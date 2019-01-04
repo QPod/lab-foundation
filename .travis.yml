@@ -10,7 +10,7 @@ env:
 notifications:
   slack:
     rooms:
-	  - q-pod:sDQLgowWjOL6TWfuO6SqAMhD#develop
+	  - q-pod:lrzKf5Ff1Ao1MGclzElR23j4#develop
 
 before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
