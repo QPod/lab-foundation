@@ -5,19 +5,20 @@ env:
     - REGISTRY_URL: "docker.io"  # or other registry URL
     - CI_PROJECT_NAMESPACE: $(dirname ${TRAVIS_REPO_SLUG})
     - CI_PROJECT_NAME: qpod
-    - REPOSITORY: "${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
+    - REPOSITORY: "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
 
 before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
     - docker info
     - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
     - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; docker push ${REPOSITORY} ;}
+    - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2" ; docker push "${REPOSITORY}:$2"; }
 
 stages:
     - base
     - cuda
     - jpy
-    - labq
+    - qpod
 
 jobs:
   include:
@@ -30,7 +31,8 @@ jobs:
       stage: cuda
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda9.0"  --build-arg "repository=${REPOSITORY}"
-    - name: "base-cuda_10.0:"
+        - alias_image ${TRAVIS_JOB_NAME} cuda
+    - name: "base-cuda_10.0"
       stage: cuda
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.0" --build-arg "repository=${REPOSITORY}"
@@ -187,6 +189,7 @@ jobs:
           --build-arg "ARG_R=true"
           --build-arg "ARG_R_DATASCIENCE=true"
           --build-arg "ARG_R_STUDIO=true"
+        - alias_image ${TRAVIS_JOB_NAME} latest
 
     - name: "full-cuda"
       stage: 
@@ -204,3 +207,4 @@ jobs:
           --build-arg "ARG_R=true"
           --build-arg "ARG_R_DATASCIENCE=true"
           --build-arg "ARG_R_STUDIO=true"
+        - alias_image ${TRAVIS_JOB_NAME} latest-cuda
