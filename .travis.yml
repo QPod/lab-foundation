@@ -5,12 +5,17 @@ env:
     - REGISTRY_URL: "docker.io"  # registry.gitlab.com
     - REPOSITORY: "${REGISTRY_URL}/${TRAVIS_REPO_SLUG}"
 
+before_script:
+    - cat /proc/meminfo | grep MemTotal
+    - free -m
+    - df -h
+    - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
+
 jobs:
   include:
     - stage: build docker image
       script:
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker build -t "${REPOSITORY}:${CI_JOB_NAME}"
+      - docker build -t "${REPOSITORY}:${TRAVIS_JOB_NAME}"
                    -f "docker_base/Dockerfile"
                    "docker_base"
       - docker push "${REPOSITORY}"
