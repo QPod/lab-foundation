@@ -11,8 +11,7 @@ before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
     - docker info
     - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
-    - build_debug() { echo "$1" "$2" "$(dirname $2)"; }
-    - build_image() { docker build --squash -t "$1" "$2" "$(dirname $2)"; }
+    - build_image() { echo `docker build --squash -t "$1" "$2" "$(dirname $2)";` }
 
 stages:
     - base
@@ -22,6 +21,5 @@ jobs:
     - name: "base"
       stage: base
       script:
-        - build_debug "${REPOSITORY}:${TRAVIS_JOB_NAME}" "docker_base/Dockerfile"
         - build_image "${REPOSITORY}:${TRAVIS_JOB_NAME}" "docker_base/Dockerfile"
         - docker push "${REPOSITORY}"
