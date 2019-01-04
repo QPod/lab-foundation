@@ -2,8 +2,8 @@ dist: bionic
 
 env:
   global:
-    - REGISTRY_URL: "docker.io"  # registry.gitlab.com
-    - REPOSITORY: "${REGISTRY_URL}/${TRAVIS_REPO_SLUG}"
+    - REGISTRY_URL: "docker.io"  # or other registry URL
+    - REPOSITORY: $(dirname ${TRAVIS_REPO_SLUG}")/qpod
 
 before_script:
     - cat /proc/meminfo | grep MemTotal
@@ -13,9 +13,9 @@ before_script:
 
 jobs:
   include:
-    - stage: build docker image
+    - name: "base"
+      stage: base
       script:
-      - docker build -t "${REPOSITORY}:${TRAVIS_JOB_NAME}"
-                   -f "docker_base/Dockerfile"
-                   "docker_base"
-      - docker push "${REPOSITORY}"
+        - docker build -t "${REPOSITORY}:${TRAVIS_JOB_NAME}"
+                       -f "docker_base/Dockerfile" "docker_base"
+        - docker push "${REPOSITORY}"
