@@ -3,7 +3,9 @@ dist: bionic
 env:
   global:
     - REGISTRY_URL: "docker.io"  # or other registry URL
-    - REPOSITORY: $(dirname ${TRAVIS_REPO_SLUG})/qpod
+    - CI_PROJECT_NAMESPACE: $(dirname ${TRAVIS_REPO_SLUG})
+    - CI_PROJECT_NAME: qpod
+    - REPOSITORY: ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
 
 before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
