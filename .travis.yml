@@ -7,10 +7,9 @@ env:
 
 before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
-    - cat /proc/meminfo | grep MemTotal
-    - free -m
-    - df -h
+    - echo ${REPOSITORY}
     - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
+    - build_image() { docker build --squash -t $1 $2 $(dirname $1); }
 
 stages:
     - base
@@ -20,6 +19,5 @@ jobs:
     - name: "base"
       stage: base
       script:
-        - docker build -t "${REPOSITORY}:${TRAVIS_JOB_NAME}"
-                       -f "docker_base/Dockerfile" "docker_base"
+        - build_image "${REPOSITORY}:${TRAVIS_JOB_NAME}" "docker_base/Dockerfile"
         - docker push "${REPOSITORY}"
