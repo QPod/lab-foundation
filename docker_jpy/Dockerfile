@@ -83,7 +83,7 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
  || true
 
 # If keeping NodeJS, then install NodeJS Kernel, else remove it to reduce image size (keep the apt source for future installation).
-RUN ${ARG_NODEJS:false} \
+RUN ${ARG_NODEJS:-false} \
  && ( npm install -g --unsafe-perm --python=python2 ijavascript && ijsinstall --install=global --spec-path=full ) \
  || ( echo "Removing Node/NPM removed..." && apt-get remove -y nodejs )
 
