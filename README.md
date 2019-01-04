@@ -1,0 +1,123 @@
+# QPod - Docker Image Stack
+
+In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI platform at your fingertip which you would love.**
+
+With Docker and `QPod`,
+ - 📦 You will be set free from tedious environment settings, because `QPod` puts everything about installing and configuring Data Science / AI development environment into standard docker images which you can use in an out-of-box manner.
+ - 🕵️‍ You can focus on your algorithms and key innovations because with the help of Jupyter ecosystem tools you are more close to data in an interactive computing manner.
+ - 🌍🌎🌏‍ You will find sharing your work with other people much easier because the standard images make scientific research or data analysis project reproducible.
+ - 🆙 You will find deploying your data science / AI projects much easier because you can use the images to develop your algorithms or programs, and then re-use these images easily either to provide RESTful APIs or orchestrate map/reduce operations on big data.
+
+## What's actually there?
+
+`QPod` curates and maintains a series of Docker images including interactive computing environment to run a Jupyter Notebook (or JupyterLab) with Python, R, OpenJDK, NodeJS, etc.
+
+`QPod` supports many use cases:
+ - (Stand-alone) Use it on your laptop as default data science / develop environment.
+ - (Multi-tenant) Use it on a server/cluster to host multiple users to exploit hardware resources like GPU.
+ - (Deployment/Production) Use it as the base image to host RESTful APIs or work as executors or map/reduce operations.
+
+## How to use? `1-2-3-GO`🎉
+
+### 0. Have docker installed on your laptop/server
+Linux (Ubuntu LTS is a good choice) / Windows (>=10 recommended) / Mac.
+ - If you are not using NVIDIA GPU, install [`docker-ce`](https://hub.docker.com/search/?offering=community&type=edition) or [`docker-ee`](https://hub.docker.com/search/?offering=enterprise&type=edition) on your laptop/server. We recommend you to use `edge` version ([macOS](https://download.docker.com/mac/edge/Docker.dmg) | [Windows](https://download.docker.com/win/edge/Docker%20for%20Windows%20Installer.exe)) on your laptop to enable Kubernetes features.
+ - If you want to use NVIDIA GPU with `QPod`, Linux server is required. After installing `docker`, please refer to [`nvidia-docker`](https://github.com/NVIDIA/nvidia-docker#quickstart) to install the latest version of NVIDIA support for docker.
+
+### 1. Choose the features and choose a folder on your disk
+See the table at bottom of this page (`QPod` feature matrix) and choose an Image Tag, say `full`.
+Typically, if you have enough disk size and no worry about your network speed, you can choose `full` for your laptop or `full-cuda` for a Linux server with NVIDIA GPU.
+
+Choose a folder (directory) on your laptop/server to server as the base directory (e.g.: `/root` or `D:/work`, please use an absolute path instead of a relative path).
+Files in this folder are visible in the environment (and files outside this folder are not visible in the environment).
+
+### 2. Start the container
+
+For Linux/macOS, run command below in shell (change `full` and `/root` to your choices).
+```
+IMG="qpod/qpod:full"
+WORKDIR="/root"
+docker pull $IMG && docker tag $IMG qpod && docker rmi $IMG && docker images | grep qpod
+docker run -d \
+    --name=QPod \
+    --hostname=QPod \
+    -p 8888:8888 \
+    -v $WORKDIR:/root \
+    qpod
+sleep 5s && docker logs QPod 2>&1|grep ?token=
+
+```
+
+For Windows, run the command below in CMD (change `full` and `D:/work` to your choices):
+```
+SET IMG="qpod/qpod:full"
+SET WORKDIR="D:/work"
+docker pull %IMG% && docker tag %IMG% qpod && docker rmi %IMG% && docker images | findstr qpod
+docker run -d ^
+    --name=QPod ^
+    --hostname=QPod ^
+    -p 8888:8888 ^
+    -v %WORKDIR%:/root ^
+    qpod
+timeout 5 && docker logs QPod 2>&1|findstr ?token=
+
+```
+
+**If you are using `QPod` with NVIDIA GPU macines with `nvidia-docker`, please add option `--runtime=nvidia` in the `docker run` command to enable GPU access.**
+
+### 3. Sit back for minutes and get the first-time login token
+The commands in the last step will:
+ - trigger a docker image download process which may take minutes
+ - start a docker container named `QPod`
+ - print a string contains a URL, which includes a 48-digit hexadecimal number
+
+Please copy the printed hexadecimal *after* `?token=` as the first-time login token.
+
+### Go! 🎉
+Access `http://localhost:8888/` (or `http://ip-address:8888` if you use a server) in your browser and input the token you just copied to start the journey.
+
+## Additional Information
+
+### Hardware
+
+The images are built based on `ubuntu:latest` and only tested on the `x86` platform.
+Minor modifications are expected to port to `ppc64le` platform.
+
+### Package Management
+
+Although `conda` is installed, we do not recommend to use conda to install a lib/package, because:
+
+- `conda` does not reuse the existing system library yet if a system lib is already installed, `conda` installs it again.
+- `conda` does not provide a stable Linux system library repository yet, for example, some lib works well on `debian:jessie` but fail on `debian:stretch`.
+
+### Customization
+
+These images are highly customizable. If you find a system lib / Python module / R packages is missing,
+you can easily add one in the `install_XX.list` in the `work` folder.
+
+
+
+# `QPod` feature matrix
+
+[![pipeline status](https://gitlab.com/qpod/qpod/badges/master/pipeline.svg)](https://gitlab.com/qpod/qpod/commits/master)
+
+|      Image Tag (Feature Spectrum)      | Image Information                                                                                                                                                                                                                                                  | Based On            | Description                                                                                                                                                                                                                           |
+|:--------------------------:|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `base`                     | [![](https://images.microbadger.com/badges/image/qpod/qpod:base.svg)](https://microbadger.com/images/qpod/qpod:base)                                                                                                                                               | `ubuntu:latest`     | This is a base image (not for final use). The image add some basic OS libs and Python3 (conda) environment.                                                                                                                           |
+| `jupyter-mini`             | [![](https://images.microbadger.com/badges/image/qpod/qpod:jupyter-mini.svg)](https://microbadger.com/images/qpod/qpod:jupyter-mini)                                                                                                                               | `base`              | A minimal run-able Jupyter environment. (no NodeJS, no extension, no latex)                                                                                                                                                           |
+| `jupyter-std`              | [![](https://images.microbadger.com/badges/image/qpod/qpod:jupyter-std.svg)](https://microbadger.com/images/qpod/qpod:jupyter-std)                                                                                                                                 | `base`              | Standard basic Jupyter environment with NodeJS and Jupyter extensions.                                                                                                                                                                |
+| `jupyter-full`             | [![](https://images.microbadger.com/badges/image/qpod/qpod:jupyter-full.svg)](https://microbadger.com/images/qpod/qpod:jupyter-full)                                                                                                                               | `base`              | Full Jupyter environment with NodeJS, LaTex, Jupyter extensions.                                                                                                                                                                      |
+| `py-std`                   | [![](https://images.microbadger.com/badges/image/qpod/qpod:py-std.svg)](https://microbadger.com/images/qpod/qpod:py-std)                                                                                                                                           | `jupyter-std`       | `jupyter-std` plus python packages for data science and AI packages. (CPU version of tensorflow installed, no LaTex)                                                                                                                                                                |
+| `py-jdk`                   | [![](https://images.microbadger.com/badges/image/qpod/qpod:py-jdk.svg)](https://microbadger.com/images/qpod/qpod:py-jdk)                                                                                                                                           | `jupyter-std`       | `py-std` plus OpenJDK. (no LaTex)                                                                                                                                                                                                     |
+| `r-mini`                   | [![](https://images.microbadger.com/badges/image/qpod/qpod:r-mini.svg)](https://microbadger.com/images/qpod/qpod:r-mini)                                                                                                                                           | `jupyter-mini`      | A minimal Jupyter environment for R. (no OpenJDK, no R data science packages, no LaTex, no Jupyter extensions)                                                                                                                        |
+| `r-std`                    | [![](https://images.microbadger.com/badges/image/qpod/qpod:r-std.svg)](https://microbadger.com/images/qpod/qpod:r-std)                                                                                                                                             | `jupyter-std`       | Standard Jupyter environment for R data science, including popular R data science packages. (OpenJDK included since many R packages need Java, no LaTex, no Jupyter extensions)                                                       |
+| `r-latex`                  | [![](https://images.microbadger.com/badges/image/qpod/qpod:r-latex.svg)](https://microbadger.com/images/qpod/qpod:r-latex)                                                                                                                                         | `jupyter-full`      | `r-std` plus LaTex and Jupyter extensions. This is the full R environment if you do not need RStudio.                                                                                                                                 |
+| `r-studio`                 | [![](https://images.microbadger.com/badges/image/qpod/qpod:r-studio.svg)](https://microbadger.com/images/qpod/qpod:r-studio)                                                                                                                                       | `jupyter-full`      |  This is the full R environment if you want to use RStudio. `r-latex` plus RStudio.                                                                                                                                                   |
+| `full`, `latest`           | [![](https://images.microbadger.com/badges/image/qpod/qpod:full.svg)](https://microbadger.com/images/qpod/qpod:full)  [![](https://images.microbadger.com/badges/image/qpod/qpod.svg)](https://microbadger.com/images/qpod/qpod)                                   | `jupyter-full`      | All features and packages for CPU included in this image.                                                                                                                                                                             |
+|             **👆The above Images do NOT have NVIDIA cuda/cudnn features installed.**   | | | **👇The Following Images have NVIDA cuda/cudnn features installed. Work for Linux only.** |             
+| `cuda`, `base-cuda_9.0`    | [![](https://images.microbadger.com/badges/image/qpod/qpod:cuda.svg)](https://microbadger.com/images/qpod/qpod:cuda)                                                                                                                                               | `base`              | This image add version 9.0 of NVIDIA cuda and cudnn libs, including runtime and devel. We use the 9.0 version as default cuda version because popular Deep Learning packages hosted on `pypi` is build against `cuda 9.0`.            |
+| `base-cuda_9.2`            | [![](https://images.microbadger.com/badges/image/qpod/qpod:base-cuda_9.2.svg)](https://microbadger.com/images/qpod/qpod:base-cuda_9.2)                                                                                                                             | `base`              | This image add version 9.2 (latest) of NVIDIA cuda and cudnn libs, including runtime and devel. It is now not used because popular Deep Learning packages hosted on ` pypi` is build against ` cuda 9.0` and not compatible with 9.2. |
+| `jupyter-mini-cuda`        | [![](https://images.microbadger.com/badges/image/qpod/qpod:jupyter-mini-cuda.svg)](https://microbadger.com/images/qpod/qpod:jupyter-mini-cuda)                                                                                                                     |  `cuda`             | A minimal Jupyter environment with NVIDIA cuda installed. No popular data science or AI Python installed. This might not be very useful, unless you just want to test Jupyter and cuda.                                               |
+| `jupyter-full-cuda`        | [![](https://images.microbadger.com/badges/image/qpod/qpod:jupyter-full-cuda.svg)](https://microbadger.com/images/qpod/qpod:jupyter-full-cuda)                                                                                                                     | `cuda`              | `jupyter-mini-cuda` plus NodeJS, LaTex, and Jupyter extensions. Might not be very useful as above but will server as base of other images.                                                                                            |
+| `py-cuda`                  | [![](https://images.microbadger.com/badges/image/qpod/qpod:py-cuda.svg)](https://microbadger.com/images/qpod/qpod:py-cuda)                                                                                                                                         | `jupyter-full-cuda` | This is the recommended image for Python based Deep Learning environment, which includes popular Python data science and AI packages. (We use `tensorflow` stack instead of `pytorch` or others.)                                     |
+| `full-cuda`, `latest-cuda` | [![](https://images.microbadger.com/badges/image/qpod/qpod:full-cuda.svg)](https://microbadger.com/images/qpod/qpod:full-cuda)  [![](https://images.microbadger.com/badges/image/qpod/qpod:latest-cuda.svg)](https://microbadger.com/images/qpod/qpod:latest-cuda) | `jupyter-full-cuda` | This cuda-enabled image including full features: Python, R (and RStudio), OpenJDK, NodeJS, LaTex, Jupyter extensions.                                                                                                                 |

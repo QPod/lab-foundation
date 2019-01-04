@@ -1,0 +1,4 @@
+% This file contains python packages to be installed with apt-get install line by line.
+% Use percent char as line comment separator.
+
+libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev   % optional libs to install JS lib canvas

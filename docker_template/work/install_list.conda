@@ -1,0 +1,11 @@
+% This file contains conda packages to be installed with conda line by line.
+% Use percent char as line comment separator.
+% It is recommended all python packages to be installed with pip.
+% Leave this file as empty if no packages is to be installed with conda.
+
+% Although conda packages are supported, we do NOT encourage you to use conda to install packages.
+% Instead, using apt-get/pip/R to install packages are encouraged bacause:
+%  - Packages on apt/pip/R sources are updated timely
+%  - conda packages are sometime built against different system environment that might not compatible with this one.
+%  - Using conda to install packages may incur large footprint than install the original ones.
+

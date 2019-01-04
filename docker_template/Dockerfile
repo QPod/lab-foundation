@@ -1,0 +1,108 @@
+# Distributed under the terms of the Modified BSD License.
+
+ARG repository
+ARG base
+
+FROM ${repository}:${base}
+
+LABEL maintainer="haobibo@gmail.com"
+
+ARG ARG_JDK=false
+
+ARG ARG_MKL=true
+ARG ARG_PY_DATABASE=false
+ARG ARG_PY_DATASCIENCE=false
+ARG ARG_PY_NLP=false
+ARG ARG_PY_CV=false
+ARG ARG_PY_BIOINFO=false
+
+ARG ARG_R=false
+ARG ARG_R_DATASCIENCE=false
+ARG ARG_R_STUDIO=false
+
+COPY work /opt/utils/
+
+WORKDIR /opt/utils
+
+
+# If installing Java environment
+RUN ${ARG_JDK:-false}           && source /opt/utils/script-utils.sh \
+    && install_apt   ./install_list_jdk.apt \
+    && echo "@ Version of Java (java/javac):" && java -version && javac -version \
+    && pip install -UIq beakerx \
+    && beakerx install \
+    && jupyter labextension install --dev-build beakerx-jupyterlab \
+    && jupyter labextension list  \
+    || true
+
+# If installing R environment
+RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
+    && install_apt  ./install_list_R.apt \
+    && echo "@ Version of R:" && R -e "R.version.string;"  \
+    && ( type java && type R && R CMD javareconf || true ) \
+    && echo "options(repos=structure(c(CRAN='https://cloud.r-project.org')))" >> /etc/R/Rprofile.site \
+    && R -e "install.packages('devtools',quiet=T,clean=T); devtools::install_github('IRkernel/IRkernel',quiet=T,clean=T); IRkernel::installspec(user=F)" \
+    && ( ${ARG_R_DATASCIENCE:-false}  \
+         && R -e "devtools::install_github('sorhawell/rgl',quiet=T,clean=T)  # work around rgl, which has too many deps." \
+         && install_apt   ./install_list_R_datascience.apt \
+         && install_R     ./install_list_R_datascience.R   \
+         || true \
+    ) \
+    && ( ${ARG_R_STUDIO:-false} \
+         && RSTUDIO_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
+         && wget -qO- "http://download2.rstudio.org/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
+         && dpkg -i /tmp/rstudio.deb && ln -s /usr/lib/rstudio-server/bin/rs* /usr/bin/ \
+         # Allow RStudio server run as root user
+         && userdel rstudio-server \
+         && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
+         # Configuration to make RStudio server disable authentication and do not run as daemon
+         && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
+         && echo "server-daemonize=0"     >> /etc/rstudio/rserver.conf \
+         && printf '#!/bin/bash\nexport USER=root\nrserver --www-port=8888' > /usr/local/bin/start-rstudio.sh \
+         && chmod u+x /usr/local/bin/start-rstudio.sh \
+         # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
+         && ( which pandoc          && rm /usr/lib/rstudio-server/bin/pandoc/pandoc          || true ) \
+         && ( which pandoc-citeproc && rm /usr/lib/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
+         # Install Jupyter Proxy to make rstudio accessible behind jupyter
+         && pip install -UIq nbrsessionproxy \
+         && jupyter serverextension enable  --sys-prefix --py nbrsessionproxy \
+         && jupyter nbextension     install --sys-prefix --py nbrsessionproxy \
+         && jupyter nbextension     enable  --sys-prefix --py nbrsessionproxy \
+         || true \
+    ) \
+    && echo "@ Version of installed R libraries:" && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]" \
+    || true
+
+# If on a x86_64 architecture and MKL selected, install MKL for acceleration
+RUN ${ARG_MKL:-false}           && [ `arch` = "x86_64" ] && pip install -Uq mkl \
+    || true
+
+# If installing Python and related packages
+RUN source /opt/utils/script-utils.sh \
+    && ( ${ARG_PY_DATASCIENCE:-false} \
+         && ( [[ -z "${CUDA_VERSION}" ]] && TF='tensorflow' || TF="tensorflow-gpu" \
+              && echo "${TF}    % Version decided based on CUDA_VERSION"    >> ./install_list_PY_datascience.pip \
+         ) \
+         && ( which R    && echo "rpy2  % Install rpy2 if R exists"         >> ./install_list_PY_datascience.pip || true ) \
+         && ( which java && echo "py4j  % Install py4j if Java exists"      >> ./install_list_PY_datascience.pip || true ) \
+         && install_pip   ./install_list_PY_datascience.pip \
+         || true \
+    ) \
+    && ( ${ARG_PY_DATABASE:-false}      && install_pip   ./install_list_PY_database.pip    || true ) \
+    && ( ${ARG_PY_NLP:-false}           && install_pip   ./install_list_PY_nlp.pip         || true ) \
+    && ( ${ARG_PY_CV:-false}            && install_pip   ./install_list_PY_cv.pip          || true ) \
+    && ( ${ARG_PY_BIOINFO:-false}       && install_pip   ./install_list_PY_bioinfo.pip     || true ) \
+    && echo "@ Version of installed Python packages:" && pip list
+
+# Installing conda packages if provided.
+RUN source /opt/utils/script-utils.sh \
+    && ( install_conda ./install_list.conda || true ) \
+    && echo "@ Version of installed Conda packages:"  && conda info && conda list | grep -v "<pip>"
+
+# Clean up and display components version information...
+RUN  source /opt/utils/script-utils.sh \
+  && install__clean && cd \
+  && echo "@ Version of image: building finished at:" `date` `uname -a` \
+  && echo "@ System environment variables:" `printenv`
+
+WORKDIR /root
