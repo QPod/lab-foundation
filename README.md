@@ -2,7 +2,7 @@
 
 In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI platform at your fingertip which you would love.**
 
-[![pipeline status](https://travis-ci.com/haobibo/docker-images.svg?branch=master)](https://travis-ci.com/haobibo/docker-images)
+[![pipeline status](https://travis-ci.com/qpod/docker-images.svg?branch=master)](https://travis-ci.com/qpod/docker-images)
 
 With Docker and `QPod`,
  - 📦 You will be set free from tedious environment settings, because `QPod` puts everything about installing and configuring Data Science / AI development environment into standard docker images which you can use in an out-of-box manner.
