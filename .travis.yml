@@ -3,13 +3,17 @@ dist: bionic
 env:
   global:
     - REGISTRY_URL: "docker.io"  # or other registry URL
-    - REPOSITORY: $(dirname ${TRAVIS_REPO_SLUG}")/qpod
+    - REPOSITORY: "$(dirname ${TRAVIS_REPO_SLUG})/qpod"
 
 before_script:
+    - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
     - cat /proc/meminfo | grep MemTotal
     - free -m
     - df -h
     - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
+
+stages:
+    - base
 
 jobs:
   include:
