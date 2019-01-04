@@ -5,14 +5,14 @@ env:
     - REGISTRY_URL: "docker.io"  # or other registry URL
     - CI_PROJECT_NAMESPACE: $(dirname ${TRAVIS_REPO_SLUG})
     - CI_PROJECT_NAME: qpod
-    - REPOSITORY: ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
+    - REPOSITORY: "${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
 
 before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
-    - echo ${REPOSITORY}
+    - docker info
     - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
-    - build_debug() { echo $1 $2 $(dirname $2); }
-    - build_image() { docker build --squash -t $1 $2 $(dirname $2); }
+    - build_debug() { echo "$1" "$2" "$(dirname $2)"; }
+    - build_image() { docker build --squash -t "$1" "$2" "$(dirname $2)"; }
 
 stages:
     - base
