@@ -11,10 +11,13 @@ before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
     - docker info
     - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USER" --password-stdin
-    - build_image() { docker build --squash -t "${REPOSITORY}:$1" -f "$2" "$(dirname $2)"; docker push ${REPOSITORY} ;}
+    - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; docker push ${REPOSITORY} ;}
 
 stages:
     - base
+    - cuda
+    - jpy
+    - labq
 
 jobs:
   include:
@@ -22,3 +25,182 @@ jobs:
       stage: base
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile"
+
+    - name: "base-cuda_9.0"
+      stage: cuda
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda9.0"  --build-arg "repository=${REPOSITORY}"
+    - name: "base-cuda_10.0:"
+      stage: cuda
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.0" --build-arg "repository=${REPOSITORY}"
+
+
+    - name: "jupyter-mini"
+      stage: jpy
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "ARG_EXTEND_JUPYTER=false"
+          --build-arg "ARG_NODEJS=false"
+          --build-arg "ARG_LATEX_BASE=false"
+          --build-arg "ARG_LATEX_CJK=false"
+
+    - name: "jupyter-mini-cuda"
+      stage: jpy
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=cuda"
+          --build-arg "ARG_EXTEND_JUPYTER=false"
+          --build-arg "ARG_NODEJS=false"
+          --build-arg "ARG_LATEX_BASE=false"
+          --build-arg "ARG_LATEX_CJK=false"
+
+    - name: "jupyter-std"
+      stage: jpy
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "ARG_EXTEND_JUPYTER=true"
+          --build-arg "ARG_NODEJS=true"
+          --build-arg "ARG_LATEX_BASE=false"
+          --build-arg "ARG_LATEX_CJK=false"
+
+    - name: "jupyter-full"
+      stage: jpy
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "ARG_EXTEND_JUPYTER=true"
+          --build-arg "ARG_NODEJS=true"
+          --build-arg "ARG_LATEX_BASE=true"
+          --build-arg "ARG_LATEX_CJK=true"
+
+    - name: "jupyter-full-cuda"
+      stage: jpy
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=cuda"
+          --build-arg "ARG_EXTEND_JUPYTER=true"
+          --build-arg "ARG_NODEJS=true"
+          --build-arg "ARG_LATEX_BASE=true"
+          --build-arg "ARG_LATEX_CJK=true"
+
+    - name: "r-mini"
+      stage: qpod
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-mini"
+          --build-arg "ARG_R=true"
+
+    - name: "r-std"
+      stage: qpod
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-std"
+          --build-arg "ARG_JDK=true"
+          --build-arg "ARG_R=true"
+          --build-arg "ARG_R_DATASCIENCE=true"
+
+    - name: "r-latex"
+      stage: 
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-full"
+          --build-arg "ARG_JDK=true"
+          --build-arg "ARG_R=true"
+          --build-arg "ARG_R_DATASCIENCE=true"
+          --build-arg "ARG_LATEX_BASE=true"
+
+    - name: "r-studio"
+      stage: 
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-full"
+          --build-arg "ARG_JDK=true"
+          --build-arg "ARG_R=true"
+          --build-arg "ARG_R_DATASCIENCE=true"
+          --build-arg "ARG_R_STUDIO=true"
+          --build-arg "ARG_LATEX_BASE=true"
+          --build-arg "ARG_LATEX_CJK=true"
+
+    - name: "py-std"
+      stage: 
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-std"
+          --build-arg "ARG_MKL=true"
+          --build-arg "ARG_PY_DATABASE=true"
+          --build-arg "ARG_PY_DATASCIENCE=true"
+          --build-arg "ARG_PY_NLP=true"
+          --build-arg "ARG_PY_CV=true"
+          --build-arg "ARG_PY_BIOINFO=true"
+
+    - name: "py-jdk"
+      stage: 
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-std"
+          --build-arg "ARG_JDK=true"
+          --build-arg "ARG_MKL=true"
+          --build-arg "ARG_PY_DATABASE=true"
+          --build-arg "ARG_PY_DATASCIENCE=true"
+          --build-arg "ARG_PY_NLP=true"
+          --build-arg "ARG_PY_CV=true"
+          --build-arg "ARG_PY_BIOINFO=true"
+
+    - name: "py-cuda"
+      stage: 
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-full-cuda"
+          --build-arg "ARG_MKL=true"
+          --build-arg "ARG_PY_DATABASE=true"
+          --build-arg "ARG_PY_DATASCIENCE=true"
+          --build-arg "ARG_PY_NLP=true"
+          --build-arg "ARG_PY_CV=true"
+          --build-arg "ARG_PY_BIOINFO=true"
+
+
+    - name: "full"
+      stage: 
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-full"
+          --build-arg "ARG_JDK=true"
+          --build-arg "ARG_MKL=true"
+          --build-arg "ARG_PY_DATABASE=true"
+          --build-arg "ARG_PY_DATASCIENCE=true"
+          --build-arg "ARG_PY_NLP=true"
+          --build-arg "ARG_PY_CV=true"
+          --build-arg "ARG_PY_BIOINFO=true"
+          --build-arg "ARG_R=true"
+          --build-arg "ARG_R_DATASCIENCE=true"
+          --build-arg "ARG_R_STUDIO=true"
+
+    - name: "full-cuda"
+      stage: 
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-full-cuda"
+          --build-arg "ARG_JDK=true"
+          --build-arg "ARG_MKL=true"
+          --build-arg "ARG_PY_DATABASE=true"
+          --build-arg "ARG_PY_DATASCIENCE=true"
+          --build-arg "ARG_PY_NLP=true"
+          --build-arg "ARG_PY_CV=true"
+          --build-arg "ARG_PY_BIOINFO=true"
+          --build-arg "ARG_R=true"
+          --build-arg "ARG_R_DATASCIENCE=true"
+          --build-arg "ARG_R_STUDIO=true"
