@@ -41,7 +41,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
     && echo "@ Version of R:" && R -e "R.version.string;"  \
     && ( type java && type R && R CMD javareconf || true ) \
     && echo "options(repos=structure(c(CRAN='https://cloud.r-project.org')))" >> /etc/R/Rprofile.site \
-    && R -e "install.packages('IRkernel',quiet=T,clean=T); IRkernel::installspec(user=F)" \
+    && R -e "install.packages(c('devtools','IRkernel'),quiet=T,clean=T); IRkernel::installspec(user=F)" \
     && ( ${ARG_R_DATASCIENCE:-false}  \
          && R -e "devtools::install_github('sorhawell/rgl',quiet=T,clean=T)  # work around rgl, which has too many deps." \
          && install_apt   ./install_list_R_datascience.apt \
