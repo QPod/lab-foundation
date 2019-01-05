@@ -12,8 +12,8 @@ install_conda(){ cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 conda instal
 # function to install python packages with pip from a text file which lists package names (add comments with % char)
 install_pip()  { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 pip install -U ; }
 
-# function to install R packages from a text file which lists package names (add comments with % char)
-install_R()    { R -e "install.packages(scan('$1','c',comment.char='%'),quiet=T,clean=T)" ; }
+# function to install R packages from a text file which lists package names (add comments with % char, use quiet=T to be less verbose)
+install_R()    { R -e "install.packages(scan('$1','c',comment.char='%'),clean=T)" ; }
 
 # function to download a ZIP file with wget and unzip it to /opt/
 install_zip()  { wget -nv $1 -O /tmp/TMP.zip && unzip -q /tmp/TMP.zip -d /opt/ && rm /tmp/TMP.zip ; }
