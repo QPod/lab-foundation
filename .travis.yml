@@ -7,11 +7,6 @@ env:
     - CI_PROJECT_NAME: qpod
     - REPOSITORY: "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
 
-notifications:
-  slack:
-    rooms:
-	  - q-pod:lrzKf5Ff1Ao1MGclzElR23j4#develop
-
 before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
     - docker info
