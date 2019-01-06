@@ -176,7 +176,7 @@ jobs:
     - name: "full"
       stage: 
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - travis_wait 90 build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-full"
           --build-arg "ARG_JDK=true"
@@ -194,7 +194,7 @@ jobs:
     - name: "full-cuda"
       stage: 
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - travis_wait 90 build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-full-cuda"
           --build-arg "ARG_JDK=true"
