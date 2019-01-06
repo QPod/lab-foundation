@@ -8,4 +8,3 @@ openpyxl sqlalchemy pandasql pymysql psycopg2			% Data access: OpenSource DB
 cx_Oracle                                               % Data access: OracleDB
 sqlalchemy_pytds                                        % Data access: Microsoft SQLServer
 ibm_db ibm_db_sa                                        % Data access: IBM DB2 and IBM Informix
-git+git://github.com/blaze/odo#egg=odo[all]				% Data Migration Tool
