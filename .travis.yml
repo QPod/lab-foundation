@@ -3,7 +3,7 @@ dist: bionic
 env:
   global:
     - REGISTRY_URL: "docker.io"  # or other registry URL
-    - CI_PROJECT_NAMESPACE: $(awk '{print tolower($(dirname ${TRAVIS_REPO_SLUG}))}')
+    - CI_PROJECT_NAMESPACE: echo "$(dirname ${TRAVIS_REPO_SLUG})" | awk '{print tolower($0)}'
     - CI_PROJECT_NAME: qpod
     - REPOSITORY: "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
 
