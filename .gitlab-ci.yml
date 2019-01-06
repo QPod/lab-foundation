@@ -6,11 +6,11 @@ services:
 
 variables:
     REGISTRY_URL: "docker.io"  # or other registry URL
-    REPOSITORY: "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
 
 before_script:
     - cat /proc/meminfo | grep MemTotal
     - docker info
+    - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
     - echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin
     - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; docker push ${REPOSITORY} ;}
     - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2" ; docker push "${REPOSITORY}:$2"; }

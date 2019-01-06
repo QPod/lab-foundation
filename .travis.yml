@@ -10,10 +10,22 @@ before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
     - docker info
     - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
-    - echo "REPOSITORY=" ${REPOSITORY} "${DOCKER_REGISTRY_USER}" "${DOCKER_REGISTRY_PASSWORD}"
-    - echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin
-    - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; docker push ${REPOSITORY} ;}
-    - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2" ; docker push "${REPOSITORY}:$2"; }
+    - echo "REPOSITORY=" ${REPOSITORY}
+    - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+        echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin;
+      fi
+    - build_image() {
+        TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)";
+        if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+            docker push ${REPOSITORY} ;
+        fi
+      }
+    - alias_image() {
+        docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2" ;
+        if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+          docker push "${REPOSITORY}:$2";
+        fi
+      }
 
 stages:
     - base
