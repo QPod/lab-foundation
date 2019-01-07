@@ -24,7 +24,7 @@ COPY work /opt/utils/
 RUN cd /tmp && mkdir -p $HOME_DIR \
  && apt-get -y update --fix-missing && apt-get -y upgrade \
  && apt-get -qq install -y --no-install-recommends \
-    apt-utils apt-transport-https ca-certificates lsb-release gnupg2 dirmngr wget locales sudo \
+    apt-utils apt-transport-https ca-certificates lsb-release gnupg2 dirmngr wget jq locales sudo \
     build-essential cmake unzip \
  && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
  && echo "en_US.UTF-8 UTF-8"             >  /etc/locale.gen && locale-gen \
@@ -35,15 +35,14 @@ RUN cd /tmp && mkdir -p $HOME_DIR \
  && cat /opt/utils/script-utils.sh       >> /etc/bash.bashrc
 
 # --> Install OS libs, Utilities, and Python3 (Miniconda3), replace conda packages with pip source.
-# # TODO: WORKAROUND for Python 3.7 incompatibility with tensorflow and other packages: use py36 for now.
 RUN source /opt/utils/script-utils.sh && cd /tmp/ \
  && install_apt /opt/utils/install_list_base.apt \
  && wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O conda.sh && bash /tmp/conda.sh -f -b -p /opt/conda \
- && conda install python=3.6 \
  && conda config --system --prepend channels conda-forge \
  && conda config --system --set auto_update_conda false  \
  && conda config --system --set show_channel_urls true   \
- && conda update --all --quiet --yes \
+ # && conda update --all --quiet --yes \ # TODO: WORKAROUND for Python 3.7 incompatibility with tensorflow and other packages: use py36 for now.
+ && conda install python=3.6 \
  && CONDA_PY_PKGS=`conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;"` \
  && conda remove --force -yq $CONDA_PY_PKGS \
  && pip install -UIq pip setuptools $CONDA_PY_PKGS \

@@ -25,10 +25,9 @@ ENTRYPOINT ["tini", "-g", "--"]
 
 
 # Install NodeJS (required to build JupyterLab Extensions later)
-RUN DISTRO=$(lsb_release -c -s) \
- && echo "deb     https://deb.nodesource.com/node_11.x ${DISTRO} main"     > /etc/apt/sources.list.d/nodesource.list \
- && echo "deb-src https://deb.nodesource.com/node_11.x ${DISTRO} main"    >> /etc/apt/sources.list.d/nodesource.list \
- && wget -qO- "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"      | apt-key add - \
+RUN wget -qO- "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"      | apt-key add - \
+ && echo "deb     https://deb.nodesource.com/node_11.x $(lsb_release -cs) main"     > /etc/apt/sources.list.d/nodesource.list \
+ && echo "deb-src https://deb.nodesource.com/node_11.x $(lsb_release -cs) main"    >> /etc/apt/sources.list.d/nodesource.list \
  && apt-get -y update --fix-missing && apt-get -qq install -y --no-install-recommends nodejs \
  && echo "@ Version of Node/NPM:" `node -v` `npm -v`
 
@@ -83,7 +82,7 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
  || true
 
 # If keeping NodeJS, then install NodeJS Kernel, else remove it to reduce image size (keep the apt source for future installation).
-RUN ${ARG_NODEJS:false} \
+RUN ${ARG_NODEJS:-false} \
  && ( npm install -g --unsafe-perm --python=python2 ijavascript && ijsinstall --install=global --spec-path=full ) \
  || ( echo "Removing Node/NPM removed..." && apt-get remove -y nodejs )
 
