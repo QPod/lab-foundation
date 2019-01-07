@@ -8,7 +8,7 @@ env:
 before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
     - docker info
-    - [[ $TRAVIS_PULL_REQUEST_SLUG = "" ]] && CI_PROJECT_NAMESPACE="$(dirname ${TRAVIS_REPO_SLUG}" || CI_PROJECT_NAMESPACE="$(dirname ${TRAVIS_PULL_REQUEST_SLUG}))"
+    - CI_PROJECT_NAMESPACE=$(dirname [[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "${TRAVIS_REPO_SLUG}" || echo "${TRAVIS_PULL_REQUEST_SLUG}")
     - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
     - echo "REPOSITORY:" ${REPOSITORY}
     - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then

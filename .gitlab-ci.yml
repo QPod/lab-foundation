@@ -5,7 +5,7 @@ services:
       command: ["--experimental"]
 
 variables:
-    - REGISTRY_URL: "docker.io"  # or other registry URL
+    REGISTRY_URL: "docker.io"  # or other registry URL
 
 before_script:
     - cat /proc/meminfo | grep MemTotal
