@@ -3,4 +3,4 @@
 
 pyparsing astroid                     % Parsing, AST
 nltk spacy PyStemmer orange3-text     % NLP
-gensim fasttext                       % NLP embeddings
+gensim                                % NLP embeddings
