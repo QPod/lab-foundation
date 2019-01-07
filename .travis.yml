@@ -4,13 +4,13 @@ env:
   global:
     - REGISTRY_URL: "docker.io"  # or other registry URL
     - CI_PROJECT_NAME: "qpod"
-    - CI_PROJECT_NAMESPACE: $(dirname ${TRAVIS_REPO_SLUG})
 
 before_script:
     - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
     - docker info
+    - [[ $TRAVIS_PULL_REQUEST_SLUG = "" ]] && CI_PROJECT_NAMESPACE="$(dirname ${TRAVIS_REPO_SLUG}" || CI_PROJECT_NAMESPACE="$(dirname ${TRAVIS_PULL_REQUEST_SLUG}))"
     - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
-    - echo "REPOSITORY=" ${REPOSITORY}
+    - echo "REPOSITORY:" ${REPOSITORY}
     - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
         echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin;
       fi
