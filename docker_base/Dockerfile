@@ -24,7 +24,7 @@ COPY work /opt/utils/
 RUN cd /tmp && mkdir -p $HOME_DIR \
  && apt-get -y update --fix-missing && apt-get -y upgrade \
  && apt-get -qq install -y --no-install-recommends \
-    apt-utils apt-transport-https ca-certificates gnupg2 dirmngr wget jq locales sudo \
+    apt-utils apt-transport-https ca-certificates lsb-release gnupg2 dirmngr wget jq locales sudo \
     build-essential cmake unzip \
  && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
  && echo "en_US.UTF-8 UTF-8"             >  /etc/locale.gen && locale-gen \
