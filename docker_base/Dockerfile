@@ -38,7 +38,7 @@ RUN cd /tmp && mkdir -p $HOME_DIR \
 RUN source /opt/utils/script-utils.sh && cd /tmp/ \
  && install_apt /opt/utils/install_list_base.apt \
  && wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O conda.sh && bash /tmp/conda.sh -f -b -p /opt/conda \
- && conda config --system --prepend channels conda-forge \
+ # && conda config --system --prepend channels conda-forge \
  && conda config --system --set auto_update_conda false  \
  && conda config --system --set show_channel_urls true   \
  # && conda update --all --quiet --yes \ # TODO: WORKAROUND for Python 3.7 incompatibility with tensorflow and other packages: use py36 for now.
