@@ -122,7 +122,7 @@ jobs:
           --build-arg "ARG_R_DATASCIENCE=true"
 
     - name: "r-latex"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -133,7 +133,7 @@ jobs:
           --build-arg "ARG_LATEX_BASE=true"
 
     - name: "r-studio"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -146,7 +146,7 @@ jobs:
           --build-arg "ARG_LATEX_CJK=true"
 
     - name: "py-std"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -159,7 +159,7 @@ jobs:
           --build-arg "ARG_PY_BIOINFO=true"
 
     - name: "py-jdk"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -173,7 +173,7 @@ jobs:
           --build-arg "ARG_PY_BIOINFO=true"
 
     - name: "py-cuda"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -187,7 +187,7 @@ jobs:
 
 
     - name: "full"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
