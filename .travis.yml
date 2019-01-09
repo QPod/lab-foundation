@@ -8,8 +8,7 @@ env:
     - CI_PROJECT_NAME: "qpod"
 
 install:
-  - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
-  - docker info
+  - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart && docker info
 
 before_script:
   - CI_PROJECT_NAMESPACE=$([[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "$(dirname ${TRAVIS_REPO_SLUG})" || echo "$(dirname ${TRAVIS_PULL_REQUEST_SLUG})")
@@ -18,15 +17,11 @@ before_script:
   - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2" ; }
   - push_image()  { docker images; docker push "${REPOSITORY}"; }
 
-
 after_script:
-  
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
       push_image ;
     fi
-
-
 
 stages:
   - base
