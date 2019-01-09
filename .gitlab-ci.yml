@@ -5,19 +5,16 @@ services:
   command: ["--experimental"]
 
 variables:
-  REGISTRY_URL: "docker.io"  # or other registry URL
+  REGISTRY_URL: "docker.io"  # or other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
 
 before_script:
   - docker info
   - CI_PROJECT_NAME="qpod"
   - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
   - echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin
-  - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
-  - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2" ; }
-  - push_image()  { docker push "${REPOSITORY}"; }
-
-after_script:
-  - push_image
+  - push_image()  { docker images; docker push "${REPOSITORY}"; }
+  - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; push_image; }
+  - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2"; push_image; }
 
 
 stages:
