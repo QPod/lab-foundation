@@ -17,7 +17,7 @@ before_script:
   - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2"; }
   - push_image()  { docker push "${REPOSITORY}"; }
 
-deploy:
+after_script:
   - docker images
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
