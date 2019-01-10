@@ -1,37 +1,34 @@
+language: minimal
+
 dist: bionic
 
 env:
   global:
-    - REGISTRY_URL: "docker.io"  # or other registry URL
+    - REGISTRY_URL: "docker.io"  # or other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
     - CI_PROJECT_NAME: "qpod"
 
+install:
+  - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart && docker info
+
 before_script:
-    - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
-    - docker info
-    - CI_PROJECT_NAMESPACE=$([[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "$(dirname ${TRAVIS_REPO_SLUG})" || echo "$(dirname ${TRAVIS_PULL_REQUEST_SLUG})")
-    - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
-    - echo "REPOSITORY:" ${REPOSITORY}
-    - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-        echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin;
-      fi
-    - build_image() {
-        TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)";
-        if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-            docker push ${REPOSITORY} ;
-        fi
-      }
-    - alias_image() {
-        docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2" ;
-        if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-          docker push "${REPOSITORY}:$2";
-        fi
-      }
+  - CI_PROJECT_NAMESPACE=$([[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "$(dirname ${TRAVIS_REPO_SLUG})" || echo "$(dirname ${TRAVIS_PULL_REQUEST_SLUG})")
+  - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
+  - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
+  - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2"; }
+  - push_image()  { docker push "${REPOSITORY}"; }
+
+after_script:
+  - docker images
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+      echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
+      push_image ;
+    fi
 
 stages:
-    - base
-    - cuda
-    - jpy
-    - qpod
+  - base
+  - cuda
+  - jpy
+  - qpod
 
 jobs:
   include:
@@ -122,7 +119,7 @@ jobs:
           --build-arg "ARG_R_DATASCIENCE=true"
 
     - name: "r-latex"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -133,7 +130,7 @@ jobs:
           --build-arg "ARG_LATEX_BASE=true"
 
     - name: "r-studio"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -146,7 +143,7 @@ jobs:
           --build-arg "ARG_LATEX_CJK=true"
 
     - name: "py-std"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -159,7 +156,7 @@ jobs:
           --build-arg "ARG_PY_BIOINFO=true"
 
     - name: "py-jdk"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -173,7 +170,7 @@ jobs:
           --build-arg "ARG_PY_BIOINFO=true"
 
     - name: "py-cuda"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -187,7 +184,7 @@ jobs:
 
 
     - name: "full"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
@@ -205,7 +202,7 @@ jobs:
         - alias_image "${TRAVIS_JOB_NAME}" "latest"
 
     - name: "full-cuda"
-      stage: 
+      stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"

@@ -1,8 +1,8 @@
 # QPod - Docker Image Stack
 
-[![GitLab Pipeline Status](https://gitlab.com/qpod/docker-images/badges/master/build.svg)](https://gitlab.com/qpod/docker-images/pipelines)
-[![TravisCI Pipeline Status](https://travis-ci.com/qpod/docker-images.svg?branch=master)](https://travis-ci.com/qpod/docker-images)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![TravisCI Pipeline Status](https://travis-ci.com/QPod/docker-images.svg?branch=master)](https://travis-ci.com/QPod/docker-images)
+[![GitLab Pipeline Status](https://gitlab.com/QPod/docker-images/badges/master/build.svg)](https://gitlab.com/QPod/docker-images/pipelines)
 
 In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI platform at your fingertip which you would love.**
 
