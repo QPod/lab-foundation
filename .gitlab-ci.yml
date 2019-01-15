@@ -5,7 +5,7 @@ services:
   command: ["--experimental"]
 
 variables:
-  REGISTRY_URL: "registry.cn-beijing.aliyuncs.com"  # docker.io or other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
+  REGISTRY_URL: "docker.io"  # other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
 
 before_script:
   - docker info
