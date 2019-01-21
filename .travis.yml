@@ -4,13 +4,16 @@ dist: bionic
 
 env:
   global:
-    - REGISTRY_URL: "docker.io"  # or other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
+    - REGISTRY_URL: "docker.io"  # docker.io or other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
     - CI_PROJECT_NAME: "qpod"
 
 install:
   - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart && docker info
 
 before_script:
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+      echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
+    fi
   - CI_PROJECT_NAMESPACE=$([[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "$(dirname ${TRAVIS_REPO_SLUG})" || echo "$(dirname ${TRAVIS_PULL_REQUEST_SLUG})")
   - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
   - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
@@ -19,10 +22,7 @@ before_script:
 
 after_script:
   - docker images
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-      echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
-      push_image ;
-    fi
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then push_image ; fi
 
 stages:
   - base
