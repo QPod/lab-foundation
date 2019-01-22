@@ -38,14 +38,13 @@ RUN apt-get -qq install -y --no-install-recommends python-pip \
 
 
 # Setup Jupyter: Basic Configurations and Extensions...
-RUN pip install -UIq jupyterhub jupyterlab notebook \
-      ipywidgets jupyter-server-proxy \
+RUN pip install -UIq jupyterhub jupyterlab notebook ipywidgets \
  && mkdir -p /opt/conda/etc/jupyter/ && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \     
  && jupyter nbextension     enable --py widgetsnbextension \
  && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \
  && npm install -g webpack webpack-command \
  && echo "@ Version of Yarn/WebPack:" `yarn -v` `npm list -g | grep webpack` \
- && jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyterlab-server-proxy \
+ && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
  && mv /opt/utils/start-*.sh /usr/local/bin/ && chmod +x /usr/local/bin/start-*.sh \
  && echo "@ Version of Jupyter Notebook/JupyterHub/JupyterLab:" \
       `jupyter notebook --version` `jupyterhub --version` `jupyter lab --version`
