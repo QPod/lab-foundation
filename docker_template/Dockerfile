@@ -63,11 +63,8 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
          && ( which pandoc          && rm /usr/lib/rstudio-server/bin/pandoc/pandoc          || true ) \
          && ( which pandoc-citeproc && rm /usr/lib/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
-         # Install Jupyter Proxy to make rstudio accessible behind jupyter
-         && pip install -UIq nbrsessionproxy \
-         && jupyter serverextension enable  --sys-prefix --py nbrsessionproxy \
-         && jupyter nbextension     install --sys-prefix --py nbrsessionproxy \
-         && jupyter nbextension     enable  --sys-prefix --py nbrsessionproxy \
+         # Install Jupyter Proxy to make rstudio/shiny accessible behind jupyter
+         && pip install -UIq jupyter-rsession-proxy \
          || true \
     ) \
     && echo "@ Version of installed R libraries:" && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]" \
