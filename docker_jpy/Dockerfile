@@ -59,9 +59,6 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
  && install_pip /opt/utils/install_list_JPY_extend.pip \
  && ipcluster nbextension enable \
  && jupyter serverextension enable  --sys-prefix --py jupyterlab_git \
- && jupyter serverextension enable  --sys-prefix --py ipyparallel \
- && jupyter nbextension     install --sys-prefix --py ipyparallel \
- && jupyter nbextension     enable  --sys-prefix --py ipyparallel \
  && jupyter nbextensions_configurator enable --sys-prefix \
  && jupyter contrib nbextension install --sys-prefix \
  && jupyter labextension install --no-build \
