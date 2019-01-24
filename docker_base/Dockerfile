@@ -41,8 +41,7 @@ RUN source /opt/utils/script-utils.sh && cd /tmp/ \
  && conda config --system --prepend channels conda-forge \
  && conda config --system --set auto_update_conda false  \
  && conda config --system --set show_channel_urls true   \
- # && conda update --all --quiet --yes \ # TODO: WORKAROUND for Python 3.7 incompatibility with tensorflow and other packages: use py36 for now.
- && conda install python=3.6 \
+ && conda update --all --quiet --yes \
  && CONDA_PY_PKGS=`conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;"` \
  && conda remove --force -yq $CONDA_PY_PKGS \
  && pip install -UIq pip setuptools $CONDA_PY_PKGS \
@@ -53,6 +52,5 @@ RUN  source /opt/utils/script-utils.sh \
   && install__clean && cd \
   && echo "@ Version of image: building finished at:" `date` `uname -a` \
   && echo "@ System environment variables:" `printenv`
-
 
 WORKDIR $HOME_DIR

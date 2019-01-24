@@ -9,7 +9,7 @@ install_apt()  { apt-get -y update --fix-missing && apt-get -qq install -y --no-
 install_conda(){ cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 conda install -yq ; }
 
 # function to install python packages with pip from a text file which lists package names (add comments with % char)
-install_pip()  { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 pip install ; }  # -U
+install_pip()  { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 pip install -U --pre ; }
 
 # function to install R packages from a text file which lists package names (add comments with % char, use quiet=T to be less verbose)
 install_R()    { R -e "lapply(scan('$1','c',comment.char='%'),function(x){install.packages(x,clean=T)});cat(x);" ; }
