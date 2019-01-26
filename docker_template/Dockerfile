@@ -68,6 +68,17 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          && jupyter labextension install jupyterlab-server-proxy \
          || true \
     ) \
+    && ( {ARG_R_STUDIO:-false} \
+         && RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION) \
+         && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
+         && dpkg -i /tmp/rshiny.deb \
+         && sed  -i 's/3838/8888/g' /etc/shiny-server/shiny-server.conf \
+         && printf '#!/bin/bash\nexport USER=root\nshiny-server' > /usr/local/bin/start-shiny-server.sh \
+         && chmod u+x /usr/local/bin/start-shiny-server.sh \
+         # Remove shiny's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
+         && ( which pandoc          && rm /opt/shiny-server/ext/pandoc/pandoc          || true ) \
+         && ( which pandoc-citeproc && rm /opt/shiny-server/ext/pandoc/pandoc-citeproc || true ) \
+    ) \
     && echo "@ Version of installed R libraries:" && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]" \
     || true
 
