@@ -63,9 +63,6 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
          && ( which pandoc          && rm /usr/lib/rstudio-server/bin/pandoc/pandoc          || true ) \
          && ( which pandoc-citeproc && rm /usr/lib/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
-         # Install Jupyter Proxy to make rstudio/shiny accessible behind jupyter  # to be replaced by QPod
-         && pip install -UIq jupyter-server-proxy jupyter-rsession-proxy \
-         && jupyter labextension install jupyterlab-server-proxy \
          && rstudio-server version \
          || true \
     ) \
