@@ -69,7 +69,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          && rstudio-server version \
          || true \
     ) \
-    && ( {ARG_R_STUDIO:-false} \
+    && ( ${ARG_R_STUDIO:-false} \
          && RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION) \
          && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
          && dpkg -i /tmp/rshiny.deb \
