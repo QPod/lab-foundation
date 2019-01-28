@@ -1,8 +1,11 @@
 # QPod - Docker Image Stack
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Docker Pulls](https://img.shields.io/docker/pulls/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
+[![Docker Starts](https://img.shields.io/docker/stars/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
 [![TravisCI Pipeline Status](https://travis-ci.com/QPod/docker-images.svg?branch=master)](https://travis-ci.com/QPod/docker-images)
 [![GitLab Pipeline Status](https://gitlab.com/QPod/docker-images/badges/master/build.svg)](https://gitlab.com/QPod/docker-images/pipelines)
+[![GitHub Starts](https://img.shields.io/github/stars/QPod/docker-images.svg?label=Stars&style=social)](https://github.com/QPod/docker-images/stargazers)
 
 In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI platform at your fingertip which you would love.**
 
@@ -11,6 +14,8 @@ With Docker and `QPod`,
  - 🕵️‍ You can focus on your algorithms and key innovations because with the help of Jupyter ecosystem tools you are more close to data in an interactive computing manner.
  - 🌍🌎🌏‍ You will find sharing your work with other people much easier because the standard images make scientific research or data analysis project reproducible.
  - 🆙 You will find deploying your data science / AI projects much easier because you can use the images to develop your algorithms or programs, and then re-use these images easily either to provide RESTful APIs or orchestrate map/reduce operations on big data.
+
+![Screenshot of QPod](https://i.imgur.com/zEaSliT.jpg "Screenshot of QPod")
 
 ## What's actually there?
 
