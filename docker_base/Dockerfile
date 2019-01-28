@@ -54,5 +54,4 @@ RUN  source /opt/utils/script-utils.sh \
   && echo "@ Version of image: building finished at:" `date` `uname -a` \
   && echo "@ System environment variables:" `printenv`
 
-
 WORKDIR $HOME_DIR

@@ -14,4 +14,5 @@ caret           % Misc functions for training and plotting classification and re
 KernSmooth      % Functions for kernel smoothing (and density estimation).	<MIT>
 quantmod        % Specify, build, trade, and analyse quantitative financial trading strategies.	<GPL3>
 rbokeh          % A native R plotting library that provides a flexible declarative interface for creating interactive web-based graphics, backed by the Bokeh visualization library. <MIT>
+shiny           % A package makes it incredibly easy to build interactive web applications with R. <GPLv3>
 Biocomb         % Feature Selection and Classification with the Embedded Validation Procedures for Biomedical Data Analysis. <GPL3>

@@ -38,14 +38,12 @@ RUN apt-get -qq install -y --no-install-recommends python-pip \
 
 
 # Setup Jupyter: Basic Configurations and Extensions...
-RUN pip install -UIq jupyterhub jupyterlab notebook \
-      ipywidgets nbserverproxy \
+RUN pip install -UIq jupyterhub jupyterlab notebook ipywidgets qpod_hub \
  && mkdir -p /opt/conda/etc/jupyter/ && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \     
  && jupyter nbextension     enable --py widgetsnbextension \
  && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \
  && npm install -g webpack webpack-command \
  && echo "@ Version of Yarn/WebPack:" `yarn -v` `npm list -g | grep webpack` \
- && jupyter serverextension enable  --sys-prefix --py nbserverproxy \
  && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
  && mv /opt/utils/start-*.sh /usr/local/bin/ && chmod +x /usr/local/bin/start-*.sh \
  && echo "@ Version of Jupyter Notebook/JupyterHub/JupyterLab:" \
@@ -60,9 +58,6 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
  && install_pip /opt/utils/install_list_JPY_extend.pip \
  && ipcluster nbextension enable \
  && jupyter serverextension enable  --sys-prefix --py jupyterlab_git \
- && jupyter serverextension enable  --sys-prefix --py ipyparallel \
- && jupyter nbextension     install --sys-prefix --py ipyparallel \
- && jupyter nbextension     enable  --sys-prefix --py ipyparallel \
  && jupyter nbextensions_configurator enable --sys-prefix \
  && jupyter contrib nbextension install --sys-prefix \
  && jupyter labextension install --no-build \

@@ -63,11 +63,22 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
          && ( which pandoc          && rm /usr/lib/rstudio-server/bin/pandoc/pandoc          || true ) \
          && ( which pandoc-citeproc && rm /usr/lib/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
-         # Install Jupyter Proxy to make rstudio accessible behind jupyter
-         && pip install -UIq nbrsessionproxy \
-         && jupyter serverextension enable  --sys-prefix --py nbrsessionproxy \
-         && jupyter nbextension     install --sys-prefix --py nbrsessionproxy \
-         && jupyter nbextension     enable  --sys-prefix --py nbrsessionproxy \
+         && rstudio-server version \
+         || true \
+    ) \
+    && ( ${ARG_R_STUDIO:-false} \
+         && RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION) \
+         && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
+         && dpkg -i /tmp/rshiny.deb \
+         && sed  -i 's/3838/8888/g' /etc/shiny-server/shiny-server.conf \
+         && printf '#!/bin/bash\nexport USER=root\nshiny-server' > /usr/local/bin/start-shiny-server.sh \
+         && chmod u+x /usr/local/bin/start-shiny-server.sh \
+         # Remove shiny's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
+         && ( which pandoc          && rm /opt/shiny-server/ext/pandoc/pandoc          || true ) \
+         && ( which pandoc-citeproc && rm /opt/shiny-server/ext/pandoc/pandoc-citeproc || true ) \
+         && rm    /opt/shiny-server/ext/node/bin/shiny-server \
+         && ln -s /opt/shiny-server/ext/node/bin/node /opt/shiny-server/ext/node/bin/shiny-server \
+         && shiny-server --version \
          || true \
     ) \
     && echo "@ Version of installed R libraries:" && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]" \
