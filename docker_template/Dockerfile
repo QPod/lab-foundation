@@ -78,6 +78,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          # Remove shiny's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
          && ( which pandoc          && rm /opt/shiny-server/ext/pandoc/pandoc          || true ) \
          && ( which pandoc-citeproc && rm /opt/shiny-server/ext/pandoc/pandoc-citeproc || true ) \
+         || true \
     ) \
     && echo "@ Version of installed R libraries:" && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]" \
     || true

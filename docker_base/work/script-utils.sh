@@ -12,7 +12,7 @@ install_conda(){ cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 conda instal
 install_pip()  { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 pip install -U --pre ; }
 
 # function to install R packages from a text file which lists package names (add comments with % char, use quiet=T to be less verbose)
-install_R()    { R -e "lapply(scan('$1','c',comment.char='%'),function(x){install.packages(x,clean=T)});cat(x);" ; }
+install_R()    { R -e "lapply(scan('$1','c',comment.char='%'),function(x){install.packages(x,clean=T);cat(x);})" ; }
 
 # function to download a ZIP file with wget and unzip it to /opt/
 install_zip()  { wget -nv $1 -O /tmp/TMP.zip && unzip -q /tmp/TMP.zip -d /opt/ && rm /tmp/TMP.zip ; }
