@@ -66,6 +66,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          # Install Jupyter Proxy to make rstudio/shiny accessible behind jupyter  # to be replaced by QPod
          && pip install -UIq jupyter-server-proxy jupyter-rsession-proxy \
          && jupyter labextension install jupyterlab-server-proxy \
+         && rstudio-server version \
          || true \
     ) \
     && ( {ARG_R_STUDIO:-false} \
@@ -78,6 +79,9 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          # Remove shiny's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
          && ( which pandoc          && rm /opt/shiny-server/ext/pandoc/pandoc          || true ) \
          && ( which pandoc-citeproc && rm /opt/shiny-server/ext/pandoc/pandoc-citeproc || true ) \
+         && rm    /opt/shiny-server/ext/node/bin/shiny-server \
+         && ln -s /opt/shiny-server/ext/node/bin/node /opt/shiny-server/ext/node/bin/shiny-server \
+         && shiny-server --version \
          || true \
     ) \
     && echo "@ Version of installed R libraries:" && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]" \
