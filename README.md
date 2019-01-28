@@ -3,8 +3,8 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Docker Pulls](https://img.shields.io/docker/pulls/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
 [![Docker Starts](https://img.shields.io/docker/stars/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
-[![TravisCI Pipeline Status](https://travis-ci.com/QPod/docker-images.svg?branch=master)](https://travis-ci.com/QPod/docker-images)
-[![GitLab Pipeline Status](https://gitlab.com/QPod/docker-images/badges/master/build.svg)](https://gitlab.com/QPod/docker-images/pipelines)
+[![GitLab Pipeline Status](https://img.shields.io/gitlab/pipeline/QPod/docker-images.svg)](https://gitlab.com/QPod/docker-images/pipelines)
+[![TravisCI Pipeline Status](https://img.shields.io/travis/com/QPod/docker-images.svg)](https://travis-ci.com/QPod/docker-images)
 [![GitHub Starts](https://img.shields.io/github/stars/QPod/docker-images.svg?label=Stars&style=social)](https://github.com/QPod/docker-images/stargazers)
 
 In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI platform at your fingertip which you would love.**
