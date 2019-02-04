@@ -31,7 +31,7 @@ RUN cd /tmp && mkdir -p $HOME_DIR \
  && echo "ALL ALL=(ALL) NOPASSWD: ALL"   >> /etc/sudoers \
  && mv /root/.bashrc /etc/bash_profile \
  && echo "[ \$BASH ] && [ -f /etc/bash_profile ] && . /etc/bash_profile"	>> /etc/bash.bashrc \
- && echo "[ \$BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc"		>> /etc/bash.bashrc \
+ && echo "[ \$BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc"		  >> /etc/bash.bashrc \
  && cat /opt/utils/script-utils.sh       >> /etc/bash.bashrc
 
 # --> Install OS libs, Utilities, and Python3 (Miniconda3), replace conda packages with pip source.

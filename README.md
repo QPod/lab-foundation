@@ -6,20 +6,21 @@
 [![GitLab Pipeline Status](https://img.shields.io/gitlab/pipeline/QPod/docker-images.svg)](https://gitlab.com/QPod/docker-images/pipelines)
 [![TravisCI Pipeline Status](https://img.shields.io/travis/com/QPod/docker-images.svg)](https://travis-ci.com/QPod/docker-images)
 [![GitHub Starts](https://img.shields.io/github/stars/QPod/docker-images.svg?label=Stars&style=social)](https://github.com/QPod/docker-images/stargazers)
+[![Beerpay](https://img.shields.io/beerpay/QPod/QPod.svg?style=social)](https://beerpay.io/QPod/QPod)
 
-In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI platform at your fingertip which you would love.**
 
-With Docker and `QPod`,
- - 📦 You will be set free from tedious environment settings, because `QPod` puts everything about installing and configuring Data Science / AI development environment into standard docker images which you can use in an out-of-box manner.
- - 🕵️‍ You can focus on your algorithms and key innovations because with the help of Jupyter ecosystem tools you are more close to data in an interactive computing manner.
- - 🌍🌎🌏‍ You will find sharing your work with other people much easier because the standard images make scientific research or data analysis project reproducible.
- - 🆙 You will find deploying your data science / AI projects much easier because you can use the images to develop your algorithms or programs, and then re-use these images easily either to provide RESTful APIs or orchestrate map/reduce operations on big data.
+In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI environment and platform at your fingertip which you would love 🤞.**
+
+With Docker and `QPod`, you
+ - 📦📦📦 can start your data science / AI work with nearly **zero configuration** - QPod puts everything about installing (latest) packages and configuring environment into standard docker images and set you free from tedious setup and configuration work.
+ - 🌍🌎🌏‍ will find your work more **easy-to-reproduce** - QPod standard images make scientific research or data analysis project as reproducible pipelines and help you share your work with other people easily.
+ - 🆙🆙🆙 can easily **scale-up and scale-out** your algorithms and key innovations - QPod help you move forward smoothly from the development stage to deployment stage by re-using these images to either to provide RESTful APIs or orchestrate map/reduce operations on big data.
 
 ![Screenshot of QPod](https://i.imgur.com/zEaSliT.jpg "Screenshot of QPod")
 
 ## What's actually there?
 
-`QPod` curates and maintains a series of Docker images including interactive computing environment to run a Jupyter Notebook (or JupyterLab) with Python, R, OpenJDK, NodeJS, etc.
+`QPod` curates and maintains a series of Docker images including interactive computing environment to run a Jupyter Notebook (or JupyterLab) with Python, R, OpenJDK, NodeJS, etc. Other IDE-like tools (e.g R-Studio) are also included.
 
 `QPod` supports many use cases:
  - (Stand-alone) Use it on your laptop as default data science / develop environment.
@@ -28,9 +29,8 @@ With Docker and `QPod`,
 
 ## How to use? `1-2-3-GO`🎉
 
-### 0. Have docker installed on your laptop/server
-Linux (Ubuntu LTS is a good choice) / Windows (>=10 recommended) / Mac.
- - If you are not using NVIDIA GPU, install [`docker-ce`](https://hub.docker.com/search/?offering=community&type=edition) or [`docker-ee`](https://hub.docker.com/search/?offering=enterprise&type=edition) on your laptop/server. We recommend you to use `edge` version ([macOS](https://download.docker.com/mac/edge/Docker.dmg) | [Windows](https://download.docker.com/win/edge/Docker%20for%20Windows%20Installer.exe)) on your laptop to enable Kubernetes features.
+### 0. Have docker installed on your laptop/server - Linux (Ubuntu LTS is a good choice) / Windows (>=10 recommended) / macOS
+ - If you are not using NVIDIA GPU, install [`docker-ce`](https://hub.docker.com/search/?offering=community&type=edition) or [`docker-ee`](https://hub.docker.com/search/?offering=enterprise&type=edition) on your laptop/server. We recommend you to use `edge` version ( [macOS](https://download.docker.com/mac/edge/Docker.dmg) | [Windows](https://download.docker.com/win/edge/Docker%20for%20Windows%20Installer.exe) ) on your laptop to enable Kubernetes features.
  - If you want to use NVIDIA GPU with `QPod`, Linux server is required. After installing `docker`, please refer to [`nvidia-docker`](https://github.com/NVIDIA/nvidia-docker#quickstart) to install the latest version of NVIDIA support for docker.
 
 ### 1. Choose the features and choose a folder on your disk
@@ -53,7 +53,7 @@ docker run -d \
     -p 8888:8888 \
     -v $WORKDIR:/root \
     qpod
-sleep 5s && docker logs QPod 2>&1|grep ?token=
+sleep 5s && docker logs QPod 2>&1|grep token=
 
 ```
 
@@ -68,11 +68,11 @@ docker run -d ^
     -p 8888:8888 ^
     -v %WORKDIR%:/root ^
     qpod
-timeout 5 && docker logs QPod 2>&1|findstr ?token=
+timeout 5 && docker logs QPod 2>&1|findstr token=
 
 ```
 
-**If you are using `QPod` with NVIDIA GPU macines with `nvidia-docker`, please add option `--runtime=nvidia` in the `docker run` command to enable GPU access.**
+ ⚠️ **If you are using `QPod` with NVIDIA GPU macines with `nvidia-docker`, please add option `--runtime=nvidia` in the `docker run` command to enable GPU access.**
 
 ### 3. Sit back for minutes and get the first-time login token
 The commands in the last step will:
