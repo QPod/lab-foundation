@@ -8,7 +8,7 @@ variables:
   REGISTRY_URL: "docker.io"  # other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
 
 before_script:
-  - docker info
+  - docker info && echo IP=$(curl -s http://ifconfig.me/ip)
   - CI_PROJECT_NAME="qpod"
   - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
   - echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin
