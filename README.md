@@ -30,8 +30,8 @@ With Docker and `QPod`, you
 ## How to use? `1-2-3-GO`🎉
 
 ### 0. Have docker installed on your laptop/server - Linux (Ubuntu LTS is a good choice) / Windows (>=10 recommended) / macOS
- - If you are not using NVIDIA GPU, install [`docker-ce`](https://hub.docker.com/search/?offering=community&type=edition) or [`docker-ee`](https://hub.docker.com/search/?offering=enterprise&type=edition) on your laptop/server. We recommend you to use `edge` version ( [macOS](https://download.docker.com/mac/edge/Docker.dmg) | [Windows](https://download.docker.com/win/edge/Docker%20for%20Windows%20Installer.exe) ) on your laptop to enable Kubernetes features.
- - If you want to use NVIDIA GPU with `QPod`, Linux server is required. After installing `docker`, please refer to [`nvidia-docker`](https://github.com/NVIDIA/nvidia-docker#quickstart) to install the latest version of NVIDIA support for docker.
+ - If you are NOT using NVIDIA GPU, install `docker-ce` ( community version & free: [macOS](https://download.docker.com/mac/stable/Docker.dmg) | [Windows](https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe)  | [Linux](https://hub.docker.com/search/?offering=community&type=edition&operating_system=linux) ) or `docker-ee` ( [enterprise version](https://hub.docker.com/search/?offering=enterprise&type=edition) & paid) on your laptop/server.
+ - If you want to use NVIDIA GPU with `QPod`, Linux server is **required**. After installing `docker`, please refer to [`nvidia-docker`](https://github.com/NVIDIA/nvidia-docker#quickstart) to install the latest version of NVIDIA support for docker.
 
 ### 1. Choose the features and choose a folder on your disk
 See the table at bottom of this page (`QPod` feature matrix) and choose an Image Tag, say `full`.
