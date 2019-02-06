@@ -11,13 +11,13 @@ install:
   - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
 
 before_script:
-  - docker info && echo IP=$(curl -s http://ifconfig.me/ip)
+  - docker info && echo IP=$(curl -s http://ifconfig.me/ip) && rm -rf ./.git
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
     fi
   - CI_PROJECT_NAMESPACE=$([[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "$(dirname ${TRAVIS_REPO_SLUG})" || echo "$(dirname ${TRAVIS_PULL_REQUEST_SLUG})")
   - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
-  - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
+  - build_image() { TAG=$1; FILE=$2; shift 2; docker build -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
   - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2"; }
   - push_image()  { docker push "${REPOSITORY}"; }
 
