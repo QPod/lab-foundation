@@ -11,7 +11,8 @@ install:
   - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
 
 before_script:
-  - docker info && echo IP=$(curl -s http://ifconfig.me/ip) && rm -rf ./.git
+  - echo IP=$(curl -s http://ifconfig.me/ip)
+  - docker info && rm -rf ./.git
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
     fi

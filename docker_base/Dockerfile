@@ -1,7 +1,8 @@
 # Distributed under the terms of the Modified BSD License.
 
-# Latest LTS version of Ubuntu (https://store.docker.com/images/ubuntu)
-FROM ubuntu:latest
+# Latest LTS version of Ubuntu (https://hub.docker.com/_/ubuntu)
+ARG base=ubuntu:latest
+FROM ${base:-base}
 
 LABEL maintainer="haobibo@gmail.com"
 
