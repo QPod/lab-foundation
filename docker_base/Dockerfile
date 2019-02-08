@@ -1,7 +1,8 @@
 # Distributed under the terms of the Modified BSD License.
 
-# Latest LTS version of Ubuntu (https://store.docker.com/images/ubuntu)
-FROM ubuntu:latest
+# Latest LTS version of Ubuntu (https://hub.docker.com/_/ubuntu)
+ARG base=ubuntu:latest
+FROM ${base:-base}
 
 LABEL maintainer="haobibo@gmail.com"
 
@@ -31,7 +32,7 @@ RUN cd /tmp && mkdir -p $HOME_DIR \
  && echo "ALL ALL=(ALL) NOPASSWD: ALL"   >> /etc/sudoers \
  && mv /root/.bashrc /etc/bash_profile \
  && echo "[ \$BASH ] && [ -f /etc/bash_profile ] && . /etc/bash_profile"	>> /etc/bash.bashrc \
- && echo "[ \$BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc"		>> /etc/bash.bashrc \
+ && echo "[ \$BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc"		  >> /etc/bash.bashrc \
  && cat /opt/utils/script-utils.sh       >> /etc/bash.bashrc
 
 # --> Install OS libs, Utilities, and Python3 (Miniconda3), replace conda packages with pip source.
@@ -41,8 +42,7 @@ RUN source /opt/utils/script-utils.sh && cd /tmp/ \
  && conda config --system --prepend channels conda-forge \
  && conda config --system --set auto_update_conda false  \
  && conda config --system --set show_channel_urls true   \
- # && conda update --all --quiet --yes \ # TODO: WORKAROUND for Python 3.7 incompatibility with tensorflow and other packages: use py36 for now.
- && conda install python=3.6 \
+ && conda update --all --quiet --yes \
  && CONDA_PY_PKGS=`conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;"` \
  && conda remove --force -yq $CONDA_PY_PKGS \
  && pip install -UIq pip setuptools $CONDA_PY_PKGS \

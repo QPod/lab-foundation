@@ -1,4 +1,4 @@
-image: docker:stable
+image: docker:latest
 
 services:
 - name: docker:edge-dind
@@ -6,11 +6,13 @@ services:
 
 variables:
   REGISTRY_URL: "docker.io"  # other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
+  DOCKER_DRIVER: overlay2
 
 before_script:
-  - docker info
   - CI_PROJECT_NAME="qpod"
   - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
+  - apk add --no-cache curl && echo IP=$(curl -s http://ifconfig.me/ip)
+  - docker info && rm -rf ./.git
   - echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin
   - push_image()  { docker images; docker push "${REPOSITORY}"; }
   - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; push_image; }
