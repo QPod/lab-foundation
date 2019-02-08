@@ -20,6 +20,8 @@ ARG ARG_R=false
 ARG ARG_R_DATASCIENCE=false
 ARG ARG_R_STUDIO=false
 
+ARG ARG_GOLANG=false
+
 COPY work /opt/utils/
 
 WORKDIR /opt/utils
@@ -88,10 +90,10 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
 RUN ${ARG_MKL:-false}           && [ `arch` = "x86_64" ] && pip install -Uq mkl \
     || true
 
-# If installing Python and related packages  # TODO: tf-nightly -> tensorflow
+# If installing Python and related packages
 RUN source /opt/utils/script-utils.sh \
     && ( ${ARG_PY_DATASCIENCE:-false} \
-         && ( [[ -z "${CUDA_VERSION}" ]] && TF='tf-nightly==1.13.0.dev20190206' || TF="tf-nightly-gpu==1.13.0.dev20190206" \
+         && ( [[ -z "${CUDA_VERSION}" ]] && TF='tensorflow' || TF="tensorflow-gpu" \
               && echo "${TF}    % Version decided based on CUDA_VERSION"    >> ./install_list_PY_datascience.pip \
          ) \
          && ( which R    && echo "rpy2  % Install rpy2 if R exists"         >> ./install_list_PY_datascience.pip || true ) \
@@ -109,6 +111,17 @@ RUN source /opt/utils/script-utils.sh \
 RUN source /opt/utils/script-utils.sh \
     && ( install_conda ./install_list.conda || true ) \
     && echo "@ Version of installed Conda packages:"  && conda info && conda list | grep -v "<pip>"
+
+# Install golang
+RUN ${ARG_GOLANG:-false}        && source /opt/utils/script-utils.sh \
+    && GO_VERSION="1.11.5" \
+    && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
+    && install_tar_gz $GO_URL go \
+    && echo "GOROOT=/opt/go/bin"      >> /etc/profile \
+    && echo "GOPATH=/opt/go/go_path"  >> /etc/profile \
+    && echo "PATH=/opt/go/bin:\$PATH" >> /etc/profile \
+    && ln -s /opt/go/bin/go /usr/bin/ \
+    && echo "@ Version of golang:" && go versoin
 
 # Clean up and display components version information...
 RUN  source /opt/utils/script-utils.sh \

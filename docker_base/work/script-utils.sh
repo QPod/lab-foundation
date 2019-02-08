@@ -18,6 +18,9 @@ install_R()    { R -e "lapply(scan('$1','c',comment.char='%'),function(x){instal
 # function to download a ZIP file with wget and unzip it to /opt/
 install_zip()  { wget -nv $1 -O /tmp/TMP.zip && unzip -q /tmp/TMP.zip -d /opt/ && rm /tmp/TMP.zip ; }
 
+# function to download a .tar.gz file with wget and unzip it to /opt/
+install_tar_gz()  { wget -nv $1 -O /tmp/TMP.tar.gz && tar -C /opt/ -xzf /tmp/TMP.tar.gz $2 && rm /tmp/TMP.tar.gz ; }
+
 # function to install java packages from a text file which lists JAR file maven full names (add comments with % char)
 install_mvn()  { cat $1 | cut -d "%" -f 1 | xargs -n1 -I {} mvn dependency:copy -DlocalRepositoryDirectory="/tmp/m2repo" -Djavax.net.ssl.trustStorePassword=changeit -Dartifact="{}" -DoutputDirectory="$2" ; }
 
