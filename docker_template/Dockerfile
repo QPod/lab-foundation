@@ -91,7 +91,7 @@ RUN ${ARG_MKL:-false}           && [ `arch` = "x86_64" ] && pip install -Uq mkl 
 # If installing Python and related packages  # TODO: tf-nightly -> tensorflow
 RUN source /opt/utils/script-utils.sh \
     && ( ${ARG_PY_DATASCIENCE:-false} \
-         && ( [[ -z "${CUDA_VERSION}" ]] && TF='tf-nightly' || TF="tf-nightly-gpu" \
+         && ( [[ -z "${CUDA_VERSION}" ]] && TF='tf-nightly==1.13.0.dev20190206' || TF="tf-nightly-gpu==1.13.0.dev20190206" \
               && echo "${TF}    % Version decided based on CUDA_VERSION"    >> ./install_list_PY_datascience.pip \
          ) \
          && ( which R    && echo "rpy2  % Install rpy2 if R exists"         >> ./install_list_PY_datascience.pip || true ) \
