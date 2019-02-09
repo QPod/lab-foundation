@@ -184,6 +184,13 @@ jobs:
           --build-arg "ARG_PY_CV=true"
           --build-arg "ARG_PY_BIOINFO=true"
 
+    - name: "golang"
+      stage: qpod
+      script:
+        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-std"
+          --build-arg "ARG_GOLANG=true"
 
     - name: "full"
       stage: qpod

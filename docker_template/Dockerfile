@@ -117,11 +117,16 @@ RUN ${ARG_GOLANG:-false}        && source /opt/utils/script-utils.sh \
     && GO_VERSION="1.11.5" \
     && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
-    && echo "GOROOT=/opt/go/bin"      >> /etc/profile \
-    && echo "GOPATH=/opt/go/go_path"  >> /etc/profile \
-    && echo "PATH=/opt/go/bin:\$PATH" >> /etc/profile \
     && ln -s /opt/go/bin/go /usr/bin/ \
-    && echo "@ Version of golang:" && go versoin
+    && echo "GOROOT=/opt/go/bin"      >> /etc/bash.bashrc \
+    && echo "GOPATH=/opt/go/go"       >> /etc/bash.bashrc \
+    && export GOPATH=/opt/go/go \
+    && go get github.com/yunabe/lgo/cmd/lgo && go get -d github.com/yunabe/lgo/cmd/lgo-internal \
+    && export LGOPATH=$GOPATH/lgo \
+    && $(go env GOPATH)/bin/lgo install \
+    && python $(go env GOPATH)/src/github.com/yunabe/lgo/bin/install_kernel \
+    && echo "@ Version of golang:" && go versoin \
+    || true
 
 # Clean up and display components version information...
 RUN  source /opt/utils/script-utils.sh \
