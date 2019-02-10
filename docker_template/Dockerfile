@@ -112,20 +112,19 @@ RUN source /opt/utils/script-utils.sh \
     && ( install_conda ./install_list.conda || true ) \
     && echo "@ Version of installed Conda packages:"  && conda info && conda list | grep -v "<pip>"
 
-# Install golang
+# Install golang and gophernotes (Jupyter kernel for golang)
 RUN ${ARG_GOLANG:-false}        && source /opt/utils/script-utils.sh \
     && GO_VERSION="1.11.5" \
     && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
     && ln -s /opt/go/bin/go /usr/bin/ \
-    && echo "GOROOT=/opt/go/bin"      >> /etc/bash.bashrc \
-    && echo "GOPATH=/opt/go/go"       >> /etc/bash.bashrc \
-    && export GOPATH=/opt/go/go \
-    && go get github.com/yunabe/lgo/cmd/lgo && go get -d github.com/yunabe/lgo/cmd/lgo-internal \
-    && export LGOPATH=$GOPATH/lgo \
-    && $(go env GOPATH)/bin/lgo install \
-    && python $(go env GOPATH)/src/github.com/yunabe/lgo/bin/install_kernel \
-    && echo "@ Version of golang:" && go versoin \
+    && echo  "GOPATH=/opt/go/path"     >> /etc/bash.bashrc \
+    && export GOPATH=/opt/go/path \
+    && go get -u github.com/gopherdata/gophernotes \
+    && mkdir -p /opt/conda/share/jupyter/kernels/gophernotes \
+    && cp $GOPATH/src/github.com/gopherdata/gophernotes/kernel/* /opt/conda/share/jupyter/kernels/gophernotes \
+    && ln -s $GOPATH/bin/gophernotes /usr/local/bin \
+    && echo "@ Version of golang:" && go version \
     || true
 
 # Clean up and display components version information...
