@@ -81,9 +81,6 @@ RUN  cd /tmp \
   && make && make install \
   && apt-get -qq remove -y libncurses5-dev
 
-# Hack nvcc compatibility with gcc7 (currently only gcc 6 is supported for cuda90)
-RUN  sed -i 's/__GNUC__ > 6/__GNUC__ > 7/g' /usr/local/cuda/include/crt/host_config.h
-
 # Clean up and display components version information...
 RUN  source /opt/utils/script-utils.sh \
   && install__clean && cd \
