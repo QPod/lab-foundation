@@ -184,13 +184,13 @@ jobs:
           --build-arg "ARG_PY_CV=true"
           --build-arg "ARG_PY_BIOINFO=true"
 
-    - name: "golang"
+    - name: "go"
       stage: qpod
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-std"
-          --build-arg "ARG_GOLANG=true"
+          --build-arg "ARG_GO=true"
 
     - name: "full"
       stage: qpod
@@ -208,6 +208,7 @@ jobs:
           --build-arg "ARG_R=true"
           --build-arg "ARG_R_DATASCIENCE=true"
           --build-arg "ARG_R_STUDIO=true"
+          --build-arg "ARG_GO=true"
         - alias_image "${TRAVIS_JOB_NAME}" "latest"
 
     - name: "full-cuda"
@@ -226,6 +227,7 @@ jobs:
           --build-arg "ARG_R=true"
           --build-arg "ARG_R_DATASCIENCE=true"
           --build-arg "ARG_R_STUDIO=true"
+          --build-arg "ARG_GO=true"
         - alias_image "${TRAVIS_JOB_NAME}" "latest-cuda"
 
 

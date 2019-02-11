@@ -180,13 +180,13 @@ py-cuda:
     --build-arg "ARG_PY_BIOINFO=true"
 
 
-golang:
+go:
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
     --build-arg "repository=${REPOSITORY}"
     --build-arg "base=jupyter-std"
-    --build-arg "ARG_GOLANG=true"
+    --build-arg "ARG_GO=true"
 
 
 full:
@@ -205,6 +205,7 @@ full:
     --build-arg "ARG_R=true"
     --build-arg "ARG_R_DATASCIENCE=true"
     --build-arg "ARG_R_STUDIO=true"
+    --build-arg "ARG_GO=true"
   - alias_image "${CI_JOB_NAME}" "latest"
 
 full-cuda:
@@ -223,4 +224,5 @@ full-cuda:
     --build-arg "ARG_R=true"
     --build-arg "ARG_R_DATASCIENCE=true"
     --build-arg "ARG_R_STUDIO=true"
+    --build-arg "ARG_GO=true"
   - alias_image "${CI_JOB_NAME}" "latest-cuda"

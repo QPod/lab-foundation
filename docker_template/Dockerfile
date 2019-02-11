@@ -20,7 +20,7 @@ ARG ARG_R=false
 ARG ARG_R_DATASCIENCE=false
 ARG ARG_R_STUDIO=false
 
-ARG ARG_GOLANG=false
+ARG ARG_GO=false
 
 COPY work /opt/utils/
 
@@ -113,7 +113,7 @@ RUN source /opt/utils/script-utils.sh \
     && echo "@ Version of installed Conda packages:"  && conda info && conda list | grep -v "<pip>"
 
 # Install golang and gophernotes (Jupyter kernel for golang)
-RUN ${ARG_GOLANG:-false}        && source /opt/utils/script-utils.sh \
+RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
     && GO_VERSION="1.11.5" \
     && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
