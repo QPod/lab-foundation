@@ -22,6 +22,8 @@ ARG ARG_R_STUDIO=false
 
 ARG ARG_GO=false
 
+ARG ARG_JULIA=false
+
 COPY work /opt/utils/
 
 WORKDIR /opt/utils
@@ -125,6 +127,28 @@ RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
     && cp $GOPATH/src/github.com/gopherdata/gophernotes/kernel/* /opt/conda/share/jupyter/kernels/gophernotes \
     && ln -s $GOPATH/bin/gophernotes /usr/local/bin \
     && echo "@ Version of golang:" && go version \
+    || true
+
+# Install Julia and IJulia
+RUN ${ARG_JULIA:-false}     && source /opt/utils/script-utils.sh \
+    && JULIA_VERSION=1.1.0 \
+    && JULIA_VERSION_MINOR=`echo ${JULIA_VERSION} | cut -d. -f 1,2` \
+    && JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION_MINOR}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" \
+    && install_tar_gz $JULIA_URL \
+    && mv /opt/julia-* /opt/julia \
+    && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
+    #
+    && mkdir /etc/julia \
+    && echo "push!(Libdl.DL_LOAD_PATH, \"/opt/conda/lib\")" >> /etc/julia/juliarc.jl \
+    # Create JULIA_PKGDIR \
+    && JULIA_DEPOT_PATH=/opt/julia/pkg \
+    && JULIA_PKGDIR=/opt/julia/pkg \
+    && mkdir $JULIA_PKGDIR \
+    #
+    && julia -e 'import Pkg; Pkg.update()' \
+    && julia -e "using Pkg; pkg\"add Gadfly RDatasets IJulia InstantiateFromURL\"; pkg\"precompile\"" \ 
+    # move kernelspec out of home \
+    && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
     || true
 
 # Clean up and display components version information...
