@@ -41,6 +41,8 @@ RUN ${ARG_JDK:-false}           && source /opt/utils/script-utils.sh \
 
 # If installing R environment
 RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
+    && echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/cran.list \
     && install_apt  ./install_list_R.apt \
     && echo "@ Version of R:" && R -e "R.version.string;"  \
     && ( type java && type R && R CMD javareconf || true ) \
@@ -55,9 +57,10 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
     && ( ${ARG_R_STUDIO:-false} \
          && RSTUDIO_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
          && wget -qO- "http://download2.rstudio.org/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
-         && dpkg -i /tmp/rstudio.deb && ln -s /usr/lib/rstudio-server/bin/rs* /usr/bin/ \
+         && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
+         && ln -s /opt/rstudio-server/bin/rs* /usr/bin/ \
          # Allow RStudio server run as root user
-         && userdel rstudio-server \
+         && mkdir -p /etc/rstudio \
          && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
          # Configuration to make RStudio server disable authentication and do not run as daemon
          && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
@@ -65,8 +68,8 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          && printf '#!/bin/bash\nexport USER=root\nrserver --www-port=8888' > /usr/local/bin/start-rstudio.sh \
          && chmod u+x /usr/local/bin/start-rstudio.sh \
          # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
-         && ( which pandoc          && rm /usr/lib/rstudio-server/bin/pandoc/pandoc          || true ) \
-         && ( which pandoc-citeproc && rm /usr/lib/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
+         && ( which pandoc          && rm /opt/rstudio-server/bin/pandoc/pandoc          || true ) \
+         && ( which pandoc-citeproc && rm /opt/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
          && rstudio-server version \
          || true \
     ) \
@@ -126,7 +129,7 @@ RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
     && mkdir -p /opt/conda/share/jupyter/kernels/gophernotes \
     && cp $GOPATH/src/github.com/gopherdata/gophernotes/kernel/* /opt/conda/share/jupyter/kernels/gophernotes \
     && ln -s $GOPATH/bin/gophernotes /usr/local/bin \
-    && echo "@ Version of golang:" && go version \
+    && echo "@ Version of golang:" && go version && go list ... \
     || true
 
 # Install Julia and IJulia
@@ -142,6 +145,7 @@ RUN ${ARG_JULIA:-false}     && source /opt/utils/script-utils.sh \
     && echo 'DEPOT_PATH[1]="/opt/julia/pkg"'                            >> /opt/julia/etc/julia/startup.jl \
     && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
     && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
+    && echo "@ Version of julia:" && julia --version && julia -e 'using Pkg; for(k,v) in sort(collect(Pkg.installed())); println(k,"==",v); end' \
     || true
 
 # Clean up and display components version information...
