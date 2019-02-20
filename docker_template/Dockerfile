@@ -137,17 +137,10 @@ RUN ${ARG_JULIA:-false}     && source /opt/utils/script-utils.sh \
     && install_tar_gz $JULIA_URL \
     && mv /opt/julia-* /opt/julia \
     && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
-    #
-    && mkdir /etc/julia \
-    && echo "push!(Libdl.DL_LOAD_PATH, \"/opt/conda/lib\")" >> /etc/julia/juliarc.jl \
-    # Create JULIA_PKGDIR \
-    && JULIA_DEPOT_PATH=/opt/julia/pkg \
-    && JULIA_PKGDIR=/opt/julia/pkg \
-    && mkdir $JULIA_PKGDIR \
-    #
-    && julia -e 'import Pkg; Pkg.update()' \
-    && julia -e "using Pkg; pkg\"add Gadfly RDatasets IJulia InstantiateFromURL\"; pkg\"precompile\"" \ 
-    # move kernelspec out of home \
+    && mkdir -p /opt/julia/pkg \
+    && echo 'import Libdl; push!(Libdl.DL_LOAD_PATH, "/opt/conda/lib")' >> /opt/julia/etc/julia/startup.jl \
+    && echo 'DEPOT_PATH[1]="/opt/julia/pkg"'                            >> /opt/julia/etc/julia/startup.jl \
+    && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
     && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
     || true
 
