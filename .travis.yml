@@ -46,6 +46,7 @@ jobs:
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda9.0"
           --build-arg "repository=${REPOSITORY}"
+          --squash
         - alias_image "${TRAVIS_JOB_NAME}" "cuda"
 
     - name: "base-cuda_10.0"
@@ -53,6 +54,7 @@ jobs:
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
           --build-arg "repository=${REPOSITORY}"
+          --squash
 
 
     - name: "jupyter-mini"
