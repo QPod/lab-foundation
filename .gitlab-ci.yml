@@ -216,6 +216,7 @@ full:
     --build-arg "ARG_R_DATASCIENCE=true"
     --build-arg "ARG_R_STUDIO=true"
     --build-arg "ARG_GO=true"
+    --build-arg "ARG_JULIA=true"
   - alias_image "${CI_JOB_NAME}" "latest"
 
 full-cuda:
@@ -235,4 +236,5 @@ full-cuda:
     --build-arg "ARG_R_DATASCIENCE=true"
     --build-arg "ARG_R_STUDIO=true"
     --build-arg "ARG_GO=true"
+    --build-arg "ARG_JULIA=true"
   - alias_image "${CI_JOB_NAME}" "latest-cuda"
