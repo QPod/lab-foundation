@@ -78,7 +78,10 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
 
 # If keeping NodeJS, then install NodeJS Kernel, else remove it to reduce image size (keep the apt source for future installation).
 RUN ${ARG_NODEJS:-false} \
- && ( npm install -g --unsafe-perm --python=python2 ijavascript && ijsinstall --install=global --spec-path=full ) \
+ && ( npm install -g --unsafe-perm --python=python2 ijavascript \
+      && ijsinstall --install=global --spec-path=full \
+      && mv /usr/local/share/jupyter/kernels/javascript /opt/conda/share/jupyter/kernels/ \
+    ) \
  || ( echo "Removing Node/NPM removed..." && apt-get remove -y nodejs )
 
 # Remove unused packages <<<---|
