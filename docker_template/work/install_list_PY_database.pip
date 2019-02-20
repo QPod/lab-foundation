@@ -2,9 +2,9 @@
 % Use percent char as line comment separator.
 % Lib Reference: https://docs.continuum.io/anaconda/packages/pkg-docs
 
-datashape bottleneck blaze dask distributed             % Python BigData/parallel interface
-dill cloudpickle								        % Data access: external systems; Object Serialization
-openpyxl sqlalchemy pandasql pymysql psycopg2			% Data access: OpenSource DB
-cx_Oracle                                               % Data access: OracleDB
-sqlalchemy_pytds                                        % Data access: Microsoft SQLServer
-ibm_db ibm_db_sa                                        % Data access: IBM DB2 and IBM Informix
+datashape bottleneck blaze dask distributed      % Python BigData/parallel interface
+dill cloudpickle                                 % Data access: external systems; Object Serialization
+openpyxl sqlalchemy pandasql pymysql psycopg2    % Data access: OpenSource DB
+cx_Oracle                                        % Data access: OracleDB
+sqlalchemy_pytds                                 % Data access: Microsoft SQLServer
+ibm_db ibm_db_sa                                 % Data access: IBM DB2 and IBM Informix

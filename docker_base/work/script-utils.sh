@@ -11,12 +11,20 @@ install_conda(){ cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 conda instal
 # function to install python packages with pip from a text file which lists package names (add comments with % char)
 install_pip()  { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 pip install -U --pre ; }
 
-
 # function to install R packages from a text file which lists package names (add comments with % char, use quiet=T to be less verbose)
 install_R()    { R -e "lapply(scan('$1','c',comment.char='%'),function(x){install.packages(x,clean=T);cat(x);})" ; }
 
+# function to install python packages with pip from a text file which lists package names (add comments with % char)
+install_go()   { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 go get -u ; }
+
+# function to install julia packages from a text file which lists package names (add comments with % char)
+install_julia()  { julia -e "import Pkg; l=filter(x->length(x)>0, [split(i,r\"%| |\t\")[1] for i in readlines(\"$1\")]); Pkg.add(l)" ; }
+
 # function to download a ZIP file with wget and unzip it to /opt/
 install_zip()  { wget -nv $1 -O /tmp/TMP.zip && unzip -q /tmp/TMP.zip -d /opt/ && rm /tmp/TMP.zip ; }
+
+# function to download a .tar.gz file with wget and unzip it to /opt/
+install_tar_gz()  { wget -nv $1 -O /tmp/TMP.tar.gz && tar -C /opt/ -xzf /tmp/TMP.tar.gz $2 && rm /tmp/TMP.tar.gz ; }
 
 # function to install java packages from a text file which lists JAR file maven full names (add comments with % char)
 install_mvn()  { cat $1 | cut -d "%" -f 1 | xargs -n1 -I {} mvn dependency:copy -DlocalRepositoryDirectory="/tmp/m2repo" -Djavax.net.ssl.trustStorePassword=changeit -Dartifact="{}" -DoutputDirectory="$2" ; }

@@ -2,3 +2,4 @@
 % Use percent char as line comment separator.
 
 libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev   % optional libs to install JS lib canvas
+libzmq3-dev                                             % required to build some jupyter kernels like libpango
