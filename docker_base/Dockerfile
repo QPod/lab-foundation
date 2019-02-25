@@ -47,6 +47,7 @@ RUN source /opt/utils/script-utils.sh && cd /tmp/ \
  && CONDA_PY_PKGS=`conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;"` \
  && conda remove --force -yq $CONDA_PY_PKGS \
  && pip install -UIq pip setuptools $CONDA_PY_PKGS \
+ && rm /usr/bin/python3 && ln -s /opt/conda/bin/python /usr/bin/python3 \
  && echo "@ Version of Conda & Python:" && conda info && conda list | grep -v "<pip>"
 
 # --> Clean up and display components version information...
