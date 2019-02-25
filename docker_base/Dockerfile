@@ -15,7 +15,8 @@ ENV SHELL=/bin/bash \
     LC_CTYPE=C.UTF-8 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
-    PATH=/opt/conda/bin:$PATH
+    PATH=/opt/conda/bin:$PATH \
+    HOME_DIR=/root
 
 SHELL ["/bin/bash", "-c"]
 
@@ -60,4 +61,4 @@ RUN  source /opt/utils/script-utils.sh \
   && echo "@ Version of image: building finished at:" `date` `uname -a` \
   && echo "@ System environment variables:" `printenv`
 
-WORKDIR /root
+WORKDIR $HOME_DIR
