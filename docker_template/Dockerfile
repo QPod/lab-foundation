@@ -135,9 +135,7 @@ RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
 
 # Install Julia and IJulia
 RUN ${ARG_JULIA:-false}     && source /opt/utils/script-utils.sh \
-    && JULIA_VERSION=1.1.0 \
-    && JULIA_VERSION_MINOR=`echo ${JULIA_VERSION} | cut -d. -f 1,2` \
-    && JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION_MINOR}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" \
+    && JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
     && install_tar_gz $JULIA_URL \
     && mv /opt/julia-* /opt/julia \
     && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
