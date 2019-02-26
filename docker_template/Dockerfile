@@ -120,7 +120,7 @@ RUN source /opt/utils/script-utils.sh \
 
 # Install golang and gophernotes (Jupyter kernel for golang)
 RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
-    && GO_VERSION="1.11.5" \
+    && GO_VERSION="1.12" \
     && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
     && ln -s /opt/go/bin/go /usr/bin/ \
