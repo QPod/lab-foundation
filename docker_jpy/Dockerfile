@@ -34,11 +34,12 @@ RUN wget -qO- "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"      | apt-
 # Some Python packages are required when building zeromq, iJavaScript, canvas, etc...
 # They will be removed later in this docker image.  |--->>>
 RUN apt-get -qq install -y --no-install-recommends python-pip \
- && pip2 install -UIq setuptools && pip2 install compiler
+ && pip2 install -Uq setuptools && pip2 install compiler
 
 
 # Setup Jupyter: Basic Configurations and Extensions...
-RUN pip install -UIq jupyterhub jupyterlab notebook ipywidgets qpod_hub \
+RUN pip install -Uq jupyterhub jupyterlab notebook ipywidgets \
+        qpod_hub tornado==5.1.1 \
  && mkdir -p /opt/conda/etc/jupyter/ && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \     
  && jupyter nbextension     enable --py widgetsnbextension \
  && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \
@@ -50,7 +51,7 @@ RUN pip install -UIq jupyterhub jupyterlab notebook ipywidgets qpod_hub \
       `jupyter notebook --version` `jupyterhub --version` `jupyter lab --version`
 
 # Install Bash Kernel kernel.
-RUN pip  install -UIq bash_kernel && python -m bash_kernel.install --sys-prefix
+RUN pip  install -Uq bash_kernel && python -m bash_kernel.install --sys-prefix
 
 # If installing more extension for Jupyter.
 RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
