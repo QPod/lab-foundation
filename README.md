@@ -12,11 +12,11 @@
 In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI environment and platform at your fingertip which you would love 🤞.**
 
 With Docker and `QPod`, you
- - 📦📦📦 can start your data science / AI work with nearly **zero configuration** - QPod puts everything about installing (latest) packages and configuring environment into standard docker images and set you free from tedious setup and configuration work.
- - 🌍🌎🌏 will find your work more **easy-to-reproduce** - QPod standard images make scientific research or data analysis project as reproducible pipelines and help you share your work with other people easily.
- - 🆙🆙🆙 can easily **scale-up and scale-out** your algorithms and key innovations - QPod help you move forward smoothly from the development stage to deployment stage by re-using these images to either to provide RESTful APIs or orchestrate map/reduce operations on big data.
+ - 📦📦📦 can start your data science / AI work with nearly `zero configuration` - QPod puts everything about installing (latest) packages and configuring environment into standard docker images and set you free from tedious setup and configuration work.
+ - 🌍🌎🌏 will find your work more `easy-to-reproduce` - QPod standard images make scientific research or data analysis project as reproducible pipelines and help you share your work with other people easily.
+ - 🆙🆙🆙 can easily `scale-up and scale-out` your algorithms and key innovations - QPod help you move forward smoothly from the development stage to deployment stage by re-using these images to either to provide RESTful APIs or orchestrate map/reduce operations on big data.
 
-![Screenshot of QPod](https://i.imgur.com/zEaSliT.jpg "Screenshot of QPod")
+![Screenshot of QPod](https://i.imgur.com/eeMLbz3.gif "Screenshot of QPod")
 
 ## What's actually there?
 

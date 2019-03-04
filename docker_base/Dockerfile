@@ -1,6 +1,6 @@
 # Distributed under the terms of the Modified BSD License.
 
-# Latest LTS version of Ubuntu (https://hub.docker.com/_/ubuntu)
+# default value: Latest LTS version of Ubuntu (https://hub.docker.com/_/ubuntu)
 ARG base=ubuntu:latest
 FROM ${base:-base}
 
@@ -22,9 +22,9 @@ SHELL ["/bin/bash", "-c"]
 
 COPY work /opt/utils/
 
-# --> Install OS libraries and setup some configurations; Build and install tini, which will be entry point later...
-RUN cd /tmp && mkdir -p $HOME_DIR \
- && apt-get -y update --fix-missing && apt-get -y upgrade \
+# --> Install OS libraries and setup some configurations
+RUN cd /tmp \
+ && apt-get -y -qq update --fix-missing && apt-get -y -qq upgrade \
  && apt-get -qq install -y --no-install-recommends \
     apt-utils apt-transport-https ca-certificates lsb-release gnupg2 dirmngr wget jq locales sudo \
     build-essential cmake unzip \
@@ -32,13 +32,15 @@ RUN cd /tmp && mkdir -p $HOME_DIR \
  && echo "en_US.UTF-8 UTF-8"             >  /etc/locale.gen && locale-gen \
  && echo "ALL ALL=(ALL) NOPASSWD: ALL"   >> /etc/sudoers \
  && mv /root/.bashrc /etc/bash_profile \
- && echo "[ \$BASH ] && [ -f /etc/bash_profile ] && . /etc/bash_profile"	>> /etc/bash.bashrc \
- && echo "[ \$BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc"		  >> /etc/bash.bashrc \
- && cat /opt/utils/script-utils.sh       >> /etc/bash.bashrc
+ && echo '[ $BASH ] && [ -f /etc/bash_profile ] && . /etc/bash_profile'	>> /etc/bash.bashrc \
+ && echo '[ $BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc'		  >> /etc/bash.bashrc \
+ && cat /opt/utils/script-utils.sh       >> /etc/bash.bashrc \
+ # Install libraries libs, utilities
+ && source /opt/utils/script-utils.sh \
+ && install_apt /opt/utils/install_list_base.apt
 
-# --> Install OS libs, Utilities, and Python3 (Miniconda3), replace conda packages with pip source.
-RUN source /opt/utils/script-utils.sh && cd /tmp/ \
- && install_apt /opt/utils/install_list_base.apt \
+# --> Install Python3 (Miniconda3), replace conda packages with pip source.
+RUN cd /tmp/ \
  && wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O conda.sh && bash /tmp/conda.sh -f -b -p /opt/conda \
  && conda config --system --prepend channels conda-forge \
  && conda config --system --set auto_update_conda false  \
@@ -47,6 +49,10 @@ RUN source /opt/utils/script-utils.sh && cd /tmp/ \
  && CONDA_PY_PKGS=`conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;"` \
  && conda remove --force -yq $CONDA_PY_PKGS \
  && pip install -UIq pip setuptools $CONDA_PY_PKGS \
+ # Replace system Python3 with Conda's Python
+ && cp -R /usr/share/pyshared/* /opt/conda/lib/python3.7/ \
+ && rm /usr/bin/python3 && ln -s /opt/conda/bin/python /usr/bin/python3 \
+ # Print Conda and Python packages information in the docker build log
  && echo "@ Version of Conda & Python:" && conda info && conda list | grep -v "<pip>"
 
 # --> Clean up and display components version information...

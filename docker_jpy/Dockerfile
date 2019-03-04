@@ -16,7 +16,7 @@ LABEL maintainer="haobibo@gmail.com"
 COPY work /opt/utils/
 
 
-# Install OS libraries and setup some configurations; Build and install tini, which will be entry point later...
+# Build and install tini, which will be entry point later...
 RUN cd /tmp \
  && wget -qO- "https://github.com/krallin/tini/archive/v0.18.0.zip" -O tini.zip && unzip -q /tmp/tini.zip \
  && cmake /tmp/tini-* && make install && mv /tmp/tini /usr/local/bin/tini && chmod +x /usr/local/bin/tini

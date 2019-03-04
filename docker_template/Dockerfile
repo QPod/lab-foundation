@@ -77,7 +77,8 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          && RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION) \
          && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
          && dpkg -i /tmp/rshiny.deb \
-         && sed  -i 's/3838/8888/g' /etc/shiny-server/shiny-server.conf \
+         && sed  -i 's/run_as shiny;/run_as root;/g'  /etc/shiny-server/shiny-server.conf \
+         && sed  -i 's/3838/8888/g'                   /etc/shiny-server/shiny-server.conf \
          && printf '#!/bin/bash\nexport USER=root\nshiny-server' > /usr/local/bin/start-shiny-server.sh \
          && chmod u+x /usr/local/bin/start-shiny-server.sh \
          # Remove shiny's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
@@ -119,7 +120,7 @@ RUN source /opt/utils/script-utils.sh \
 
 # Install golang and gophernotes (Jupyter kernel for golang)
 RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
-    && GO_VERSION="1.11.5" \
+    && GO_VERSION="1.12" \
     && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
     && ln -s /opt/go/bin/go /usr/bin/ \
@@ -134,9 +135,7 @@ RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
 
 # Install Julia and IJulia
 RUN ${ARG_JULIA:-false}     && source /opt/utils/script-utils.sh \
-    && JULIA_VERSION=1.1.0 \
-    && JULIA_VERSION_MINOR=`echo ${JULIA_VERSION} | cut -d. -f 1,2` \
-    && JULIA_URL="https://julialang-s3.julialang.org/bin/linux/x64/${JULIA_VERSION_MINOR}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" \
+    && JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
     && install_tar_gz $JULIA_URL \
     && mv /opt/julia-* /opt/julia \
     && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
