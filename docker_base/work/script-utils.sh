@@ -8,8 +8,8 @@ install_apt()  { apt-get -y update --fix-missing && apt-get -qq install -y --no-
 # function to install conda packages from a text file which lists package names (add comments with % char)
 install_conda(){ cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 conda install -yq ; }
 
-# function to install python packages with pip from a text file which lists package names (add comments with % char)
-install_pip()  { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 pip install -U --pre ; }
+# function to install python packages with pip from a text file which lists package names (add comments with % char) -U --pre
+install_pip()  { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 pip install ; }
 
 # function to install R packages from a text file which lists package names (add comments with % char, use quiet=T to be less verbose)
 install_R()    { R -e "options(Ncpus=4);lapply(scan('$1','c',comment.char='%'),function(x){cat(x,system.time(install.packages(x,clean=T,quiet=T)),'\n')})"; }
