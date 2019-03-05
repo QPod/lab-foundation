@@ -35,5 +35,5 @@ install__clean(){
   which conda   && conda clean -ya
   which npm     && npm cache clean --force
   rm -rf /opt/conda/share/jupyter/lab/staging
-  ( rm -rf /root/.* /tmp/.* /tmp/* || true )
+  ( rm -rf /root/.* /tmp/.* /tmp/* /var/log/* /var/cache/* || true )
 }
