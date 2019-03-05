@@ -86,6 +86,8 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          && ( which pandoc-citeproc && rm /opt/shiny-server/ext/pandoc/pandoc-citeproc || true ) \
          && rm    /opt/shiny-server/ext/node/bin/shiny-server \
          && ln -s /opt/shiny-server/ext/node/bin/node /opt/shiny-server/ext/node/bin/shiny-server \
+         # hack shiny-server to allow run in root user: https://github.com/rstudio/shiny-server/pull/391
+         && sed  -i 's/throw new Error/logger.warn/g'  /opt/shiny-server/lib/worker/app-worker.js \
          && shiny-server --version \
          || true \
     ) \
