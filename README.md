@@ -5,6 +5,7 @@
 [![Docker Starts](https://img.shields.io/docker/stars/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
 [![GitLab Pipeline Status](https://img.shields.io/gitlab/pipeline/QPod/docker-images.svg)](https://gitlab.com/QPod/docker-images/pipelines)
 [![TravisCI Pipeline Status](https://img.shields.io/travis/com/QPod/docker-images.svg)](https://travis-ci.com/QPod/docker-images)
+[![Join the Gitter Chat](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/QPod/)
 [![GitHub Starts](https://img.shields.io/github/stars/QPod/docker-images.svg?label=Stars&style=social)](https://github.com/QPod/docker-images/stargazers)
 [![Beerpay](https://img.shields.io/beerpay/QPod/QPod.svg?style=social)](https://beerpay.io/QPod/QPod)
 

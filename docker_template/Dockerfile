@@ -33,7 +33,7 @@ WORKDIR /opt/utils
 RUN ${ARG_JDK:-false}           && source /opt/utils/script-utils.sh \
     && install_apt   ./install_list_jdk.apt \
     && echo "@ Version of Java (java/javac):" && java -version && javac -version \
-    && pip install -q beakerx \
+    && pip install -Uq beakerx \
     && beakerx install \
     && jupyter labextension install --dev-build beakerx-jupyterlab \
     && jupyter labextension list  \
@@ -95,7 +95,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
     || true
 
 # If on a x86_64 architecture and MKL selected, install MKL for acceleration
-RUN ${ARG_MKL:-false}           && [ `arch` = "x86_64" ] && pip install -q mkl \
+RUN ${ARG_MKL:-false}           && [ `arch` = "x86_64" ] && pip install -Uq --pre mkl \
     || true
 
 # If installing Python and related packages
