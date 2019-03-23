@@ -38,8 +38,7 @@ RUN apt-get -qq install -y --no-install-recommends python-pip \
 
 
 # Setup Jupyter: Basic Configurations and Extensions...
-RUN pip install -Uq jupyterhub jupyterlab notebook ipywidgets \
-        qpod_hub tornado==5.1.1 \
+RUN pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub \
  && mkdir -p /opt/conda/etc/jupyter/ && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \     
  && jupyter nbextension     enable --py widgetsnbextension \
  && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \
