@@ -18,14 +18,14 @@ ARG ARG_CUDNN_DEVEL=true
 
 ENV CUDA_VER 10.1
 ENV CUDA_VERSION ${CUDA_VER}.105
-ENV CUDA_PKG_VERSION 10-0=$CUDA_VERSION-1
+ENV CUDA_PKG_VERSION 10-1=$CUDA_VERSION-1
 ENV NCCL_VERSION 2.4.2
 ENV CUDNN_VERSION 7.5.0.56
 ENV NVIDIA_REQUIRE_CUDA "cuda>=${CUDA_VER}"
 
 ENV NVIDIA_VISIBLE_DEVICES=all \
     NVIDIA_DRIVER_CAPABILITIES=compute,utility \
-    NVIDIA_REQUIRE_CUDA="cuda>=10.0 brand=tesla,driver>=418,driver<419" \
+    NVIDIA_REQUIRE_CUDA="cuda>=10.1 brand=tesla,driver>=418,driver<419" \
     PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH} \
     LIBRARY_PATH=/usr/local/cuda/lib64/stubs \
     LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
@@ -38,7 +38,7 @@ RUN  wget -qO- "https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1
   && echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
-        cuda-cudart-$CUDA_PKG_VERSION cuda-compat-10-0=410.48-1 \
+        cuda-cudart-$CUDA_PKG_VERSION cuda-compat-10-1=418.39-1 \
   && ln -s cuda-$CUDA_VER /usr/local/cuda \
   && echo "/usr/local/nvidia/lib"   >> /etc/ld.so.conf.d/nvidia.conf \
   && echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
