@@ -41,13 +41,12 @@ jobs:
           --squash
 
 
-    - name: "base-cuda_9.0"
+    - name: "base-cuda_10.1"
       stage: cuda
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda9.0"
+        - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.1"
           --build-arg "repository=${REPOSITORY}"
           --squash
-        - alias_image "${TRAVIS_JOB_NAME}" "cuda"
 
     - name: "base-cuda_10.0"
       stage: cuda
@@ -55,7 +54,7 @@ jobs:
         - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
           --build-arg "repository=${REPOSITORY}"
           --squash
-
+        - alias_image "${TRAVIS_JOB_NAME}" "cuda"
 
     - name: "jupyter-mini"
       stage: jpy
