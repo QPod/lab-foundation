@@ -51,7 +51,9 @@ RUN cd /tmp/ \
  && conda remove --force -yq $CONDA_PY_PKGS \
  && pip install -UIq pip setuptools $CONDA_PY_PKGS \
  # Replace system Python3 with Conda's Python, and take care of `lsb_releaes`
- && rm /usr/bin/python3 && ln -s /opt/conda/bin/python /usr/bin/python3 \
+ && rm /usr/bin/python3* \
+ && ln -s /opt/conda/bin/python /usr/bin/python3 \
+ && ln -s /opt/conda/bin/python /usr/bin/python3m \
  && mv /usr/share/pyshared/lsb_release.py /usr/bin/ \
  # Print Conda and Python packages information in the docker build log
  && echo "@ Version of Conda & Python:" && conda info && conda list | grep -v "<pip>"

@@ -34,7 +34,7 @@ RUN cd /tmp && source /opt/utils/script-utils.sh \
 
 # Some Python packages are required when building zeromq, iJavaScript, canvas, etc...
 # They will be removed later in this docker image.  |--->>>
-RUN apt-get -qq install -y --no-install-recommends python-pip \
+RUN apt-get -y update --fix-missing && apt-get -qq install -y --no-install-recommends python-pip \
  && pip2 install -Uq setuptools && pip2 install compiler
 
 
