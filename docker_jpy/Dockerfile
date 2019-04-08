@@ -32,12 +32,6 @@ RUN cd /tmp && source /opt/utils/script-utils.sh \
  && mv /opt/node* /opt/node && ln -s /opt/node/bin/* /usr/bin/ \
  && echo "@ Version of Node/NPM:" `node -v` `npm -v`
 
-# Some Python packages are required when building zeromq, iJavaScript, canvas, etc...
-# They will be removed later in this docker image.  |--->>>
-RUN apt-get -y update --fix-missing && apt-get -qq install -y --no-install-recommends python-pip \
- && pip2 install -Uq setuptools && pip2 install compiler
-
-
 # Setup Jupyter: Basic Configurations and Extensions...
 RUN pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub \
  && mkdir -p /opt/conda/etc/jupyter/ && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \     
@@ -79,14 +73,11 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
 
 # If keeping NodeJS, then install NodeJS Kernel, else remove it to reduce image size.
 RUN ${ARG_NODEJS:-false} \
- && ( npm install -g --unsafe-perm --python=python2 ijavascript \
-      && ijsinstall --install=global --spec-path=full \
+ && ( npm install -g --unsafe-perm ijavascript \
+      && /opt/node/bin/ijsinstall --install=global --spec-path=full \
       && mv /usr/local/share/jupyter/kernels/javascript /opt/conda/share/jupyter/kernels/ \
     ) \
  || ( echo "Removing Node/NPM removed..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
-
-# Remove unused packages <<<---|
-RUN pip2 uninstall -y compiler setuptools && apt-get remove -y python-pip python-pip-whl
 
 # If installing LaTex and LaTex CJK packages.
 RUN  source /opt/utils/script-utils.sh \
