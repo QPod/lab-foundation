@@ -52,6 +52,7 @@ RUN cd /tmp/ \
  && pip install -UIq pip setuptools $CONDA_PY_PKGS \
  # Replace system Python3 with Conda's Python, and take care of `lsb_releaes`, `debian_defaults`
  && rm /usr/bin/python3* \
+ && ln -s /opt/conda/bin/python3.7 /usr/bin/ \
  && ln -s /opt/conda/bin/python /usr/bin/python3 \
  && ln -s /opt/conda/bin/python /usr/bin/python3m \
  && mv /usr/share/pyshared/lsb_release.py /usr/bin/ \
