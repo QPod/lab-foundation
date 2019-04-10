@@ -56,7 +56,8 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
     ) \
     && ( ${ARG_R_STUDIO:-false} \
          && RSTUDIO_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
-         && wget -qO- "http://download2.rstudio.org/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
+         && RSTUDIO_VERSION=$(echo $RSTUDIO_VERSION | cut -d- -f1) \
+         && wget -qO- "https://download2.rstudio.org/server/trusty/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
          && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
          && ln -s /opt/rstudio-server/bin/rs* /usr/bin/ \
          # Allow RStudio server run as root user
@@ -70,7 +71,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
          && ( which pandoc          && rm /opt/rstudio-server/bin/pandoc/pandoc          || true ) \
          && ( which pandoc-citeproc && rm /opt/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
-         && rstudio-server version \
+         && echo "@ Version of rstudio-server:" && rstudio-server version \
          || true \
     ) \
     && ( ${ARG_R_STUDIO:-false} \
@@ -88,7 +89,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          && ln -s /opt/shiny-server/ext/node/bin/node /opt/shiny-server/ext/node/bin/shiny-server \
          # hack shiny-server to allow run in root user: https://github.com/rstudio/shiny-server/pull/391
          && sed  -i 's/throw new Error/logger.warn/g'  /opt/shiny-server/lib/worker/app-worker.js \
-         && shiny-server --version \
+         && echo "@ Version of shiny-server:" && shiny-server --version \
          || true \
     ) \
     && echo "@ Version of installed R libraries:" && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]" \
