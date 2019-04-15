@@ -29,7 +29,9 @@ RUN cd /tmp && source /opt/utils/script-utils.sh \
  && NODEJS_VERSION="8.15.1" && ARCH="x64" \
  && NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")" \
  && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-v${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
- && mv /opt/node* /opt/node && ln -s /opt/node/bin/* /usr/bin/ \
+ && mv /opt/node* /opt/node \
+ && echo  "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
+ && export PATH=/opt/node/bin:$PATH \
  && echo "@ Version of Node/NPM:" `node -v` `npm -v`
 
 # Setup Jupyter: Basic Configurations and Extensions...
