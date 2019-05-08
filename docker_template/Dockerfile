@@ -24,6 +24,8 @@ ARG ARG_GO=false
 
 ARG ARG_JULIA=false
 
+ARG ARG_OCTAVE=false
+
 COPY work /opt/utils/
 
 WORKDIR /opt/utils
@@ -148,6 +150,25 @@ RUN ${ARG_JULIA:-false}     && source /opt/utils/script-utils.sh \
     && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
     && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
     && echo "@ Version of julia:" && julia --version && julia -e 'using Pkg; for(k,v) in sort(collect(Pkg.installed())); println(k,"==",v); end' \
+    || true
+
+# Install Octave and Octave kernal for Jupyter
+RUN ${ARG_OCTAVE:-false}    && source /opt/utils/script-utils.sh \
+    && install_apt   /opt/utils/install_list_octave.apt \
+    && OCTAVE_VERSION="5.1.0" \
+    && OCTAVE_URL="https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
+    && install_tar_xz $OCTAVE_URL \
+    && cd /opt/octave-* \
+    && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
+    && make -j8 && make install -j8 \
+    && rm -rf /opt/octave-* \
+    && echo "PATH=/opt/octave/bin:$PATH"     >> /etc/bash.bashrc \
+    && export PATH=/opt/octave/bin:$PATH \
+    && cd /tmp && pip install -Uq octave_kernel \
+    && install_octave    /opt/utils/install_list_octave.pkg \
+    && echo "@ Version of Octave and installed packages:" \
+    && /opt/octave/bin/octave --version  \
+    && /opt/octave/bin/octave --eval "pkg list"  \
     || true
 
 # Clean up and display components version information...
