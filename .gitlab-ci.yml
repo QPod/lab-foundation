@@ -9,24 +9,35 @@ variables:
   DOCKER_DRIVER: overlay2
 
 before_script:
-  - CI_PROJECT_NAME="qpod"
-  - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
   - apk add --no-cache curl && echo IP=$(curl -s http://ifconfig.me/ip)
-  - docker info && rm -rf ./.git
-  - echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin
-  - push_image()  { docker image prune --force && docker push "${REPOSITORY}"; }
-  - build_image() { TAG=$1; FILE=$2; shift 2; docker build --force-rm=true -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; push_image; }
-  - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2"; push_image; }
-
-
+  - docker info
+  - if [ "$CI_COMMIT_REF_NAME" == "master" ]; then
+      echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin
+    fi
+  
 stages:
   - base
   - cuda
   - jpy
   - qpod
 
+.build_tpl: &builder
+  before_script:
+    - echo "Building Image> ${CI_COMMIT_REF_NAME}:${CI_JOB_NAME}"
+    - build_image() { TAG=$1; FILE=$2; shift 2; docker build --force-rm=true -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
+    - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2"; }
+    - CI_PROJECT_NAME="qpod"
+    - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
+
+  after_script:
+    - docker image prune --force && docker images
+    - if [ "$CI_COMMIT_REF_NAME" == "master" ]; then
+          docker push "${REPOSITORY}";
+      fi
+
 
 base:
+  <<: *builder
   stage: base
   script:
   - build_image "${CI_JOB_NAME}" "docker_base/Dockerfile"
@@ -34,6 +45,7 @@ base:
 
 
 base-cuda_10.1:
+  <<: *builder
   stage: cuda
   script:
   - build_image "${CI_JOB_NAME}" "docker_base/Dockerfile-cuda10.1"
@@ -41,6 +53,7 @@ base-cuda_10.1:
     --squash
 
 base-cuda_10.0:
+  <<: *builder
   stage: cuda
   script:
   - build_image "${CI_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
@@ -49,6 +62,7 @@ base-cuda_10.0:
   - alias_image "${CI_JOB_NAME}" "cuda"
 
 jupyter-mini:
+  <<: *builder
   stage: jpy
   script:
   - build_image "${CI_JOB_NAME}" "docker_jpy/Dockerfile"
@@ -59,6 +73,7 @@ jupyter-mini:
     --build-arg "ARG_LATEX_CJK=false"
 
 jupyter-mini-cuda:
+  <<: *builder
   stage: jpy
   script:
   - build_image "${CI_JOB_NAME}" "docker_jpy/Dockerfile"
@@ -70,6 +85,7 @@ jupyter-mini-cuda:
     --build-arg "ARG_LATEX_CJK=false"
 
 jupyter-std:
+  <<: *builder
   stage: jpy
   script:
   - build_image "${CI_JOB_NAME}" "docker_jpy/Dockerfile"
@@ -80,6 +96,7 @@ jupyter-std:
     --build-arg "ARG_LATEX_CJK=false"
 
 jupyter-full:
+  <<: *builder
   stage: jpy
   script:
   - build_image "${CI_JOB_NAME}" "docker_jpy/Dockerfile"
@@ -90,6 +107,7 @@ jupyter-full:
     --build-arg "ARG_LATEX_CJK=true"
 
 jupyter-full-cuda:
+  <<: *builder
   stage: jpy
   script:
   - build_image "${CI_JOB_NAME}" "docker_jpy/Dockerfile"
@@ -102,6 +120,7 @@ jupyter-full-cuda:
 
 
 r-mini:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -110,6 +129,7 @@ r-mini:
     --build-arg "ARG_R=true"
 
 r-std:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -120,6 +140,7 @@ r-std:
     --build-arg "ARG_R_DATASCIENCE=true"
 
 r-latex:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -131,6 +152,7 @@ r-latex:
     --build-arg "ARG_LATEX_BASE=true"
 
 r-studio:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -145,6 +167,7 @@ r-studio:
 
 
 py-std:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -158,6 +181,7 @@ py-std:
     --build-arg "ARG_PY_BIOINFO=true"
 
 py-jdk:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -172,6 +196,7 @@ py-jdk:
     --build-arg "ARG_PY_BIOINFO=true"
 
 py-cuda:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -186,6 +211,7 @@ py-cuda:
 
 
 go:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -194,6 +220,7 @@ go:
     --build-arg "ARG_GO=true"
 
 julia:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -201,8 +228,18 @@ julia:
     --build-arg "base=jupyter-std"
     --build-arg "ARG_JULIA=true"
 
+octave:
+  <<: *builder
+  stage: qpod
+  script:
+  - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
+    --build-arg "repository=${REPOSITORY}"
+    --build-arg "base=jupyter-std"
+    --build-arg "ARG_OCTAVE=true"
+
 
 full:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -220,9 +257,11 @@ full:
     --build-arg "ARG_R_STUDIO=true"
     --build-arg "ARG_GO=true"
     --build-arg "ARG_JULIA=true"
+    --build-arg "ARG_OCTAVE=true"
   - alias_image "${CI_JOB_NAME}" "latest"
 
 full-cuda:
+  <<: *builder
   stage: qpod
   script:
   - build_image "${CI_JOB_NAME}" "docker_template/Dockerfile"
@@ -240,4 +279,5 @@ full-cuda:
     --build-arg "ARG_R_STUDIO=true"
     --build-arg "ARG_GO=true"
     --build-arg "ARG_JULIA=true"
+    --build-arg "ARG_OCTAVE=true"
   - alias_image "${CI_JOB_NAME}" "latest-cuda"
