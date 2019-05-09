@@ -211,7 +211,7 @@ jobs:
       script:
         - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
-          --build-arg "base=jupyter-std"
+          --build-arg "base=jupyter-full"
           --build-arg "ARG_OCTAVE=true"
 
     - name: "full"
