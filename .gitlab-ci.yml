@@ -31,6 +31,7 @@ stages:
 
   after_script:
     - docker image prune --force && docker images
+    - echo "### ${REPOSITORY}"
     - if [ "$CI_COMMIT_REF_NAME" == "master" ]; then
           docker push "${REPOSITORY}";
       fi
