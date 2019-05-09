@@ -156,8 +156,7 @@ RUN ${ARG_JULIA:-false}     && source /opt/utils/script-utils.sh \
 RUN ${ARG_OCTAVE:-false}    && source /opt/utils/script-utils.sh \
     && install_apt   /opt/utils/install_list_octave.apt \
     && OCTAVE_VERSION="5.1.0" \
-    && OCTAVE_URL="https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
-    && install_tar_xz $OCTAVE_URL \
+    && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
     && cd /opt/octave-* \
     && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
     && make -j8 && make install -j8 \
