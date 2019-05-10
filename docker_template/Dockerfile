@@ -2,7 +2,6 @@
 
 ARG repository
 ARG base
-
 FROM ${repository}:${base}
 
 LABEL maintainer="haobibo@gmail.com"

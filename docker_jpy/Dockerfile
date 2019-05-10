@@ -4,6 +4,7 @@ ARG repository
 ARG base
 FROM ${repository}:${base:-base}
 
+LABEL maintainer="haobibo@gmail.com"
 
 ARG ARG_EXTEND_JUPYTER=true
 ARG ARG_NODEJS=true
@@ -11,10 +12,7 @@ ARG ARG_LATEX_BASE=false
 ARG ARG_LATEX_CJK=false
 
 
-LABEL maintainer="haobibo@gmail.com"
-
 COPY work /opt/utils/
-
 
 # Build and install tini, which will be entry point later...
 RUN cd /tmp \
