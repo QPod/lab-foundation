@@ -21,9 +21,9 @@ With Docker and `QPod`, you
 
 ## What's actually there?
 
-`QPod` curates and maintains a series of Docker images including interactive computing environment to run a Jupyter Notebook (or JupyterLab) with Python, R, OpenJDK, NodeJS, etc. Other IDE-like tools (e.g R-Studio) are also included.
+`QPod` curates and maintains a series of Docker images including interactive computing environment to run a Jupyter Notebook (or JupyterLab) with Python, R, OpenJDK, NodeJS, Go, Julia, Octave etc. Other IDE-like tools (e.g R-Studio) are also included.
 
-`QPod` supports many use cases:
+`QPod` supports use cases of both research and production:
  - (Stand-alone) Use it on your laptop as default data science / develop environment.
  - (Multi-tenant) Use it on a server/cluster to host multiple users to exploit hardware resources like GPU.
  - (Deployment/Production) Use it as the base image to host RESTful APIs or work as executors or map/reduce operations.
