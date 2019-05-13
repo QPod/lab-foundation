@@ -32,7 +32,10 @@ stages:
   after_script:
     - docker image prune --force && docker images
     - if [ "$CI_COMMIT_REF_NAME" == "master" ]; then
-        docker push "${REPOSITORY}" && echo "Image pushed> ${REPOSITORY}";
+        false ;
+        while [ $? -gt 0 ]; do
+          docker push "${REPOSITORY}" && echo "Image pushed> ${REPOSITORY}" ;
+        done
       fi
 
 base:
