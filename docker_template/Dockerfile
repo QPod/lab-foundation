@@ -159,10 +159,10 @@ RUN ${ARG_OCTAVE:-false}    && source /opt/utils/script-utils.sh \
     && cd /opt/octave-* \
     && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
     && make -j8 && make install -j8 \
-    && rm -rf /opt/octave-* \
+    && cd /opt/utils && rm -rf /opt/octave-* \
     && echo "PATH=/opt/octave/bin:$PATH"     >> /etc/bash.bashrc \
     && export PATH=/opt/octave/bin:$PATH \
-    && cd /tmp && pip install -Uq octave_kernel \
+    && pip install -Uq octave_kernel \
     && install_octave    /opt/utils/install_list_octave.pkg \
     && echo "@ Version of Octave and installed packages:" \
     && /opt/octave/bin/octave --version  \
