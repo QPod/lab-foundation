@@ -26,24 +26,20 @@ stages:
     - if [ "$CI_COMMIT_REF_NAME" == "master" ]; then
           echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin;
       fi
-    - build_image() { TAG=$1; FILE=$2; shift 2; docker build --force-rm=true -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
+    - build_image() { TAG=$1; FILE=$2; shift 2; docker build --squash --force-rm=true -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
     - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2"; }
 
   after_script:
     - docker image prune --force && docker images
     - if [ "$CI_COMMIT_REF_NAME" == "master" ]; then
-        echo "Pushing Image> ${REPOSITORY}";
-        docker push "${REPOSITORY}";
+        docker push "${REPOSITORY}" && echo "Image pushed> ${REPOSITORY}";
       fi
-
 
 base:
   <<: *builder
   stage: base
   script:
   - build_image "${CI_JOB_NAME}" "docker_base/Dockerfile"
-    --squash
-
 
 base-cuda_10.1:
   <<: *builder
@@ -51,7 +47,6 @@ base-cuda_10.1:
   script:
   - build_image "${CI_JOB_NAME}" "docker_base/Dockerfile-cuda10.1"
     --build-arg "repository=${REPOSITORY}"
-    --squash
 
 base-cuda_10.0:
   <<: *builder
@@ -59,8 +54,8 @@ base-cuda_10.0:
   script:
   - build_image "${CI_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
     --build-arg "repository=${REPOSITORY}"
-    --squash
   - alias_image "${CI_JOB_NAME}" "cuda"
+
 
 jupyter-mini:
   <<: *builder
