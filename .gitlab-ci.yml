@@ -5,8 +5,8 @@ services:
   command: ["--experimental"]
 
 variables:
-  REGISTRY_URL: "docker.io"  # other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
-  CI_PROJECT_NAME: "qpod"
+  REGISTRY_URL: "registry.gitlab.com"  # other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
+  CI_PROJECT_NAME: "docker-images/qpod"
   REPOSITORY: "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
   DOCKER_DRIVER: overlay
 
@@ -33,12 +33,14 @@ stages:
 
   after_script:
     - docker image prune --force && docker images
+    - echo "### ${REPOSITORY}"
     - if [ "$CI_COMMIT_REF_NAME" == "master" ]; then
         export REPOSITORY=$(echo "${REPOSITORY}" | awk '{print tolower($0)}') ;
         status=1 ;
         while [ $status -gt 0 ]; do
           docker push "${REPOSITORY}" && echo "Image pushed> ${REPOSITORY}" ;
           status=$? ;
+          echo "Push status > ${status}" ;
         done
       fi
 
@@ -54,6 +56,7 @@ base-cuda_10.1:
   script:
   - build_image_squash "${CI_JOB_NAME}" "docker_base/Dockerfile-cuda10.1"
     --build-arg "repository=${REPOSITORY}"
+  - docker rmi "${REPOSITORY}:base"
 
 base-cuda_10.0:
   <<: *builder
@@ -62,6 +65,7 @@ base-cuda_10.0:
   - build_image_squash "${CI_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
     --build-arg "repository=${REPOSITORY}"
   - alias_image "${CI_JOB_NAME}" "cuda"
+  - docker rmi "${REPOSITORY}:base"
 
 
 jupyter-mini:
@@ -74,6 +78,7 @@ jupyter-mini:
     --build-arg "ARG_NODEJS=false"
     --build-arg "ARG_LATEX_BASE=false"
     --build-arg "ARG_LATEX_CJK=false"
+  - docker rmi "${REPOSITORY}:base"
 
 jupyter-mini-cuda:
   <<: *builder
@@ -86,6 +91,7 @@ jupyter-mini-cuda:
     --build-arg "ARG_NODEJS=false"
     --build-arg "ARG_LATEX_BASE=false"
     --build-arg "ARG_LATEX_CJK=false"
+  - docker rmi "${REPOSITORY}:cuda"
 
 jupyter-std:
   <<: *builder
@@ -97,29 +103,32 @@ jupyter-std:
     --build-arg "ARG_NODEJS=true"
     --build-arg "ARG_LATEX_BASE=false"
     --build-arg "ARG_LATEX_CJK=false"
+  - docker rmi "${REPOSITORY}:base"
 
 jupyter-full:
   <<: *builder
   stage: jpy
   script:
-  - build_image_squash "${CI_JOB_NAME}" "docker_jpy/Dockerfile"
+  - build_image "${CI_JOB_NAME}" "docker_jpy/Dockerfile"
     --build-arg "repository=${REPOSITORY}"
     --build-arg "ARG_EXTEND_JUPYTER=true"
     --build-arg "ARG_NODEJS=true"
     --build-arg "ARG_LATEX_BASE=true"
     --build-arg "ARG_LATEX_CJK=true"
+  - docker rmi "${REPOSITORY}:base"
 
 jupyter-full-cuda:
   <<: *builder
   stage: jpy
   script:
-  - build_image_squash "${CI_JOB_NAME}" "docker_jpy/Dockerfile"
+  - build_image "${CI_JOB_NAME}" "docker_jpy/Dockerfile"
     --build-arg "repository=${REPOSITORY}"
     --build-arg "base=cuda"
     --build-arg "ARG_EXTEND_JUPYTER=true"
     --build-arg "ARG_NODEJS=true"
     --build-arg "ARG_LATEX_BASE=true"
     --build-arg "ARG_LATEX_CJK=true"
+  - docker rmi "${REPOSITORY}:cuda"
 
 
 r-mini:
@@ -130,6 +139,7 @@ r-mini:
     --build-arg "repository=${REPOSITORY}"
     --build-arg "base=jupyter-mini"
     --build-arg "ARG_R=true"
+  - docker rmi "${REPOSITORY}:jupyter-mini"
 
 r-std:
   <<: *builder
@@ -141,6 +151,7 @@ r-std:
     --build-arg "ARG_JDK=true"
     --build-arg "ARG_R=true"
     --build-arg "ARG_R_DATASCIENCE=true"
+  - docker rmi "${REPOSITORY}:jupyter-std"
 
 r-latex:
   <<: *builder
@@ -153,6 +164,7 @@ r-latex:
     --build-arg "ARG_R=true"
     --build-arg "ARG_R_DATASCIENCE=true"
     --build-arg "ARG_LATEX_BASE=true"
+  - docker rmi "${REPOSITORY}:jupyter-full"
 
 r-studio:
   <<: *builder
@@ -167,6 +179,7 @@ r-studio:
     --build-arg "ARG_R_STUDIO=true"
     --build-arg "ARG_LATEX_BASE=true"
     --build-arg "ARG_LATEX_CJK=true"
+  - docker rmi "${REPOSITORY}:jupyter-full"
 
 
 py-std:
@@ -182,6 +195,7 @@ py-std:
     --build-arg "ARG_PY_NLP=true"
     --build-arg "ARG_PY_CV=true"
     --build-arg "ARG_PY_BIOINFO=true"
+  - docker rmi "${REPOSITORY}:jupyter-std"
 
 py-jdk:
   <<: *builder
@@ -197,6 +211,7 @@ py-jdk:
     --build-arg "ARG_PY_NLP=true"
     --build-arg "ARG_PY_CV=true"
     --build-arg "ARG_PY_BIOINFO=true"
+  - docker rmi "${REPOSITORY}:jupyter-std"
 
 py-cuda:
   <<: *builder
@@ -211,6 +226,7 @@ py-cuda:
     --build-arg "ARG_PY_NLP=true"
     --build-arg "ARG_PY_CV=true"
     --build-arg "ARG_PY_BIOINFO=true"
+  - docker rmi "${REPOSITORY}:jupyter-full-cuda"
 
 
 go:
@@ -221,6 +237,7 @@ go:
     --build-arg "repository=${REPOSITORY}"
     --build-arg "base=jupyter-std"
     --build-arg "ARG_GO=true"
+  - docker rmi "${REPOSITORY}:jupyter-std"
 
 julia:
   <<: *builder
@@ -230,6 +247,7 @@ julia:
     --build-arg "repository=${REPOSITORY}"
     --build-arg "base=jupyter-std"
     --build-arg "ARG_JULIA=true"
+  - docker rmi "${REPOSITORY}:jupyter-std"
 
 octave:
   <<: *builder
@@ -239,6 +257,7 @@ octave:
     --build-arg "repository=${REPOSITORY}"
     --build-arg "base=jupyter-full"
     --build-arg "ARG_OCTAVE=true"
+  - docker rmi "${REPOSITORY}:jupyter-full"
 
 
 full:
@@ -262,6 +281,7 @@ full:
     --build-arg "ARG_JULIA=true"
     --build-arg "ARG_OCTAVE=false"
   - alias_image "${CI_JOB_NAME}" "latest"
+  - docker rmi "${REPOSITORY}:jupyter-full"
 
 full-cuda:
   <<: *builder
@@ -284,3 +304,4 @@ full-cuda:
     --build-arg "ARG_JULIA=true"
     --build-arg "ARG_OCTAVE=false"
   - alias_image "${CI_JOB_NAME}" "latest-cuda"
+  - docker rmi "${REPOSITORY}:jupyter-full-cuda"

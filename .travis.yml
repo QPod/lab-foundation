@@ -4,7 +4,7 @@ dist: bionic
 
 env:
   global:
-    - REGISTRY_URL: "quay.io"  # docker.io or other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
+    - REGISTRY_URL: "docker.io"  # docker.io or other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
     - CI_PROJECT_NAME: "qpod"
 
 install:
@@ -24,9 +24,11 @@ before_script:
 
 after_script:
   - docker image prune --force && docker images
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-      docker push "${REPOSITORY}" && echo "Image pushed> ${REPOSITORY}";
+  - if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
+      echo "Not pushing ${REPOSITORY} in PR..." && exit 0;
     fi
+  - docker push "${REPOSITORY}"
+  - echo $? "Image pushed > ${REPOSITORY}"
 
 stages:
   - base
@@ -47,6 +49,7 @@ jobs:
       script:
         - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.1"
           --build-arg "repository=${REPOSITORY}"
+        - docker rmi "${REPOSITORY}:base"
 
     - name: "base-cuda_10.0"
       stage: cuda
@@ -54,6 +57,7 @@ jobs:
         - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
           --build-arg "repository=${REPOSITORY}"
         - alias_image "${TRAVIS_JOB_NAME}" "cuda"
+        - docker rmi "${REPOSITORY}:base"
 
     - name: "jupyter-mini"
       stage: jpy
@@ -64,6 +68,7 @@ jobs:
           --build-arg "ARG_NODEJS=false"
           --build-arg "ARG_LATEX_BASE=false"
           --build-arg "ARG_LATEX_CJK=false"
+        - docker rmi "${REPOSITORY}:base"
 
     - name: "jupyter-mini-cuda"
       stage: jpy
@@ -75,6 +80,7 @@ jobs:
           --build-arg "ARG_NODEJS=false"
           --build-arg "ARG_LATEX_BASE=false"
           --build-arg "ARG_LATEX_CJK=false"
+        - docker rmi "${REPOSITORY}:cuda"
 
     - name: "jupyter-std"
       stage: jpy
@@ -85,6 +91,7 @@ jobs:
           --build-arg "ARG_NODEJS=true"
           --build-arg "ARG_LATEX_BASE=false"
           --build-arg "ARG_LATEX_CJK=false"
+        - docker rmi "${REPOSITORY}:base"
 
     - name: "jupyter-full"
       stage: jpy
@@ -95,6 +102,7 @@ jobs:
           --build-arg "ARG_NODEJS=true"
           --build-arg "ARG_LATEX_BASE=true"
           --build-arg "ARG_LATEX_CJK=true"
+        - docker rmi "${REPOSITORY}:base"
 
     - name: "jupyter-full-cuda"
       stage: jpy
@@ -106,6 +114,8 @@ jobs:
           --build-arg "ARG_NODEJS=true"
           --build-arg "ARG_LATEX_BASE=true"
           --build-arg "ARG_LATEX_CJK=true"
+        - docker rmi "${REPOSITORY}:cuda"
+
 
     - name: "r-mini"
       stage: qpod
@@ -114,6 +124,7 @@ jobs:
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-mini"
           --build-arg "ARG_R=true"
+        - docker rmi "${REPOSITORY}:jupyter-mini"
 
     - name: "r-std"
       stage: qpod
@@ -124,6 +135,7 @@ jobs:
           --build-arg "ARG_JDK=true"
           --build-arg "ARG_R=true"
           --build-arg "ARG_R_DATASCIENCE=true"
+        - docker rmi "${REPOSITORY}:jupyter-std"
 
     - name: "r-latex"
       stage: qpod
@@ -135,6 +147,7 @@ jobs:
           --build-arg "ARG_R=true"
           --build-arg "ARG_R_DATASCIENCE=true"
           --build-arg "ARG_LATEX_BASE=true"
+        - docker rmi "${REPOSITORY}:jupyter-full"
 
     - name: "r-studio"
       stage: qpod
@@ -148,6 +161,7 @@ jobs:
           --build-arg "ARG_R_STUDIO=true"
           --build-arg "ARG_LATEX_BASE=true"
           --build-arg "ARG_LATEX_CJK=true"
+        - docker rmi "${REPOSITORY}:jupyter-full"
 
     - name: "py-std"
       stage: qpod
@@ -161,6 +175,7 @@ jobs:
           --build-arg "ARG_PY_NLP=true"
           --build-arg "ARG_PY_CV=true"
           --build-arg "ARG_PY_BIOINFO=true"
+        - docker rmi "${REPOSITORY}:jupyter-std"
 
     - name: "py-jdk"
       stage: qpod
@@ -175,6 +190,7 @@ jobs:
           --build-arg "ARG_PY_NLP=true"
           --build-arg "ARG_PY_CV=true"
           --build-arg "ARG_PY_BIOINFO=true"
+        - docker rmi "${REPOSITORY}:jupyter-std"
 
     - name: "py-cuda"
       stage: qpod
@@ -188,6 +204,7 @@ jobs:
           --build-arg "ARG_PY_NLP=true"
           --build-arg "ARG_PY_CV=true"
           --build-arg "ARG_PY_BIOINFO=true"
+        - docker rmi "${REPOSITORY}:jupyter-full-cuda"
 
     - name: "go"
       stage: qpod
@@ -196,6 +213,7 @@ jobs:
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-std"
           --build-arg "ARG_GO=true"
+        - docker rmi "${REPOSITORY}:jupyter-std"
 
     - name: "julia"
       stage: qpod
@@ -204,6 +222,7 @@ jobs:
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-std"
           --build-arg "ARG_JULIA=true"
+        - docker rmi "${REPOSITORY}:jupyter-std"
 
     - name: "octave"
       stage: qpod
@@ -212,6 +231,7 @@ jobs:
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-full"
           --build-arg "ARG_OCTAVE=true"
+        - docker rmi "${REPOSITORY}:jupyter-full"
 
     - name: "full"
       stage: qpod
@@ -233,6 +253,7 @@ jobs:
           --build-arg "ARG_JULIA=true"
           --build-arg "ARG_OCTAVE=true"
         - alias_image "${TRAVIS_JOB_NAME}" "latest"
+        - docker rmi "${REPOSITORY}:jupyter-full"
 
     - name: "full-cuda"
       stage: qpod
@@ -254,6 +275,7 @@ jobs:
           --build-arg "ARG_JULIA=true"
           --build-arg "ARG_OCTAVE=true"
         - alias_image "${TRAVIS_JOB_NAME}" "latest-cuda"
+        - docker rmi "${REPOSITORY}:jupyter-full-cuda"
 
 
 notifications:
