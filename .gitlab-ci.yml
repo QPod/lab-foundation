@@ -8,6 +8,7 @@ variables:
   REGISTRY_URL: "docker.io"  # other registry URL, DOCKER_REGISTRY_PASSWORD and DOCKER_REGISTRY_USER to be set in CI env.
   CI_PROJECT_NAME: "qpod"
   REPOSITORY: "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
+  DOCKER_DRIVER: overlay
 
 before_script:
   - apk add --no-cache curl && echo IP=$(curl -s http://ifconfig.me/ip)
