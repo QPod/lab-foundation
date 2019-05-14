@@ -37,7 +37,8 @@ RUN cd /tmp \
  && cat /opt/utils/script-utils.sh       >> /etc/bash.bashrc \
  # Install libraries libs, utilities
  && source /opt/utils/script-utils.sh \
- && install_apt /opt/utils/install_list_base.apt
+ && install_apt /opt/utils/install_list_base.apt \
+ && chmod 777 /tmp
 
 # --> Install Python3 (Miniconda3), replace conda packages with pip source.
 RUN cd /tmp/ \

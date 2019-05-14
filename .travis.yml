@@ -12,19 +12,21 @@ install:
 
 before_script:
   - echo IP=$(curl -s http://ifconfig.me/ip)
-  - docker info && rm -rf ./.git
+  - docker info
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
     fi
   - CI_PROJECT_NAMESPACE=$([[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "$(dirname ${TRAVIS_REPO_SLUG})" || echo "$(dirname ${TRAVIS_PULL_REQUEST_SLUG})")
-  - REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
-  - push_image()  { docker image prune --force && docker push "${REPOSITORY}"; }
+  - export REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
+  - build_image_squash() { TAG=$1; FILE=$2; shift 2; docker build --squash --force-rm=true -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
   - build_image() { TAG=$1; FILE=$2; shift 2; docker build --force-rm=true -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
   - alias_image() { docker tag "${REPOSITORY}:$1" "${REPOSITORY}:$2"; }
 
 after_script:
-  - docker images
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then push_image ; fi
+  - docker image prune --force && docker images
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+      docker push "${REPOSITORY}" && echo "Image pushed> ${REPOSITORY}";
+    fi
 
 stages:
   - base
@@ -37,29 +39,26 @@ jobs:
     - name: "base"
       stage: base
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile"
-          --squash
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile"
 
 
     - name: "base-cuda_10.1"
       stage: cuda
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.1"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.1"
           --build-arg "repository=${REPOSITORY}"
-          --squash
 
     - name: "base-cuda_10.0"
       stage: cuda
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
           --build-arg "repository=${REPOSITORY}"
-          --squash
         - alias_image "${TRAVIS_JOB_NAME}" "cuda"
 
     - name: "jupyter-mini"
       stage: jpy
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "ARG_EXTEND_JUPYTER=false"
           --build-arg "ARG_NODEJS=false"
@@ -69,7 +68,7 @@ jobs:
     - name: "jupyter-mini-cuda"
       stage: jpy
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=cuda"
           --build-arg "ARG_EXTEND_JUPYTER=false"
@@ -80,7 +79,7 @@ jobs:
     - name: "jupyter-std"
       stage: jpy
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "ARG_EXTEND_JUPYTER=true"
           --build-arg "ARG_NODEJS=true"
@@ -90,7 +89,7 @@ jobs:
     - name: "jupyter-full"
       stage: jpy
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "ARG_EXTEND_JUPYTER=true"
           --build-arg "ARG_NODEJS=true"
@@ -100,7 +99,7 @@ jobs:
     - name: "jupyter-full-cuda"
       stage: jpy
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=cuda"
           --build-arg "ARG_EXTEND_JUPYTER=true"
@@ -111,7 +110,7 @@ jobs:
     - name: "r-mini"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-mini"
           --build-arg "ARG_R=true"
@@ -119,7 +118,7 @@ jobs:
     - name: "r-std"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-std"
           --build-arg "ARG_JDK=true"
@@ -129,7 +128,7 @@ jobs:
     - name: "r-latex"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-full"
           --build-arg "ARG_JDK=true"
@@ -140,7 +139,7 @@ jobs:
     - name: "r-studio"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-full"
           --build-arg "ARG_JDK=true"
@@ -153,7 +152,7 @@ jobs:
     - name: "py-std"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-std"
           --build-arg "ARG_MKL=true"
@@ -166,7 +165,7 @@ jobs:
     - name: "py-jdk"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-std"
           --build-arg "ARG_JDK=true"
@@ -180,7 +179,7 @@ jobs:
     - name: "py-cuda"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-full-cuda"
           --build-arg "ARG_MKL=true"
@@ -193,7 +192,7 @@ jobs:
     - name: "go"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-std"
           --build-arg "ARG_GO=true"
@@ -201,15 +200,23 @@ jobs:
     - name: "julia"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-std"
           --build-arg "ARG_JULIA=true"
 
+    - name: "octave"
+      stage: qpod
+      script:
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-full"
+          --build-arg "ARG_OCTAVE=true"
+
     - name: "full"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-full"
           --build-arg "ARG_JDK=true"
@@ -224,12 +231,13 @@ jobs:
           --build-arg "ARG_R_STUDIO=true"
           --build-arg "ARG_GO=true"
           --build-arg "ARG_JULIA=true"
+          --build-arg "ARG_OCTAVE=true"
         - alias_image "${TRAVIS_JOB_NAME}" "latest"
 
     - name: "full-cuda"
       stage: qpod
       script:
-        - build_image "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-full-cuda"
           --build-arg "ARG_JDK=true"
@@ -244,6 +252,7 @@ jobs:
           --build-arg "ARG_R_STUDIO=true"
           --build-arg "ARG_GO=true"
           --build-arg "ARG_JULIA=true"
+          --build-arg "ARG_OCTAVE=true"
         - alias_image "${TRAVIS_JOB_NAME}" "latest-cuda"
 
 

@@ -1,0 +1,6 @@
+% This file contains octave packages to be installed with octave "pkg install -forge" line by line.
+% Use percent char as line comment separator.
+
+control signal              % signal
+nan tsa                     % tsa
+io struct statistics optim  % optim

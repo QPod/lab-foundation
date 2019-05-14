@@ -1,0 +1,68 @@
+% Install dependencies for octave:
+%% https://wiki.octave.org/Octave_for_Debian_systems#Install_dependencies
+%% https://octave.org/doc/interpreter/External-Packages.html
+% ==== Required build tools
+gcc g++                         % C/C++ compiler
+gfortran                        % fortran compiler required to build Octave
+make                            % GNU make
+% ==== Required external packages
+% libblas-dev                   % BLAS: Basic Linear Algebra Subroutine: slow, unmaintained, and suffers from certain bugs in corner case inputs
+libopenblas-dev                 % Accelerated BLAS library: https://www.openblas.net
+liblapack-dev                   % LAPACK: Linear Algebra Package
+libpcre3-dev                    % PCRE: Perl Compatible Regular Expression
+% ==== Strongly recommended
+libreadline-dev                 % GNU Readline: Command-line editing library
+libcurl4-gnutls-dev             % cURL (~1392 KB): ftp objects, urlread/urlwrite, required when installing pckages
+texinfo                         % makeinfo (~15 MB), documentation system for on-line information and printed output, required when installing pkg
+zlib1g-dev                      % Compression library
+openjdk-11-jdk-headless         % OpenJDK headless 11
+llvm-dev                        % LLVM (~239MB): required for Octave’s experimental just-in-time (JIT) compilation for speeding up the interpreter
+% ==== Strongly recommended: Maths, Matrices, Differential / Algebraic equations, Computational Geometry
+libglpk-dev                     % GLPK (~5071 KB): solving linear programs
+libarpack2-dev                  % ARPACK (~981 KB): eigs function, solution of large-scale eigenvalue problems 
+libqrupdate-dev                 % qrupdate (~358 KB): accelerate QR & Cholesky updating functions
+libsuitesparse-dev              % SuiteSparse (~19.8 MB): -> ordering methods (libamd2:AMD; libcamd2:CAMD; libcolamd2:COLAMD; libccolamd2:CCOLAMD; libcholmod3:CHOLMOD; libumfpack5:UMFPACK; libklu1:KLU; libcxsparse3:CXSparse)
+libfftw3-dev                    % FFTW3 (~23.4 MB): discrete Fourier transform (DFT) in one or more dimensions
+libqhull-dev                    % Qhull: Computational geometry library, provides functions: convhull, convhulln, delaunay, delaunayn, voronoi, and voronoin
+libsundials-nvecserial2         % SUNDIALS NVECTOR (~11.5 KB): SUite of Nonlinear and DIfferential/ALgebraic Equation Solvers, solvers ode15i and ode15s
+libsundials-ida2                % SUNDIALS IDA (~54.2 KB): SUite of Nonlinear and DIfferential/ALgebraic Equation Solvers, solvers ode15i and ode15s
+% ==== Strongly recommended: Input/Output and multi-media data format, image, audio, etc
+libgraphicsmagick++1-dev        % GraphicsMagick++ (~41.6 MB): imread, imwrite, imfinfo for read/write image files
+libsndfile1-dev                 % sndfile: audioinfo, audioread, audiowrite; reading and writing files containing sampled audio data
+portaudio19-dev                 % PortAudio: audioplayer, audiorecorder, audiodevinfo
+libhdf5-serial-dev              % HDF5: load/save HDF5 data files
+% ==== Strongly recommended: Fonts, Figures, Rendering
+gnuplot-x11                     % Command-line driven interactive plotting program, required for plotting
+epstool                         % Edit preview images and fix bounding boxes in EPS files (depends on ghostscript), required for plotting
+libfontconfig1-dev              % Library for configuring and customizing font access, used to manage fonts for Octave’s OpenGL-based graphics functions
+libfreetype6-dev                % Portable font engine, used to perform font rendering for Octave’s OpenGL-based graphics functions
+libxft-dev                      % FreeType-based font drawing library for X (development files)
+libosmesa6-dev                  % OSMesa (~9520 KB): Mesa Off-screen rendering extension
+transfig                        % Virtual package pointing to fig2dev (~7394 KB), utilities for converting XFig figure files
+% ==== Strongly recommended: Documentation
+% libgl2ps-dev                  % Providing high quality vector output for OpenGL application
+% pstoedit                      % PostScript and PDF files to editable vector graphics converter
+% lpr                           % BSD lpr/lpd line printer spooling system
+% texlive                       % TeX Live: A decent selection of the TeX Live packages
+% texlive-generic-recommended   % TeX Live: Generic recommended packages
+% ==== GUIs - not installing
+% libgl1-mesa-dev               % OpenGL (~216 MB)
+% libfltk1.3-dev                % FLTK:  cross-platform widget (graphical control element) library for graphical user interfaces (GUIs)
+% qtbase5-dev                   % Qt 5 base development files
+% qttools5-dev                  % Qt 5 tools development files
+% qttools5-dev-tools            % Qt 5 development tools
+% libqscintilla2-dev            % Virtual package pointing to libqscintilla2-qt4-dev  <- ? should be qt5?
+% libqscintilla2-qt5-dev        % QScintilla, Scintilla source code editing widget for Qt, development files
+% ==== Only required when building from development sources
+% autoconf
+% automake
+% bison
+% flex
+% gperf
+% gzip
+% icoutils
+% libsvg2-bin                   % rsvg-convert: command-line and graphical viewers for SVG files
+% libtool
+% perl
+% rsync
+% tar
