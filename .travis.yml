@@ -13,9 +13,6 @@ install:
 before_script:
   - echo IP=$(curl -s http://ifconfig.me/ip)
   - docker info
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-      echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
-    fi
   - CI_PROJECT_NAMESPACE=$([[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "$(dirname ${TRAVIS_REPO_SLUG})" || echo "$(dirname ${TRAVIS_PULL_REQUEST_SLUG})")
   - export REPOSITORY=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" | awk '{print tolower($0)}')
   - build_image_squash() { TAG=$1; FILE=$2; shift 2; docker build --squash --force-rm=true -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
@@ -24,12 +21,13 @@ before_script:
 
 after_script:
   - docker image prune --force && docker images
-  - if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
-      echo "Not pushing ${REPOSITORY} in PR...";
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+      echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin
+      docker push "${REPOSITORY}"
+      status=$?
+      echo "[${status}] Image pushed > ${REPOSITORY}"
     else
-      docker push "${REPOSITORY}";
-      status=$?;
-      echo "[${status}] Image pushed > ${REPOSITORY}";
+      echo "Not pushing ${REPOSITORY} in PR..."
     fi
 
 stages:
