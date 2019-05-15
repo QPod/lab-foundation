@@ -10,9 +10,6 @@ variables:
   REPOSITORY: "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}"
   DOCKER_DRIVER: overlay
 
-before_script:
-  - apk add --no-cache curl && echo IP=$(curl -s http://ifconfig.me/ip)
-  - docker info
 
 stages:
   - base
@@ -33,16 +30,24 @@ stages:
 
   after_script:
     - docker image prune --force && docker images
-    - echo "### ${REPOSITORY}"
+    - export REPOSITORY=$(echo "${REPOSITORY}" | awk '{print tolower($0)}')
     - if [ "$CI_COMMIT_REF_NAME" == "master" ]; then
-        export REPOSITORY=$(echo "${REPOSITORY}" | awk '{print tolower($0)}') ;
-        status=1 ;
-        while [ $status -gt 0 ]; do
-          docker push "${REPOSITORY}" && echo "Image pushed> ${REPOSITORY}" ;
-          status=$? ;
-          echo "Push status > ${status}" ;
+        status=1
+        while [ $status -gt 0 ]
+        do
+          docker push "${REPOSITORY}"
+          status=$?
+          echo "[${status}] Image pushed > ${REPOSITORY}"
         done
+      else
+        echo "Not pushing ${REPOSITORY} in non-master branch ..."
       fi
+
+env:
+  stage: base
+  script:
+    - apk add --no-cache curl && echo IP=$(curl -s http://ifconfig.me/ip)
+    - docker info
 
 base:
   <<: *builder

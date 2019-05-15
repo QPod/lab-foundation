@@ -25,10 +25,12 @@ before_script:
 after_script:
   - docker image prune --force && docker images
   - if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
-      echo "Not pushing ${REPOSITORY} in PR..." && exit 0;
+      echo "Not pushing ${REPOSITORY} in PR..."
+    else
+      docker push "${REPOSITORY}"
+      status=$?
+      echo "[${status}] Image pushed > ${REPOSITORY}"
     fi
-  - docker push "${REPOSITORY}"
-  - echo $? "Image pushed > ${REPOSITORY}"
 
 stages:
   - base
