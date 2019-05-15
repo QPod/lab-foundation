@@ -28,8 +28,7 @@ stages:
   after_script:
     - docker image prune --force && docker images
     - export REPOSITORY=$(echo "${REPOSITORY}" | awk '{print tolower($0)}')
-    - if [ "$CI_COMMIT_REF_NAME" == "master" ]
-      then
+    - if [ "$CI_COMMIT_REF_NAME" == "master" ]; then
         echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin;
         status=1;
         while [ $status -gt 0 ]; do
