@@ -251,7 +251,7 @@ jobs:
           --build-arg "ARG_R_STUDIO=true"
           --build-arg "ARG_GO=true"
           --build-arg "ARG_JULIA=true"
-          --build-arg "ARG_OCTAVE=true"
+          --build-arg "ARG_OCTAVE=false"
         - alias_image "${TRAVIS_JOB_NAME}" "latest"
         - docker rmi "${REPOSITORY}:jupyter-full"
 
@@ -273,7 +273,7 @@ jobs:
           --build-arg "ARG_R_STUDIO=true"
           --build-arg "ARG_GO=true"
           --build-arg "ARG_JULIA=true"
-          --build-arg "ARG_OCTAVE=true"
+          --build-arg "ARG_OCTAVE=false"
         - alias_image "${TRAVIS_JOB_NAME}" "latest-cuda"
         - docker rmi "${REPOSITORY}:jupyter-full-cuda"
 
