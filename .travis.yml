@@ -35,6 +35,7 @@ stages:
   - cuda
   - jpy
   - qpod
+  - vision
 
 jobs:
   include:
@@ -276,6 +277,12 @@ jobs:
           --build-arg "ARG_OCTAVE=false"
         - alias_image "${TRAVIS_JOB_NAME}" "latest-cuda"
         - docker rmi "${REPOSITORY}:jupyter-full-cuda"
+
+
+    - name: "openface"
+      stage: vision
+      script:
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_vision/OpenFace.Dockerfile"
 
 
 notifications:

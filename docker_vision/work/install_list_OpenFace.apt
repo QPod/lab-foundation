@@ -1,0 +1,10 @@
+% This file contains python packages to be installed with apt-get install line by line.
+% Use percent char as line comment separator.
+
+%% Packages required to build OpenFace:
+libc++-dev libc++abi-dev llvm clang libboost-all-dev
+libopenblas-dev liblapack-dev libtbb2 libtbb-dev
+libgtk2.0-dev libdc1394-22-dev
+ffmpeg libavcodec-dev libavformat-dev libswscale-dev
+libjpeg-dev libpng-dev libtiff-dev
+pkg-config checkinstall
