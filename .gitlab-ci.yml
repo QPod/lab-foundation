@@ -317,3 +317,4 @@ openface:
   - build_image_squash "${CI_JOB_NAME}" "docker_vision/OpenFace.Dockerfile"
     --build-arg "repository=${REPOSITORY}"
     --build-arg "base=base"
+  - docker rmi "${REPOSITORY}:base"
