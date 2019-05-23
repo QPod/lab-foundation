@@ -104,7 +104,7 @@ RUN ${ARG_MKL:-false}           && [ `arch` = "x86_64" ] && pip install -Uq --pr
 RUN source /opt/utils/script-utils.sh \
     && ( ${ARG_PY_DATASCIENCE:-false} \
          && ( [[ -z "${CUDA_VERSION}" ]] && TF='tensorflow' || TF="tensorflow-gpu" \
-              && echo "${TF}    % Version decided based on CUDA_VERSION"    >> ./install_list_PY_datascience.pip \
+              && echo "${TF}==1.*   % decide version based on CUDA_VERSION" >> ./install_list_PY_datascience.pip \
          ) \
          && ( which R    && echo "rpy2  % Install rpy2 if R exists"         >> ./install_list_PY_datascience.pip || true ) \
          && ( which java && echo "py4j  % Install py4j if Java exists"      >> ./install_list_PY_datascience.pip || true ) \
