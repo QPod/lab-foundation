@@ -48,14 +48,14 @@ jobs:
     - name: "base-cuda_10.1"
       stage: cuda
       script:
-        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.1"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda10.1.Dockerfile"
           --build-arg "repository=${REPOSITORY}"
         - docker rmi "${REPOSITORY}:base"
 
     - name: "base-cuda_10.0"
       stage: cuda
       script:
-        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda10.0.Dockerfile"
           --build-arg "repository=${REPOSITORY}"
         - alias_image "${TRAVIS_JOB_NAME}" "cuda"
         - docker rmi "${REPOSITORY}:base"

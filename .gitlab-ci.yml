@@ -57,7 +57,7 @@ base-cuda_10.1:
   <<: *builder
   stage: cuda
   script:
-  - build_image_squash "${CI_JOB_NAME}" "docker_base/Dockerfile-cuda10.1"
+  - build_image_squash "${CI_JOB_NAME}" "docker_base/cuda10.1.Dockerfile"
     --build-arg "repository=${REPOSITORY}"
   - docker rmi "${REPOSITORY}:base"
 
@@ -65,7 +65,7 @@ base-cuda_10.0:
   <<: *builder
   stage: cuda
   script:
-  - build_image_squash "${CI_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
+  - build_image_squash "${CI_JOB_NAME}" "docker_base/cuda10.0.Dockerfile"
     --build-arg "repository=${REPOSITORY}"
   - alias_image "${CI_JOB_NAME}" "cuda"
   - docker rmi "${REPOSITORY}:base"
