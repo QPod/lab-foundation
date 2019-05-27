@@ -33,9 +33,9 @@ after_script:
 stages:
   - base
   - cuda
+  - vision
   - jpy
   - qpod
-  - vision
 
 jobs:
   include:
@@ -48,14 +48,14 @@ jobs:
     - name: "base-cuda_10.1"
       stage: cuda
       script:
-        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.1"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda10.1.Dockerfile"
           --build-arg "repository=${REPOSITORY}"
         - docker rmi "${REPOSITORY}:base"
 
     - name: "base-cuda_10.0"
       stage: cuda
       script:
-        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile-cuda10.0"
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda10.0.Dockerfile"
           --build-arg "repository=${REPOSITORY}"
         - alias_image "${TRAVIS_JOB_NAME}" "cuda"
         - docker rmi "${REPOSITORY}:base"
@@ -283,6 +283,14 @@ jobs:
       stage: vision
       script:
         - build_image_squash "${TRAVIS_JOB_NAME}" "docker_vision/OpenFace.Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=base"
+        - docker rmi "${REPOSITORY}:base"
+
+    - name: "opensmile"
+      stage: vision
+      script:
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_vision/openSMILE.Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=base"
         - docker rmi "${REPOSITORY}:base"

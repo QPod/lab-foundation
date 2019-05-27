@@ -11,13 +11,9 @@ COPY work /opt/utils/
 RUN cd /tmp      && source /opt/utils/script-utils.sh \
     && install_apt /opt/utils/install_list_OpenFace.apt \
     && ln /dev/null /dev/raw1394 \
-    ## Download
+    ## Download and build OpenCV
     && install_tar_gz https://github.com/opencv/opencv/archive/4.1.0.tar.gz \
     && mv /opt/opencv-* /tmp/opencv \
-    && install_zip http://dlib.net/files/dlib-19.17.zip \
-    && mv /opt/dlib-* /tmp/dlib \
-    && git clone --depth=1 https://github.com/TadasBaltrusaitis/OpenFace.git \
-    ## Build OpenCV
     && cd /tmp/opencv && mkdir -p build && cd build \
     && cmake \
     -D CMAKE_BUILD_TYPE=RELEASE \
@@ -28,11 +24,15 @@ RUN cd /tmp      && source /opt/utils/script-utils.sh \
     -D PYTHON_DEFAULT_EXECUTABLE=`which python` \
     -D BUILD_SHARED_LIBS=ON  .. \
     && make -j8 && make install \
-    ## Build dlib
+    ## Download and build dlib
+    && install_zip http://dlib.net/files/dlib-19.17.zip \
+    && mv /opt/dlib-* /tmp/dlib \
     && cd /tmp/dlib && mkdir -p build && cd build \
     && cmake .. && cmake --build . --config Release -- -j8 \
     && make install && ldconfig \
-    ## Build OpenFace
+    ## Download and build OpenFace
+    && cd /tmp \
+    && git clone --depth=1 https://github.com/TadasBaltrusaitis/OpenFace.git \
     && cd /tmp/OpenFace \
     && sed  -i 's/3.3/4.1/g' CMakeLists.txt \
     && mkdir -p build && cd build \
