@@ -24,7 +24,7 @@ COPY work /opt/utils/
 
 # --> Install OS libraries and setup some configurations
 RUN cd /tmp \
- && apt-get -y -qq update --fix-missing && apt-get -y -qq upgrade \
+ && apt-get -y update --fix-missing > /dev/null && apt-get -y -qq upgrade \
  && apt-get -qq install -y --no-install-recommends \
     apt-utils apt-transport-https ca-certificates lsb-release gnupg2 dirmngr wget jq locales sudo \
     build-essential cmake unzip \

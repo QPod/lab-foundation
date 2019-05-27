@@ -3,7 +3,7 @@
 install_echo() { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 printf '%s\n' ; }
 
 # function to install apt-get packages from a text file which lists package names (add comments with % char)
-install_apt()  { apt-get -y update --fix-missing && apt-get -qq install -y --no-install-recommends `cat $1 | cut -d '%' -f 1` ; }
+install_apt()  { apt-get -y update --fix-missing > /dev/null && apt-get install -yq --no-install-recommends `cat $1 | cut -d '%' -f 1` ; }
 
 # function to install conda packages from a text file which lists package names (add comments with % char)
 install_conda(){ cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -n1 conda install -yq ; }
