@@ -287,6 +287,14 @@ jobs:
           --build-arg "base=base"
         - docker rmi "${REPOSITORY}:base"
 
+    - name: "opensmile"
+      stage: vision
+      script:
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_vision/openSMILE.Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=base"
+        - docker rmi "${REPOSITORY}:base"
+
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4
