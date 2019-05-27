@@ -10,12 +10,9 @@ COPY work /opt/utils/
 
 RUN cd /tmp      && source /opt/utils/script-utils.sh \
     && install_apt /opt/utils/install_list_openSMILE.apt \
-    ## Download
+    ## Download and build OpenCV
     && install_tar_gz https://github.com/opencv/opencv/archive/4.1.0.tar.gz \
     && mv /opt/opencv-* /tmp/opencv \
-    && install_tar_gz http://www.audeering.com/download/opensmile-2-3-0-tar-gz/?wpdmdl=4782 \
-    && mv /opt/opensmile-* /tmp/openSMILE \
-    ## Build OpenCV
     && cd /tmp/opencv && mkdir -p build && cd build \
     && cmake \
     -D CMAKE_BUILD_TYPE=RELEASE \
@@ -26,12 +23,14 @@ RUN cd /tmp      && source /opt/utils/script-utils.sh \
     -D PYTHON_DEFAULT_EXECUTABLE=`which python` \
     -D BUILD_SHARED_LIBS=ON  .. \
     && make -j8 && make install \
-    ## Build OpenSMILE
+    ## Download and build OpenSMILE
+    && install_tar_gz http://www.audeering.com/download/opensmile-2-3-0-tar-gz/?wpdmdl=4782 \
+    && mv /opt/opensmile-* /tmp/openSMILE \
     && cd /tmp/openSMILE \
     && sed -i '117s/(char)/(unsigned char)/g' src/include/core/vectorTransform.hpp \
     && ./buildWithPortAudio.sh -p /opt/openSMILE \
 	&& ./buildStandalone.sh -p /opt/openSMILE \
-    && mv config script /opt/openSMILE \
+    && mv config scripts /opt/openSMILE \
     ## Clean Up
     && cd /opt/openSMILE && install__clean
 
