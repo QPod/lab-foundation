@@ -16,19 +16,22 @@ RUN cd /tmp      && source /opt/utils/script-utils.sh \
     && mv /opt/opencv-* /tmp/opencv \
     && cd /tmp/opencv && mkdir -p build && cd build \
     && cmake \
-    -D CMAKE_BUILD_TYPE=RELEASE \
-    -D CMAKE_INSTALL_PREFIX=/usr/local \
-    -D WITH_TBB=ON \
-    -D WITH_EIGEN=ON \
-    -D WITH_CUDA=OFF \
-    -D PYTHON_DEFAULT_EXECUTABLE=`which python` \
-    -D BUILD_SHARED_LIBS=ON  .. \
+        -D CMAKE_BUILD_TYPE=RELEASE \
+        -D CMAKE_INSTALL_PREFIX=/opt/opencv \
+        -D WITH_TBB=ON \
+        -D WITH_EIGEN=ON \
+        -D WITH_CUDA=OFF \
+        -D PYTHON_DEFAULT_EXECUTABLE=`which python` \
+        -D BUILD_SHARED_LIBS=ON  .. \
     && make -j8 && make install \
     ## Download and build dlib
     && install_zip http://dlib.net/files/dlib-19.17.zip \
     && mv /opt/dlib-* /tmp/dlib \
     && cd /tmp/dlib && mkdir -p build && cd build \
-    && cmake .. && cmake --build . --config Release -- -j8 \
+    && cmake \
+        -D BUILD_SHARED_LIBS=1 .. \
+        -D CMAKE_INSTALL_PREFIX=/opt/dlib \
+    && cmake --build . --config Release -- -j8 \
     && make install && ldconfig \
     ## Download and build OpenFace
     && cd /tmp \

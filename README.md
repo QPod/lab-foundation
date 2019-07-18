@@ -10,7 +10,7 @@
 [![Beerpay](https://img.shields.io/beerpay/QPod/QPod.svg?style=social)](https://beerpay.io/QPod/QPod)
 
 
-In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI environment and platform at your fingertip which you would love 🤞.**
+In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI environment and platform at your fingertip which you would love 💕.**
 
 With Docker and `QPod`, you
  - 📦📦📦 can start your data science / AI work with nearly `zero configuration` - QPod puts everything about installing (latest) packages and configuring environment into standard docker images and set you free from tedious setup and configuration work.

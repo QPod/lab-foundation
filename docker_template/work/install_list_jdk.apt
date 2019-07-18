@@ -1,4 +1,4 @@
 % This file contains apt packages to be installed with apt-get install line by line.
 % Use percent char as line comment separator.
 
-openjdk-11-jdk-headless
+openjdk-8-jdk-headless    % openjdk-11-jdk-headless, using 8 until 11 is accepted by packages like Spark
