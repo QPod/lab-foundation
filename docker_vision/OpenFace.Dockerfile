@@ -36,7 +36,7 @@ RUN cd /tmp      && source /opt/utils/script-utils.sh \
     ## Download and build OpenFace
     && cd /tmp \
     && install_tar_gz https://github.com/TadasBaltrusaitis/OpenFace/archive/OpenFace_2.1.0.tar.gz \
-    && mv /opt/OpenFace* /tmp/OpenFace \
+    && mv /opt/OpenFace-* /tmp/OpenFace \
     && cd /tmp/OpenFace \
     && sed  -i 's/3.3/4.1/g' CMakeLists.txt \
     && mkdir -p build && cd build \
