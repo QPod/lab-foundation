@@ -29,13 +29,14 @@ RUN cd /tmp      && source /opt/utils/script-utils.sh \
     && mv /opt/dlib-* /tmp/dlib \
     && cd /tmp/dlib && mkdir -p build && cd build \
     && cmake \
-        -D BUILD_SHARED_LIBS=1 .. \
-        -D CMAKE_INSTALL_PREFIX=/opt/dlib \
+        -D BUILD_SHARED_LIBS=1 \
+        -D CMAKE_INSTALL_PREFIX=/opt/dlib  .. \
     && cmake --build . --config Release -- -j8 \
     && make install && ldconfig \
     ## Download and build OpenFace
     && cd /tmp \
-    && git clone --depth=1 https://github.com/TadasBaltrusaitis/OpenFace.git \
+    && install_tar_gz https://github.com/TadasBaltrusaitis/OpenFace/archive/OpenFace_2.1.0.tar.gz \
+    && mv /opt/OpenFace* /tmp/OpenFace \
     && cd /tmp/OpenFace \
     && sed  -i 's/3.3/4.1/g' CMakeLists.txt \
     && mkdir -p build && cd build \
