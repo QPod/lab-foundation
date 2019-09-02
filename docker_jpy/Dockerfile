@@ -24,7 +24,7 @@ ENTRYPOINT ["tini", "-g", "--"]
 
 # Install NodeJS (required to build JupyterLab Extensions later)
 RUN cd /tmp && source /opt/utils/script-utils.sh \
- && NODEJS_VERSION="8.16.0" && ARCH="x64" \
+ && NODEJS_VERSION="10.16.3" && ARCH="x64" \
  && NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")" \
  && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-v${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
  && mv /opt/node* /opt/node \
