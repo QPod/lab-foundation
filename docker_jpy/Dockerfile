@@ -73,11 +73,11 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
 
 # If keeping NodeJS, then install NodeJS Kernel, else remove it to reduce image size.
 RUN ${ARG_NODEJS:-false} \
- && ( npm install -g --unsafe-perm ijavascript \
+ && ( npm install -g --unsafe-perm --python=python2.7 ijavascript \
       && /opt/node/bin/ijsinstall --install=global --spec-path=full \
       && mv /usr/local/share/jupyter/kernels/javascript /opt/conda/share/jupyter/kernels/ \
     ) \
- || ( echo "Removing Node/NPM removed..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
+ || ( echo "Removing Node/NPM..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
 
 # If installing LaTex and LaTex CJK packages.
 RUN  source /opt/utils/script-utils.sh \
