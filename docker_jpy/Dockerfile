@@ -56,11 +56,11 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
  && jupyter nbextensions_configurator enable --sys-prefix \
  && jupyter contrib nbextension install --sys-prefix \
  && jupyter labextension install --no-build \
-     @jupyterlab/toc  @jupyterlab/latex  @jupyterlab/git \
+     @jupyterlab/toc    @jupyterlab/shortcutui \
+     @jupyterlab/latex  @jupyterlab/git \
      @jupyterlab/fasta-extension  @jupyterlab/geojson-extension \
      @jupyterlab/plotly-extension @jupyterlab/mathjax3-extension \
-     @jupyterlab/hub-extension \
-     # @jupyterlab/shortcutui  @jupyterlab/statusbar   \ # temporarily remove conflict packages with version conflict
+     @jupyterlab/dataregistry-extension @jupyterlab/metadata-extension @jupyterlab/commenting-extension \
  && export NODE_OPTIONS=--max-old-space-size=4096 \
  # && git clone https://github.com/jupyterlab/jupyterlab-monaco.git /tmp/jupyterlab-monaco && cd /tmp/jupyterlab-monaco \
  # && yarn install && yarn run build && jupyter labextension install . \
