@@ -56,14 +56,11 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
  && jupyter nbextensions_configurator enable --sys-prefix \
  && jupyter contrib nbextension install --sys-prefix \
  && jupyter labextension install --no-build \
-     @jupyterlab/toc  @jupyterlab/latex  @jupyterlab/git \
+     @jupyterlab/toc    @jupyterlab/shortcutui \
+     @jupyterlab/latex  @jupyterlab/git \
      @jupyterlab/fasta-extension  @jupyterlab/geojson-extension \
      @jupyterlab/plotly-extension @jupyterlab/mathjax3-extension \
-     @jupyterlab/hub-extension \
-     # @jupyterlab/shortcutui  @jupyterlab/statusbar   \ # temporarily remove conflict packages with version conflict
- && export NODE_OPTIONS=--max-old-space-size=4096 \
- # && git clone https://github.com/jupyterlab/jupyterlab-monaco.git /tmp/jupyterlab-monaco && cd /tmp/jupyterlab-monaco \
- # && yarn install && yarn run build && jupyter labextension install . \
+     @jupyterlab/dataregistry-extension @jupyterlab/metadata-extension @jupyterlab/commenting-extension \
  && jupyter lab build \
  && echo "@ Jupyter Extension list:" \
  && jupyter nbextension list \
@@ -73,11 +70,11 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
 
 # If keeping NodeJS, then install NodeJS Kernel, else remove it to reduce image size.
 RUN ${ARG_NODEJS:-false} \
- && ( npm install -g --unsafe-perm ijavascript \
+ && ( npm install -g --unsafe-perm --python=python2.7 ijavascript \
       && /opt/node/bin/ijsinstall --install=global --spec-path=full \
       && mv /usr/local/share/jupyter/kernels/javascript /opt/conda/share/jupyter/kernels/ \
     ) \
- || ( echo "Removing Node/NPM removed..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
+ || ( echo "Removing Node/NPM..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
 
 # If installing LaTex and LaTex CJK packages.
 RUN  source /opt/utils/script-utils.sh \

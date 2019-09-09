@@ -5,3 +5,4 @@ openssh-client          % To generate keys
 htop vim git            % Process Management, Editor, Version Control
 curl rsync p7zip-full   % Utilites
 iputils-ping            % ping command
+python2.7               % required for some legacy packages like node-gyp
