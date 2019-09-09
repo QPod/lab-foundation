@@ -39,7 +39,9 @@ RUN pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub \
  && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \
  && npm install -g webpack webpack-command \
  && echo "@ Version of Yarn/WebPack:" `yarn -v` `npm list -g | grep webpack` \
- && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
+ && jupyter labextension install  --no-build \
+     @jupyter-widgets/jupyterlab-manager \
+ && jupyter lab build \
  && mv /opt/utils/start-*.sh /usr/local/bin/ && chmod +x /usr/local/bin/start-*.sh \
  && echo "@ Version of Jupyter Notebook/JupyterHub/JupyterLab:" \
       `jupyter notebook --version` `jupyterhub --version` `jupyter lab --version`
@@ -61,9 +63,6 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
      @jupyterlab/fasta-extension  @jupyterlab/geojson-extension \
      @jupyterlab/plotly-extension @jupyterlab/mathjax3-extension \
      @jupyterlab/dataregistry-extension @jupyterlab/metadata-extension @jupyterlab/commenting-extension \
- && export NODE_OPTIONS=--max-old-space-size=4096 \
- # && git clone https://github.com/jupyterlab/jupyterlab-monaco.git /tmp/jupyterlab-monaco && cd /tmp/jupyterlab-monaco \
- # && yarn install && yarn run build && jupyter labextension install . \
  && jupyter lab build \
  && echo "@ Jupyter Extension list:" \
  && jupyter nbextension list \
