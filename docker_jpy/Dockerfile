@@ -88,7 +88,8 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
     && mv /opt/code-server* /opt/code-server \
     && printf '#!/bin/bash\n/opt/code-server/code-server --port=8888 ~' > /usr/local/bin/start-code-server.sh \
     && chmod u+x /usr/local/bin/start-code-server.sh \
-    && echo "@ coder-server Version:" && /opt/code-server/code-server -v
+    && echo "@ coder-server Version:" && /opt/code-server/code-server -v \
+    || true
 
 # Clean up and display components version information...
 RUN  source /opt/utils/script-utils.sh \
