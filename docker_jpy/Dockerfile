@@ -77,17 +77,24 @@ RUN ${ARG_NODEJS:-false} \
  || ( echo "Removing Node/NPM..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
 
 # If installing LaTex and LaTex CJK packages.
-RUN  source /opt/utils/script-utils.sh \
+RUN source /opt/utils/script-utils.sh \
     && ( ${ARG_LATEX_BASE:-false}       && install_apt   /opt/utils/install_list_latex_base.apt     || true ) \
     && ( ${ARG_LATEX_CJK:-false}        && install_apt   /opt/utils/install_list_latex_cjk.apt      || true )
 
+# If installing coder-server  # https://github.com/cdr/code-server/releases
+RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
+    && VERSION_CODER="2.preview.11-vsc1.37.0" \
+    && install_tar_gz "https://github.com/cdr/code-server/releases/download/${VERSION_CODER}/code-server${VERSION_CODER}-linux-x86_64.tar.gz" \
+    && mv /opt/code-server* /opt/code-server \
+    && printf '#!/bin/bash\n/opt/code-server/code-server --port=8888 ~' > /usr/local/bin/start-code-server.sh \
+    && chmod u+x /usr/local/bin/start-code-server.sh \
+    && echo "@ coder-server Version:" && /opt/code-server/code-server -v
 
 # Clean up and display components version information...
 RUN  source /opt/utils/script-utils.sh \
   && install__clean && cd \
   && echo "@ Version of image: building finished at:" `date` `uname -a` \
   && echo "@ System environment variables:" `printenv`
-
 
 WORKDIR $HOME_DIR
 EXPOSE 8888
