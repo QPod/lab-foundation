@@ -37,12 +37,11 @@ RUN pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub \
  && mkdir -p /opt/conda/etc/jupyter/ && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \     
  && jupyter nbextension     enable --py widgetsnbextension \
  && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \
- && npm install -g webpack webpack-command \
- && echo "@ Version of Yarn/WebPack:" `yarn -v` `npm list -g | grep webpack` \
+ && echo "@ Version of Yarn:" `yarn -v` \
  && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
  && mv /opt/utils/start-*.sh /usr/local/bin/ && chmod +x /usr/local/bin/start-*.sh \
- && echo "@ Version of Jupyter Notebook/JupyterHub/JupyterLab:" \
-      `jupyter notebook --version` `jupyterhub --version` `jupyter lab --version`
+ && echo "@ Version of Jupyter Notebook/JupyterLab:" \
+      `jupyter notebook --version` `jupyter lab --version`
 
 # Install Bash Kernel kernel.
 RUN pip  install -Uq bash_kernel && python -m bash_kernel.install --sys-prefix
@@ -60,7 +59,8 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
      @jupyterlab/latex  @jupyterlab/git \
      @jupyterlab/fasta-extension  @jupyterlab/geojson-extension \
      @jupyterlab/plotly-extension @jupyterlab/mathjax3-extension \
-     @jupyterlab/dataregistry-extension @jupyterlab/metadata-extension @jupyterlab/commenting-extension \
+     @jupyterlab/dataregistry-extension @jupyterlab/commenting-extension \
+     # @jupyterlab/metadata-extension <- remove temporarily for react version conflict
  && jupyter lab build \
  && echo "@ Jupyter Extension list:" \
  && jupyter nbextension list \
@@ -77,17 +77,26 @@ RUN ${ARG_NODEJS:-false} \
  || ( echo "Removing Node/NPM..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
 
 # If installing LaTex and LaTex CJK packages.
-RUN  source /opt/utils/script-utils.sh \
+RUN source /opt/utils/script-utils.sh \
     && ( ${ARG_LATEX_BASE:-false}       && install_apt   /opt/utils/install_list_latex_base.apt     || true ) \
     && ( ${ARG_LATEX_CJK:-false}        && install_apt   /opt/utils/install_list_latex_cjk.apt      || true )
 
+# If installing coder-server  # https://github.com/cdr/code-server/releases
+RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
+    && VERSION_CODER="2.preview.11-vsc1.37.0" \
+    && install_tar_gz "https://github.com/cdr/code-server/releases/download/${VERSION_CODER}/code-server${VERSION_CODER}-linux-x86_64.tar.gz" \
+    && mv /opt/code-server* /opt/code-server \
+    && ln -s /opt/code-server/code-server /usr/bin/ \
+    && printf '#!/bin/bash\n/opt/code-server/code-server --port=8888 ~' > /usr/local/bin/start-code-server.sh \
+    && chmod u+x /usr/local/bin/start-code-server.sh \
+    && echo "@ coder-server Version:" && /opt/code-server/code-server -v \
+    || true
 
 # Clean up and display components version information...
 RUN  source /opt/utils/script-utils.sh \
   && install__clean && cd \
   && echo "@ Version of image: building finished at:" `date` `uname -a` \
   && echo "@ System environment variables:" `printenv`
-
 
 WORKDIR $HOME_DIR
 EXPOSE 8888
