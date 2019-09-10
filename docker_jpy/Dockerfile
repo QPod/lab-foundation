@@ -37,12 +37,11 @@ RUN pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub \
  && mkdir -p /opt/conda/etc/jupyter/ && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \     
  && jupyter nbextension     enable --py widgetsnbextension \
  && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \
- && npm install -g webpack webpack-command \
- && echo "@ Version of Yarn/WebPack:" `yarn -v` `npm list -g | grep webpack` \
+ && echo "@ Version of Yarn:" `yarn -v` \
  && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
  && mv /opt/utils/start-*.sh /usr/local/bin/ && chmod +x /usr/local/bin/start-*.sh \
- && echo "@ Version of Jupyter Notebook/JupyterHub/JupyterLab:" \
-      `jupyter notebook --version` `jupyterhub --version` `jupyter lab --version`
+ && echo "@ Version of Jupyter Notebook/JupyterLab:" \
+      `jupyter notebook --version` `jupyter lab --version`
 
 # Install Bash Kernel kernel.
 RUN pip  install -Uq bash_kernel && python -m bash_kernel.install --sys-prefix
@@ -60,7 +59,8 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
      @jupyterlab/latex  @jupyterlab/git \
      @jupyterlab/fasta-extension  @jupyterlab/geojson-extension \
      @jupyterlab/plotly-extension @jupyterlab/mathjax3-extension \
-     @jupyterlab/dataregistry-extension @jupyterlab/metadata-extension @jupyterlab/commenting-extension \
+     @jupyterlab/dataregistry-extension @jupyterlab/commenting-extension \
+     # @jupyterlab/metadata-extension <- remove temporarily for react version conflict
  && jupyter lab build \
  && echo "@ Jupyter Extension list:" \
  && jupyter nbextension list \
