@@ -104,7 +104,7 @@ RUN ${ARG_MKL:-false}           && [ `arch` = "x86_64" ] && pip install -Uq --pr
 RUN source /opt/utils/script-utils.sh \
     && ( ${ARG_PY_DATASCIENCE:-false} \
          && ( [[ -z "${CUDA_VERSION}" ]] && TF='tensorflow' || TF="tensorflow-gpu" \
-              && echo "${TF}==1.*   % decide version based on CUDA_VERSION" >> ./install_list_PY_datascience.pip \
+              && echo "${TF}  % decide version based on CUDA_VERSION" >> ./install_list_PY_datascience.pip \
          ) \
          && ( which R    && echo "rpy2  % Install rpy2 if R exists"         >> ./install_list_PY_datascience.pip || true ) \
          && ( which java && echo "py4j  % Install py4j if Java exists"      >> ./install_list_PY_datascience.pip || true ) \
@@ -125,7 +125,8 @@ RUN source /opt/utils/script-utils.sh \
 
 # Install golang and gophernotes (Jupyter kernel for golang)
 RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
-    && GO_VERSION="1.12.9" \
+    && GO_VERSION=$(wget --no-check-certificate -qO- https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 ) \
+    && GO_VERSION=$(echo $GO_VERSION | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*$/\1/') \
     && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
     && ln -s /opt/go/bin/go /usr/bin/ \
