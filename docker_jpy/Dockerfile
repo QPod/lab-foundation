@@ -22,10 +22,11 @@ RUN cd /tmp \
 ENTRYPOINT ["tini", "-g", "--"]
 
 
-# Install NodeJS (required to build JupyterLab Extensions later)
+# Install NodeJS (required to build JupyterLab Extensions later) # NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")"
 RUN cd /tmp && source /opt/utils/script-utils.sh \
- && NODEJS_VERSION="10.16.3" && ARCH="x64" \
- && NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")" \
+ && ARCH="x64" && NODEJS_VERSION_MAJOR="10" \
+ && NODEJS_VERSION=$(wget --no-check-certificate -qO- https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | grep "v${NODEJS_VERSION_MAJOR}." | head -1 ) \
+ && NODEJS_VERSION=$(echo $NODEJS_VERSION | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*$/\1/') \
  && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-v${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
  && mv /opt/node* /opt/node \
  && ln -s /opt/node/bin/* /usr/bin/ \
