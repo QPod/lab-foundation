@@ -16,17 +16,20 @@ COPY work /opt/utils/
 
 # Build and install tini, which will be entry point later...
 RUN cd /tmp \
- && wget -qO- "https://github.com/krallin/tini/archive/v0.18.0.zip" -O tini.zip && unzip -q /tmp/tini.zip \
+ && TINI_VERSION=$(wget --no-check-certificate -qO- https://github.com/krallin/tini/releases.atom | grep 'releases/tag' | head -1 ) \
+ && TINI_VERSION=$(echo $TINI_VERSION | cut -d \" -f6 | cut -d \/ -f8 ) \
+ && wget -qO- "https://github.com/krallin/tini/archive/${TINI_VERSION}.zip" -O tini.zip && unzip -q /tmp/tini.zip \
  && cmake /tmp/tini-* && make install && mv /tmp/tini /usr/local/bin/tini && chmod +x /usr/local/bin/tini
 
 ENTRYPOINT ["tini", "-g", "--"]
 
 
-# Install NodeJS (required to build JupyterLab Extensions later)
+# Install NodeJS (required to build JupyterLab Extensions later) # NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")"
 RUN cd /tmp && source /opt/utils/script-utils.sh \
- && NODEJS_VERSION="10.16.3" && ARCH="x64" \
- && NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")" \
- && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-v${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
+ && ARCH="x64" && NODEJS_VERSION_MAJOR="10" \
+ && NODEJS_VERSION=$(wget --no-check-certificate -qO- https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | grep "v${NODEJS_VERSION_MAJOR}." | head -1 ) \
+ && NODEJS_VERSION=$(echo $NODEJS_VERSION | cut -d \" -f6 | cut -d \/ -f8 ) \
+ && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
  && mv /opt/node* /opt/node \
  && ln -s /opt/node/bin/* /usr/bin/ \
  && echo  "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
@@ -78,25 +81,26 @@ RUN ${ARG_NODEJS:-false} \
 
 # If installing LaTex and LaTex CJK packages.
 RUN source /opt/utils/script-utils.sh \
-    && ( ${ARG_LATEX_BASE:-false}       && install_apt   /opt/utils/install_list_latex_base.apt     || true ) \
-    && ( ${ARG_LATEX_CJK:-false}        && install_apt   /opt/utils/install_list_latex_cjk.apt      || true )
+ && ( ${ARG_LATEX_BASE:-false}       && install_apt   /opt/utils/install_list_latex_base.apt     || true ) \
+ && ( ${ARG_LATEX_CJK:-false}        && install_apt   /opt/utils/install_list_latex_cjk.apt      || true )
 
 # If installing coder-server  # https://github.com/cdr/code-server/releases
 RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
-    && VERSION_CODER="2.preview.11-vsc1.37.0" \
-    && install_tar_gz "https://github.com/cdr/code-server/releases/download/${VERSION_CODER}/code-server${VERSION_CODER}-linux-x86_64.tar.gz" \
-    && mv /opt/code-server* /opt/code-server \
-    && ln -s /opt/code-server/code-server /usr/bin/ \
-    && printf '#!/bin/bash\n/opt/code-server/code-server --port=8888 ~' > /usr/local/bin/start-code-server.sh \
-    && chmod u+x /usr/local/bin/start-code-server.sh \
-    && echo "@ coder-server Version:" && /opt/code-server/code-server -v \
-    || true
+ && VERSION_CODER=$(wget --no-check-certificate -qO- https://github.com/cdr/code-server/releases.atom | grep 'releases/tag' | head -1 ) \
+ && VERSION_CODER=$(echo $VERSION_CODER | cut -d \" -f6 | cut -d \/ -f8 ) \
+ && install_tar_gz "https://github.com/cdr/code-server/releases/download/${VERSION_CODER}/code-server${VERSION_CODER}-linux-x86_64.tar.gz" \
+ && mv /opt/code-server* /opt/code-server \
+ && ln -s /opt/code-server/code-server /usr/bin/ \
+ && printf '#!/bin/bash\n/opt/code-server/code-server --port=8888 ~' > /usr/local/bin/start-code-server.sh \
+ && chmod u+x /usr/local/bin/start-code-server.sh \
+ && echo "@ coder-server Version:" && /opt/code-server/code-server -v \
+ || true
 
 # Clean up and display components version information...
-RUN  source /opt/utils/script-utils.sh \
-  && install__clean && cd \
-  && echo "@ Version of image: building finished at:" `date` `uname -a` \
-  && echo "@ System environment variables:" `printenv`
+RUN source /opt/utils/script-utils.sh \
+ && install__clean && cd \
+ && echo "@ Version of image: building finished at:" `date` `uname -a` \
+ && echo "@ System environment variables:" `printenv`
 
 WORKDIR $HOME_DIR
 EXPOSE 8888

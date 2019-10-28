@@ -42,4 +42,5 @@ install__clean(){
   which npm     && npm cache clean --force
   rm -rf /opt/conda/share/jupyter/lab/staging
   ( rm -rf /root/.* /tmp/.* /tmp/* /var/log/* /var/cache/* || true )
+  chmod ugo+rwXt /tmp
 }
