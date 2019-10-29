@@ -150,7 +150,7 @@ RUN ${ARG_JULIA:-false}     && source /opt/utils/script-utils.sh \
     && echo 'DEPOT_PATH[1]="/opt/julia/pkg"'                            >> /opt/julia/etc/julia/startup.jl \
     && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
     && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
-    && echo "@ Version of julia:" && julia --version && julia -e 'using Pkg; for(k,v) in sort(collect(Pkg.installed())); println(k,"==",v); end' \
+    && echo "@ Version of julia:" && julia -e 'using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,"==",v.version); end' \
     || true
 
 # Install Octave and Octave kernal for Jupyter
