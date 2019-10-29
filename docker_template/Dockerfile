@@ -36,7 +36,7 @@ RUN ${ARG_JDK:-false}           && source /opt/utils/script-utils.sh \
     && echo "@ Version of Java (java/javac):" && java -version && javac -version \
     && pip install -Uq beakerx pandas py4j  \
     && beakerx install \
-    && jupyter labextension install --dev-build beakerx-jupyterlab \
+    && jupyter labextension install beakerx-jupyterlab \
     && jupyter labextension list  \
     || true
 
