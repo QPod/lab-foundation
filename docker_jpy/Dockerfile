@@ -91,7 +91,7 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
  && install_tar_gz "https://github.com/cdr/code-server/releases/download/${VERSION_CODER}/code-server${VERSION_CODER}-linux-x86_64.tar.gz" \
  && mv /opt/code-server* /opt/code-server \
  && ln -s /opt/code-server/code-server /usr/bin/ \
- && printf '#!/bin/bash\n/opt/code-server/code-server --port=8888 --auth=none $HOME\n' > /usr/local/bin/start-code-server.sh \
+ && printf '#!/bin/bash\n/opt/code-server/code-server --port=8888 --auth=none --disable-telemetry $HOME\n' > /usr/local/bin/start-code-server.sh \
  && chmod u+x /usr/local/bin/start-code-server.sh \
  && echo "@ coder-server Version:" && /opt/code-server/code-server -v \
  || true
