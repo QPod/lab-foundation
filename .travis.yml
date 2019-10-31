@@ -33,9 +33,9 @@ after_script:
 stages:
   - base
   - cuda
-  - vision
   - jpy
   - qpod
+  - vision
 
 jobs:
   include:
