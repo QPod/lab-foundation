@@ -14,9 +14,9 @@ variables:
 stages:
   - base
   - cuda
-  - vision
   - jpy
   - qpod
+  - vision
 
 .build_tpl: &builder
   before_script:
