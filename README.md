@@ -73,7 +73,7 @@ timeout 10 && docker logs QPod 2>&1|findstr token=
  ⚠️ If you are using `QPod` with NVIDIA GPU machines with `nvidia-docker`, be sure to:
   - Use **Docker >= 19.03** and the command `nvidia-smi` works well on host machine
   - Add option `--gus all` in the `docker run` command to enable GPU access (after `--restart=always`)
-  - Use `IMG="full-cuda"` or other images with cuda support
+  - Use `IMG="qpod/qpod:full-cuda"` or other images with cuda support
 
 ### 3. Sit back for minutes and get the first-time login token
 The commands in the last step will:
@@ -87,6 +87,9 @@ Please copy the printed hexadecimal *after* `?token=` as the first-time login to
 Access `http://localhost:8888/` (or `http://ip-address:8888` if you use a server) in your browser and input the token you just copied to start the journey.
 
 ## Additional Information
+
+### FAQ
+For a list of FAQ or other information, please refer to the [wiki page](https://github.com/QPod/docker-images/wiki) of this repo.
 
 ### Hardware
 
