@@ -61,7 +61,7 @@ sleep 10s && docker logs QPod 2>&1|grep token=
   - Add option `--gus all` in the `docker run` command to enable GPU access (after `--restart=always`)
   - Use `IMG="qpod/qpod:full-cuda"` or other images with cuda support
 
-For Windows, run the command below in CMD (change `full` and `D:/work` to your choices) - Docker on windows doesn't support GPUs yet:
+For Windows, run the command below in CMD or [Terminal](https://github.com/microsoft/terminal) (change `full` and `D:/work` to your choices, and Docker on windows doesn't support GPUs yet):
 ```
 SET IMG="qpod/qpod:full"
 SET WORKDIR="D:/work"
