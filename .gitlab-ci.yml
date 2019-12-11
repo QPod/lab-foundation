@@ -1,1 +1,0 @@
-    - build_image() { TAG=$1; FILE=$2; shift 2; docker build --force-rm=true -t "${REPOSITORY}:$TAG" -f "$FILE" "$@" "$(dirname $FILE)"; }
