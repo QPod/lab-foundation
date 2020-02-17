@@ -88,7 +88,8 @@ RUN source /opt/utils/script-utils.sh \
 RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
  && VERSION_CODER=$(wget --no-check-certificate -qO- https://github.com/cdr/code-server/releases.atom | grep 'releases/tag' | head -1 ) \
  && VERSION_CODER=$(echo $VERSION_CODER | cut -d \" -f6 | cut -d \/ -f8 ) \
- && install_tar_gz "https://github.com/cdr/code-server/releases/download/${VERSION_CODER}/code-server${VERSION_CODER}-linux-x86_64.tar.gz" \
+ && VERSION_VSC='1.41.1' \
+ && install_tar_gz "https://github.com/cdr/code-server/releases/download/${VERSION_CODER}/code-server${VERSION_CODER}-vsc${VERSION_VSC}-linux-x86_64.tar.gz" \
  && mv /opt/code-server* /opt/code-server \
  && ln -s /opt/code-server/code-server /usr/bin/ \
  && printf '#!/bin/bash\n/opt/code-server/code-server --port=8888 --auth=none --disable-telemetry $HOME\n' > /usr/local/bin/start-code-server.sh \
