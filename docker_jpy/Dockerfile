@@ -36,7 +36,8 @@ RUN cd /tmp && source /opt/utils/script-utils.sh \
  && echo "@ Version of Node/NPM:" `node -v` `npm -v`
 
 # Setup Jupyter: Basic Configurations and Extensions...
-RUN pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub \
+RUN pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub 'mistune<2,>0.8.1' \
+ # TEMP fix: nbconver requires mistune<2,>0.8.1 for now
  && mkdir -p /opt/conda/etc/jupyter/ && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \     
  && jupyter nbextension     enable --py widgetsnbextension \
  && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \

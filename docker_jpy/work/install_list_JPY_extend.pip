@@ -8,3 +8,4 @@ jupyterlab_latex                        % Jupyter Lab Latex extension
 jupyterlab_server                       % Jupyter Lab Server
 jupyter_nbextensions_configurator       % Jupyter Notebook extension configurator
 jupyter_contrib_nbextensions            % Jupyter Notebook third-party extensions
+mistune<2,>0.8.1                        % TEMP fix, nbconvert requires mistune<2,>0.8.1 for now
