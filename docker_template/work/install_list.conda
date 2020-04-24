@@ -9,3 +9,4 @@
 %  - conda packages are sometime built against different system environment that might not compatible with this one.
 %  - Using conda to install packages may incur large footprint than install the original ones.
 
+conda
