@@ -120,9 +120,9 @@ RUN source /opt/utils/script-utils.sh \
 
 # Installing conda packages if provided.
 RUN source /opt/utils/script-utils.sh \
+    && echo "@ Conda Info:"  && conda info \
     && ( install_conda ./install_list.conda || true ) \
-    && echo "@ Version of installed Conda packages:"  && conda info \
-    && conda list | grep -v "pypi"
+    && echo "@ Version of installed Conda packages:"  && conda list | grep -v "pypi"
 
 # Install golang and gophernotes (Jupyter kernel for golang)
 RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
