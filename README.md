@@ -6,14 +6,16 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
 [![Docker Starts](https://img.shields.io/docker/stars/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
 [![Recent Code Update](https://img.shields.io/github/last-commit/QPod/docker-images.svg)](https://github.com/QPod/docker-images/stargazers)
-[![GitHub Starts](https://img.shields.io/github/stars/QPod/docker-images.svg?label=Stars&style=social)](https://github.com/QPod/docker-images/stargazers)
 
-In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is **an out-of-box Data Science / AI environment and platform at your fingertip which you would love 💕.**
+## Please generously STAR⭐ our project!  [![GitHub Starts](https://img.shields.io/github/stars/QPod/docker-images.svg?label=Stars&style=social)](https://github.com/QPod/docker-images/stargazers)
+
+In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is an **out-of-box Data Science / AI environment and platform** at your fingertip which you would love 💕.
 
 With Docker and `QPod`, you
- - 📦📦📦 can start your data science / AI projects with nearly `zero configuration` - QPod puts everything about installing (latest) packages and configuring environment into standard docker images and set you free from these tedious work.
- - 🌍🌎🌏 will find your work more `easy-to-reproduce` - QPod standard images make scientific research or data analysis project as [reproducible pipelines](https://doi.org/10.1038/d41586-018-07196-1) and help you [share your work with others](https://doi.org/10.1038/515151a).
- - 🆙🆙🆙 can easily `scale-up and scale-out` your algorithms and key innovations - QPod help you move forward smoothly from the development stage to deployment stage by re-using these images to either to provide RESTful APIs or orchestrate map/reduce operations on big data.
+
+- 📦📦📦 can start your data science / AI projects with nearly `zero configuration` - QPod puts everything about installing (latest) packages and configuring environment into standard docker images and set you free from these tedious work.
+- 🌍🌎🌏 will find your work more `easy-to-reproduce` - QPod standard images make scientific research or data analysis project as [reproducible pipelines](https://doi.org/10.1038/d41586-018-07196-1) and help you [share your work with others](https://doi.org/10.1038/515151a).
+- 🆙🆙🆙 can easily `scale-up and scale-out` your algorithms and key innovations - QPod help you move forward smoothly from the development stage to deployment stage by re-using these images to either to provide RESTful APIs or orchestrate map/reduce operations on big data.
 
 ![Screenshot of QPod](https://raw.githubusercontent.com/wiki/QPod/qpod-hub/img/QPod-screenshot.webp "Screenshot of QPod")
 
@@ -22,17 +24,20 @@ With Docker and `QPod`, you
 `QPod` curates and maintains a series of Docker images including interactive computing environment to run a Jupyter Notebook (or JupyterLab) with Python, R, OpenJDK, NodeJS, Go, Julia, Octave etc. Other IDE-like tools (e.g VS Code, R-Studio) are also included.
 
 `QPod` supports use cases of both research and production:
- - (Stand-alone) Use it on your laptop as default data science / develop environment.
- - (Multi-tenant) Use it on a server/cluster to host multiple users to exploit hardware resources like GPU.
- - (Deployment/Production) Use it as the base image to host RESTful APIs or work as executors or map/reduce operations.
+
+- (Stand-alone) Use it on your laptop as default data science / develop environment.
+- (Multi-tenant) Use it on a server/cluster to host multiple users to exploit hardware resources like GPU.
+- (Deployment/Production) Use it as the base image to host RESTful APIs or work as executors or map/reduce operations.
 
 ## How to use? `1-2-3-GO`🎉
 
 ### 0. Have docker installed on your laptop/server - Linux (Ubuntu LTS is a good choice) / Windows (>=10 recommended) / macOS
- - Please install **Docker >= 19.03**: `docker-ce` ( community version & free: [Linux](https://hub.docker.com/search/?offering=community&type=edition&operating_system=linux) | [macOS](https://download.docker.com/mac/stable/Docker.dmg) | [Windows](https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe)   ) or [docker-ee](https://hub.docker.com/search/?offering=enterprise&type=edition) (enterprise version & paid) on your laptop/server. **Docker installed from default Ubuntu/CentOS repository probably doesn't work for GPU!**
- - If you want to use *NVIDIA GPUs* with `QPod`, Linux server is **required**. After installing **Docker >= 19.03**, please also install both the [`NVIDIA driver`](https://github.com/NVIDIA/nvidia-docker/wiki/Frequently-Asked-Questions#how-do-i-install-the-nvidia-driver) and the latest version of [`nvidia-container-toolkit`](https://github.com/NVIDIA/nvidia-docker#quickstart) to use the GPUs in containers.
+
+- Please install **Docker >= 19.03**: `docker-ce` ( community version & free: [Linux](https://hub.docker.com/search/?offering=community&type=edition&operating_system=linux) | [macOS](https://download.docker.com/mac/stable/Docker.dmg) | [Windows](https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe)   ) or [docker-ee](https://hub.docker.com/search/?offering=enterprise&type=edition) (enterprise version & paid) on your laptop/server. **Docker installed from default Ubuntu/CentOS repository probably doesn't work for GPU!**
+- If you want to use *NVIDIA GPUs* with `QPod`, Linux server is **required**. After installing **Docker >= 19.03**, please also install both the [`NVIDIA driver`](https://github.com/NVIDIA/nvidia-docker/wiki/Frequently-Asked-Questions#how-do-i-install-the-nvidia-driver) and the latest version of [`nvidia-container-toolkit`](https://github.com/NVIDIA/nvidia-docker#quickstart) to use the GPUs in containers.
 
 ### 1. Choose the features and choose a folder on your disk
+
 See the table at bottom of this page (`QPod` feature matrix) and choose an Image Tag, say `full`.
 Typically, if you have enough disk size and no worry about your network speed, you can choose `full` for your laptop or `full-cuda` for a Linux server with NVIDIA GPU.
 
@@ -42,7 +47,8 @@ Files in this folder are visible in the environment (and files outside this fold
 ### 2. Start the container
 
 For Linux/macOS, run command below in shell (change `full` and `/root` to your choices).
-```
+
+```shell
 IMG="qpod/qpod:full"
 WORKDIR="/root"
 docker pull $IMG && docker tag $IMG qpod && docker rmi $IMG && docker images | grep qpod
@@ -57,12 +63,14 @@ sleep 10s && docker logs QPod 2>&1|grep token=
 ```
 
  ⚠️⚠️⚠️ If you are using `QPod` with NVIDIA GPU machines with `nvidia-docker`, be sure to:
-  - Use **Docker >= 19.03** and the command `nvidia-smi` works well on host machine
-  - Add option `--gus all` in the `docker run` command to enable GPU access (after `--restart=always`)
-  - Use `IMG="qpod/qpod:full-cuda"` or other images with cuda support
+
+- Use **Docker >= 19.03** and the command `nvidia-smi` works well on host machine
+- Add option `--gus all` in the `docker run` command to enable GPU access (after `--restart=always`)
+- Use `IMG="qpod/qpod:full-cuda"` or other images with cuda support
 
 For Windows, run the command below in CMD or [Terminal](https://github.com/microsoft/terminal) (change `full` and `D:/work` to your choices, and Docker on windows doesn't support GPUs yet):
-```
+
+```cmd
 SET IMG="qpod/qpod:full"
 SET WORKDIR="D:/work"
 docker pull %IMG% && docker tag %IMG% qpod && docker rmi %IMG% && docker images | findstr qpod
@@ -77,19 +85,23 @@ timeout 10 && docker logs QPod 2>&1|findstr token=
 ```
 
 ### 3. Sit back for minutes and get the first-time login token
+
 The commands in the last step will:
- - trigger a docker image download process which may take minutes
- - start a docker container named `QPod`
- - print a string contains a URL, which includes a 48-digit hexadecimal number
+
+- trigger a docker image download process which may take minutes
+- start a docker container named `QPod`
+- print a string contains a URL, which includes a 48-digit hexadecimal number
 
 Please copy the printed hexadecimal *after* `?token=` as the first-time login token.
 
 ### Go! 🎉
+
 Access `http://localhost:8888/` (or `http://ip-address:8888` if you use a server) in your browser and input the token you just copied to start the journey.
 
 ## Additional Information
 
 ### FAQ
+
 For a list of FAQ or other information, please refer to the [wiki page](https://github.com/QPod/docker-images/wiki) of this repo.
 
 ### Hardware
@@ -109,9 +121,7 @@ Although `conda` is installed, we do not recommend to use conda to install a lib
 These images are highly customizable. If you find a system lib / Python module / R packages is missing,
 you can easily add one in the `install_XX.list` in the `work` folder.
 
-
-
-# `QPod` feature matrix
+## `QPod` feature matrix
 
 |      Image Tag (Feature Spectrum)      | Image Information                                                                                                                                                                                                                                                  | Based On            | Description                                                                                                                                                                                                                           |
 |:--------------------------:|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
