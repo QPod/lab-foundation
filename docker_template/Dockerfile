@@ -97,9 +97,17 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
     && echo "@ Version of installed R libraries:" && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]" \
     || true
 
+
 # If on a x86_64 architecture and MKL selected, install MKL for acceleration
-RUN ${ARG_MKL:-false}           && [ `arch` = "x86_64" ] && pip install -Uq --pre mkl \
-    || true
+RUN ${ARG_MKL:-false} && (echo "mkl" >> ./install_list.conda ) || true
+
+
+# Installing conda packages if provided.
+RUN source /opt/utils/script-utils.sh \
+    && echo "@ Conda Info:"  && conda info \
+    && ( install_conda ./install_list.conda || true ) \
+    && echo "@ Version of installed Conda packages:"  && conda list | grep -v "pypi"
+
 
 # If installing Python and related packages
 RUN source /opt/utils/script-utils.sh \
@@ -118,11 +126,6 @@ RUN source /opt/utils/script-utils.sh \
     && ( ${ARG_PY_BIOINFO:-false}       && install_pip   ./install_list_PY_bioinfo.pip     || true ) \
     && echo "@ Version of installed Python packages:" && pip list
 
-# Installing conda packages if provided.
-RUN source /opt/utils/script-utils.sh \
-    && ( install_conda ./install_list.conda || true ) \
-    && echo "@ Version of installed Conda packages:"  && conda info 
-    # && conda list | grep -v "pypi" # Temporarily remove this action due to bug cased by conda 4.7.11
 
 # Install golang and gophernotes (Jupyter kernel for golang)
 RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
