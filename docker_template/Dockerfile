@@ -124,8 +124,9 @@ RUN source /opt/utils/script-utils.sh \
     && ( ${ARG_PY_NLP:-false}           && install_pip   ./install_list_PY_nlp.pip         || true ) \
     && ( ${ARG_PY_CV:-false}            && install_pip   ./install_list_PY_cv.pip          || true ) \
     && ( ${ARG_PY_BIOINFO:-false}       && install_pip   ./install_list_PY_bioinfo.pip     || true ) \
-    && echo "@ Version of installed Python packages:" && pip list
-
+    && echo "@ Version of installed Python packages:" && pip list \
+    # TODO: TEMP Fix - https://github.com/pytoolz/cytoolz/issues/144
+    && rm -f /opt/conda/lib/python3.7/site-packages/cytoolz/__init__.py
 
 # Install golang and gophernotes (Jupyter kernel for golang)
 RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
