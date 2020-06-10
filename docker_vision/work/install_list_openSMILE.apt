@@ -1,5 +1,0 @@
-% This file contains python packages to be installed with apt-get install line by line.
-% Use percent char as line comment separator.
-
-%% Packages required to build openSMILE:
-automake libtool
