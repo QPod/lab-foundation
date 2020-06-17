@@ -1,10 +1,10 @@
 # Distributed under the terms of the Modified BSD License.
 
-# CUDA  base:    https://gitlab.com/nvidia/cuda/blob/ubuntu18.04/10.1/base/Dockerfile
-# CUDA  runtime: https://gitlab.com/nvidia/cuda/blob/ubuntu18.04/10.1/runtime/Dockerfile
-# CUDNN runtime  https://gitlab.com/nvidia/cuda/blob/ubuntu18.04/10.1/runtime/cudnn7/Dockerfile
-# CUDA  devel:   https://gitlab.com/nvidia/cuda/blob/ubuntu18.04/10.1/devel/Dockerfile
-# CUDNN devel    https://gitlab.com/nvidia/cuda/blob/ubuntu18.04/10.1/devel/cudnn7/Dockerfile
+# CUDA  base:    https://gitlab.com/nvidia/container-images/cuda/blob/ubuntu18.04/10.1/base/Dockerfile
+# CUDA  runtime: https://gitlab.com/nvidia/container-images/cuda/blob/ubuntu18.04/10.1/runtime/Dockerfile
+# CUDNN runtime: https://gitlab.com/nvidia/container-images/cuda/blob/ubuntu18.04/10.1/runtime/cudnn7/Dockerfile
+# CUDA  devel:   https://gitlab.com/nvidia/container-images/cuda/blob/ubuntu18.04/10.1/devel/Dockerfile
+# CUDNN devel    https://gitlab.com/nvidia/container-images/cuda/blob/ubuntu18.04/10.1/devel/cudnn7/Dockerfile
 
 ARG repository
 FROM ${repository}:base
