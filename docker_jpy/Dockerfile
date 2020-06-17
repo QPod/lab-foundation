@@ -60,11 +60,11 @@ RUN ${ARG_EXTEND_JUPYTER:-false}     && source /opt/utils/script-utils.sh \
  && jupyter nbextensions_configurator enable --sys-prefix \
  && jupyter contrib nbextension install --sys-prefix \
  && jupyter labextension install --no-build \
-     @jupyterlab/toc \
+     @jupyterlab/toc @jupyterlab/shortcutui @jupyterlab/git \
+     @jupyterlab/mathjax3-extension @jupyterlab/fasta-extension @jupyterlab/geojson-extension \
+     @jupyterlab/commenting-extension \
      # TEMP fix: not compatible with JupyterLab 2.0
-     # @jupyterlab/shortcutui @jupyterlab/latex @jupyterlab/git \
-     # @jupyterlab/fasta-extension  @jupyterlab/geojson-extension @jupyterlab/plotly-extension @jupyterlab/mathjax3-extension \
-     # @jupyterlab/metadata-extension @jupyterlab/dataregistry-extension @jupyterlab/commenting-extension
+     # @jupyterlab/latex @jupyterlab/plotly-extension @jupyterlab/metadata-extension @jupyterlab/dataregistry-extension 
  && jupyter lab build \
  && echo "@ Jupyter Extension list:" \
  && jupyter nbextension list \
