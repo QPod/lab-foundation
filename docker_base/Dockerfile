@@ -42,7 +42,7 @@ RUN cd /tmp \
 
 # --> Install Python3 (Miniconda3), replace conda packages with pip source.
 RUN cd /tmp/ \
- && wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O conda.sh && bash /tmp/conda.sh -f -b -p /opt/conda \
+ && wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-py38_4.8.3-Linux-$(arch).sh" -O conda.sh && bash /tmp/conda.sh -f -b -p /opt/conda \
  && conda config --system --prepend channels conda-forge \
  && conda config --system --set auto_update_conda false  \
  && conda config --system --set show_channel_urls true   \
