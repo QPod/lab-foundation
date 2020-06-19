@@ -21,13 +21,13 @@ before_script:
 
 after_script:
   - docker image prune --force && docker images
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ] ; then
       echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin;
       docker push "${REPOSITORY}";
       status=$?;
       echo "[${status}] Image pushed > ${REPOSITORY}";
     else
-      echo "Not pushing ${REPOSITORY} in PR...";
+      echo "Not pushing ${REPOSITORY} in PR/branch ...";
     fi
 
 stages:
