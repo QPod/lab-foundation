@@ -48,7 +48,7 @@ RUN  ${ARG_CUDA_RUNTIME:-false} \
   && apt-get install -y --no-install-recommends \
         cuda-libraries-$CUDA_PKG_VERSION    cuda-nvtx-$CUDA_PKG_VERSION \
         cuda-nvtx-$CUDA_PKG_VERSION         libcublas10=$CUBLAS_VERSION \
-  && wget -nv https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda10.2_x86_64.txz -O /tmp/nccl1.txz && \
+  && wget -nv https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda10.2_x86_64.txz -O /tmp/nccl1.txz \
   && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl1.txz -C /usr/local/cuda/lib64/ --strip-components=2 --wildcards '*/lib/libnccl.so.*' \
   && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl1.txz -C /usr/lib/pkgconfig/    --strip-components=3 --wildcards '*/lib/pkgconfig/*'  \
   && ldconfig \

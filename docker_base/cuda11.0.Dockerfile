@@ -47,7 +47,7 @@ RUN  wget -qO- "https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1
 RUN  ${ARG_CUDA_RUNTIME:-false} \
   && apt-get install -y --no-install-recommends \
         cuda-libraries-11-0=11.0.1-1  libnpp-11-0=11.0.0.191-1  cuda-nvtx-11-0=11.0.167-1 \
-  && wget -nv https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda11.0_x86_64.txz -O /tmp/nccl1.txz && \
+  && wget -nv https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda11.0_x86_64.txz -O /tmp/nccl1.txz \
   && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl1.txz -C /usr/local/cuda/lib64/ --strip-components=2 --wildcards '*/lib/libnccl.so.*' \
   && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl1.txz -C /usr/lib/pkgconfig/    --strip-components=3 --wildcards '*/lib/pkgconfig/*'  \
   && ldconfig \
