@@ -47,7 +47,7 @@ RUN  wget -qO- "https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1
 RUN  ${ARG_CUDA_RUNTIME:-false} \
   && apt-get install -y --no-install-recommends \
         cuda-libraries-11-0=11.0.1-1  libnpp-11-0=11.0.0.191-1  cuda-nvtx-11-0=11.0.167-1 \
-  && curl -fsSL https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda11.0_x86_64.txz -O /tmp/nccl1.txz && \
+  && wget -nv https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda11.0_x86_64.txz -O /tmp/nccl1.txz && \
   && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl1.txz -C /usr/local/cuda/lib64/ --strip-components=2 --wildcards '*/lib/libnccl.so.*' \
   && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl1.txz -C /usr/lib/pkgconfig/    --strip-components=3 --wildcards '*/lib/pkgconfig/*'  \
   && ldconfig \
@@ -55,7 +55,7 @@ RUN  ${ARG_CUDA_RUNTIME:-false} \
 
 # If installing CUDNN runtime
 RUN  ${ARG_CUDNN_RUNTIME:false} \
-  && curl -fsSL https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.0/Ubuntu18_04-x64/libcudnn8_8.0.0.180-1+cuda11.0_amd64.deb -O /tmp/cudnn1.deb \
+  && wget -nv https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.0/Ubuntu18_04-x64/libcudnn8_8.0.0.180-1+cuda11.0_amd64.deb -O /tmp/cudnn1.deb \
   && dpkg -i /tmp/cudnn1.deb \
   || true
 
@@ -67,15 +67,15 @@ RUN  ${ARG_CUDA_DEVEL:false} \
         libnpp-dev-11-0=11.0.0.191-1      cuda-libraries-dev-11-0=11.0.1-1 \
         cuda-minimal-build-11-0=11.0.1-1  libcublas-dev-11-0=11.0.0.191-1 \
         libcusparse-11-0=11.0.0.191-1     libcusparse-dev-11-0=11.0.0.191-1 \
-  && curl -fsSL https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda11.0_x86_64.txz -O /tmp/nccl2.txz \
+  && wget -nv https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda11.0_x86_64.txz -O /tmp/nccl2.txz \
   && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl2.txz -C /usr/local/cuda/include/ --strip-components=2 --wildcards '*/include/*'      \
   && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl2.txz -C /usr/local/cuda/lib64/   --strip-components=2 --wildcards '*/lib/libnccl.so' \
   || true
 
 # If installing CUDNN devel
 RUN  ${ARG_CUDNN_DEVEL:false} \
-  && curl -fsSL https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.0/Ubuntu18_04-x64/libcudnn8_8.0.0.180-1+cuda11.0_amd64.deb -O  /tmp/cudnn2.deb \
-  && curl -fsSL https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.0/Ubuntu18_04-x64/libcudnn8-dev_8.0.0.180-1+cuda11.0_amd64.deb -O /tmp/cudnn-dev.deb \
+  && wget -nv https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.0/Ubuntu18_04-x64/libcudnn8_8.0.0.180-1+cuda11.0_amd64.deb -O  /tmp/cudnn2.deb \
+  && wget -nv https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.0/Ubuntu18_04-x64/libcudnn8-dev_8.0.0.180-1+cuda11.0_amd64.deb -O /tmp/cudnn-dev.deb \
   && dpkg -i /tmp/cudnn2.deb && dpkg -i /tmp/cudnn-dev.deb \
   || true
 
