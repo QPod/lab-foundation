@@ -60,12 +60,12 @@ jobs:
         - docker rmi "${REPOSITORY}:base"
 
     - name: "base-cuda_11.0"
-        stage: cuda
-        script:
-          - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda11.0.Dockerfile"
-            --build-arg "repository=${REPOSITORY}"
-          - alias_image "${TRAVIS_JOB_NAME}" "cuda"
-          - docker rmi "${REPOSITORY}:base"  
+      stage: cuda
+      script:
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda11.0.Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+        - alias_image "${TRAVIS_JOB_NAME}" "cuda"
+        - docker rmi "${REPOSITORY}:base"  
 
 
     - name: "jupyter-mini"
