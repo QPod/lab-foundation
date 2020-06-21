@@ -59,7 +59,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
     && ( ${ARG_R_STUDIO:-false} \
          && RSTUDIO_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
          && RSTUDIO_VERSION=$(echo $RSTUDIO_VERSION | cut -d- -f1) \
-         && wget -qO- "https://download2.rstudio.org/server/trusty/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
+         && wget -qO- "https://download2.rstudio.org/server/xenial/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
          && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
          && ln -s /opt/rstudio-server/bin/rs* /usr/bin/ \
          # Allow RStudio server run as root user
