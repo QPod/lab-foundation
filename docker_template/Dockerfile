@@ -44,7 +44,7 @@ RUN ${ARG_JDK:-false}           && source /opt/utils/script-utils.sh \
 # If installing R environment
 RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
-    && echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/cran.list \
+    && echo "deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/" > /etc/apt/sources.list.d/cran.list \
     && install_apt  ./install_list_R.apt \
     && echo "@ Version of R:" && R -e "R.version.string;"  \
     && ( type java && type R && R CMD javareconf || true ) \
@@ -131,8 +131,8 @@ RUN source /opt/utils/script-utils.sh \
 # Install golang and gophernotes (Jupyter kernel for golang)
 RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \
     && GO_VERSION=$(wget --no-check-certificate -qO- https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 ) \
-    && GO_VERSION=$(echo $GO_VERSION | sed 's/^.*[^0-9]\([0-9]*\.[0-9]*\.[0-9]*\).*$/\1/') \
-    && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
+    && GO_VERSION=$(echo $GO_VERSION | grep -o 'go[^"/]*' | tail -n 1) \
+    && GO_URL="https://dl.google.com/go/$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
     && ln -s /opt/go/bin/go /usr/bin/ \
     && echo  "GOPATH=/opt/go/path"     >> /etc/bash.bashrc \
@@ -161,7 +161,7 @@ RUN ${ARG_JULIA:-false}     && source /opt/utils/script-utils.sh \
 # Install Octave and Octave kernal for Jupyter
 RUN ${ARG_OCTAVE:-false}    && source /opt/utils/script-utils.sh \
     && install_apt   /opt/utils/install_list_octave.apt \
-    && OCTAVE_VERSION="5.1.0" \
+    && OCTAVE_VERSION="5.2.0" \
     && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
     && cd /opt/octave-* \
     && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
