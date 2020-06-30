@@ -43,4 +43,5 @@ install__clean(){
   rm -rf /opt/conda/share/jupyter/lab/staging
   ( rm -rf /root/.* /tmp/.* /tmp/* /var/log/* /var/cache/* || true )
   chmod ugo+rwXt /tmp
+  find /opt/conda/lib | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
 }

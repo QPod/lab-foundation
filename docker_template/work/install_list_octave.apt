@@ -5,6 +5,7 @@
 gcc g++                         % C/C++ compiler
 gfortran                        % fortran compiler required to build Octave
 make                            % GNU make
+automake-1.15                   % automake
 % ==== Required external packages
 % libblas-dev                   % BLAS: Basic Linear Algebra Subroutine: slow, unmaintained, and suffers from certain bugs in corner case inputs
 libopenblas-dev                 % Accelerated BLAS library: https://www.openblas.net
@@ -15,7 +16,7 @@ libreadline-dev                 % GNU Readline: Command-line editing library
 libcurl4-gnutls-dev             % cURL (~1392 KB): ftp objects, urlread/urlwrite, required when installing pckages
 texinfo                         % makeinfo (~15 MB), documentation system for on-line information and printed output, required when installing pkg
 zlib1g-dev                      % Compression library
-openjdk-11-jdk-headless         % OpenJDK headless 11
+openjdk-14-jdk-headless         % OpenJDK headless
 llvm-dev                        % LLVM (~239MB): required for Octave’s experimental just-in-time (JIT) compilation for speeding up the interpreter
 % ==== Strongly recommended: Maths, Matrices, Differential / Algebraic equations, Computational Geometry
 libglpk-dev                     % GLPK (~5071 KB): solving linear programs
@@ -24,8 +25,9 @@ libqrupdate-dev                 % qrupdate (~358 KB): accelerate QR & Cholesky u
 libsuitesparse-dev              % SuiteSparse (~19.8 MB): -> ordering methods (libamd2:AMD; libcamd2:CAMD; libcolamd2:COLAMD; libccolamd2:CCOLAMD; libcholmod3:CHOLMOD; libumfpack5:UMFPACK; libklu1:KLU; libcxsparse3:CXSparse)
 libfftw3-dev                    % FFTW3 (~23.4 MB): discrete Fourier transform (DFT) in one or more dimensions
 libqhull-dev                    % Qhull: Computational geometry library, provides functions: convhull, convhulln, delaunay, delaunayn, voronoi, and voronoin
-libsundials-nvecserial2         % SUNDIALS NVECTOR (~11.5 KB): SUite of Nonlinear and DIfferential/ALgebraic Equation Solvers, solvers ode15i and ode15s
-libsundials-ida2                % SUNDIALS IDA (~54.2 KB): SUite of Nonlinear and DIfferential/ALgebraic Equation Solvers, solvers ode15i and ode15s
+% --- The following two packages are not avaliable in ubuntu 20.04
+% libsundials-nvecserial2       % SUNDIALS NVECTOR (~11.5 KB): SUite of Nonlinear and DIfferential/ALgebraic Equation Solvers, solvers ode15i and ode15s
+% libsundials-ida2              % SUNDIALS IDA (~54.2 KB): SUite of Nonlinear and DIfferential/ALgebraic Equation Solvers, solvers ode15i and ode15s
 % ==== Strongly recommended: Input/Output and multi-media data format, image, audio, etc
 libgraphicsmagick++1-dev        % GraphicsMagick++ (~41.6 MB): imread, imwrite, imfinfo for read/write image files
 libsndfile1-dev                 % sndfile: audioinfo, audioread, audiowrite; reading and writing files containing sampled audio data
@@ -55,7 +57,6 @@ transfig                        % Virtual package pointing to fig2dev (~7394 KB)
 % libqscintilla2-qt5-dev        % QScintilla, Scintilla source code editing widget for Qt, development files
 % ==== Only required when building from development sources
 % autoconf
-% automake
 % bison
 % flex
 % gperf
