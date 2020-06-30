@@ -126,7 +126,7 @@ RUN source /opt/utils/script-utils.sh \
     && ( ${ARG_PY_BIOINFO:-false}       && install_pip   ./install_list_PY_bioinfo.pip     || true ) \
     && echo "@ Version of installed Python packages:" && pip list \
     # TODO: TEMP Fix - https://github.com/pytoolz/cytoolz/issues/144
-    && rm -f $(python -c 'import cytoolz as z; print(z.__path__._path[0] + "/__init__.py")')
+    && rm -f $(python -c 'import sys; print("/opt/conda/lib/python3.%s/site-packages/cytoolz/__init__.py" % sys.version_info.minor)')
 
 # Install golang and gophernotes (Jupyter kernel for golang)
 RUN ${ARG_GO:-false}        && source /opt/utils/script-utils.sh \

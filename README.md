@@ -36,6 +36,8 @@ With Docker and `QPod`, you
 - (Multi-tenant) Use it on a server/cluster to host multiple users to exploit hardware resources like GPU.
 - (Deployment/Production) Use it as the base image to host RESTful APIs or work as executors or map/reduce operations.
 
+![QPod-tech-arch](https://raw.githubusercontent.com/wiki/QPod/docker-images/img/QPod-arch.svg)
+
 ## How to use? `1-2-3-GO`🎉
 
 ### 0. Have docker installed on your laptop/server - Linux (e.g.: Ubuntu LTS) / Windows (>=10) / macOS
@@ -52,9 +54,9 @@ Typically, you can choose `full` for your laptop or `full-cuda` for a Linux serv
 
 ### 2. Start the container
 
-Change the value of`IMG` and `WORKDIR` to your choices in the script below, and run the script. Shutdown Jupyter or other service/program which are using port 8888 or 9999.
+Change the value of `IMG` and `WORKDIR` to your choices in the script below, and run the script. Shutdown Jupyter or other service/program which are using port 8888 or 9999.
 
-For Linux/macOS, run this in bash/terminal:
+#### For Linux/macOS, run this in bash/terminal
 
 ```shell
 IMG="qpod/qpod:full"
@@ -76,7 +78,7 @@ sleep 10s && docker logs QPod 2>&1|grep token=
 - 👉 Add option (after `--restart=always`) in the `docker run` command to enable GPU access: `--gus all` (for older version of nvidia-container, use `--runtime nvidia`)  
 - 👉 Use `IMG="qpod/qpod:full-cuda"` or other images with cuda support
 
-For Windows, run this in [Terminal](https://github.com/microsoft/terminal) or CMD (Docker on windows doesn't support GPUs yet):
+#### For Windows, run this in [Terminal](https://github.com/microsoft/terminal) or CMD
 
 ```cmd
 SET IMG="qpod/qpod:full"
@@ -92,6 +94,8 @@ timeout 10 && docker logs QPod 2>&1|findstr token=
 
 ```
 
+Docker on Windows doesn't support GPU yet (cuda WSL support is coming soon).
+
 ### 3. Sit back for minutes and get the first-time login token
 
 The commands in the last step will:
@@ -104,7 +108,7 @@ Copy the printed hexadecimal string *after* `?token=` as the first-time login to
 
 ### Go! 🎉
 
-Access <a heef="http://localhost:8888" target="_blank">http://localhost:8888</a> (or `http://ip-address:8888`) in your browser and paste the token you just copied to start the journey.
+Access <a href="http://localhost:8888" target="_blank">http://localhost:8888</a> (or `http://ip-address:8888`) in your browser and paste the token you just copied to start the journey.
 
 ## Additional Information
 
