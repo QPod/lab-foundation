@@ -32,13 +32,16 @@ WORKDIR /opt/utils
 
 # If installing Java environment
 RUN ${ARG_JDK:-false}           && source /opt/utils/script-utils.sh \
-    && install_apt   ./install_list_jdk.apt \
+    && VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=3 \
+    && URL_OPENJDK="https://download.java.net/java/early_access/jdk${VERSION_OPENJDK}/${VERSION_OPENJDK_EA}/GPL/openjdk-${VERSION_OPENJDK}-ea+${VERSION_OPENJDK_EA}_linux-x64_bin.tar.gz" \
+    && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
+    && ln -s /opt/jdk/bin/* /usr/bin/ \
     && echo "@ Version of Java (java/javac):" && java -version && javac -version \
     && pip install -Uq beakerx pandas py4j  \
     && beakerx install \
     # TEMP fix: not compatible with JupyterLab 2.0
     # && jupyter labextension install beakerx-jupyterlab \
-    && jupyter labextension list  \
+    && jupyter labextension list \
     || true
 
 # If installing R environment
