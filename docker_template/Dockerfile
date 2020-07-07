@@ -67,7 +67,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          && ln -s /opt/rstudio-server/bin/rs* /usr/bin/ \
          # Allow RStudio server run as root user
          && mkdir -p /etc/rstudio \
-         && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
+         && echo "server-user=root"       >> /etc/rstudio/rserver.conf \
          # Configuration to make RStudio server disable authentication and do not run as daemon
          && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
          && echo "server-daemonize=0"     >> /etc/rstudio/rserver.conf \
@@ -80,7 +80,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          || true \
     ) \
     && ( ${ARG_R_STUDIO:-false} \
-         && RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION) \
+         && RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
          && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
          && dpkg -i /tmp/rshiny.deb \
          && sed  -i 's/run_as shiny;/run_as root;/g'  /etc/shiny-server/shiny-server.conf \
