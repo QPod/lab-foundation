@@ -32,13 +32,16 @@ WORKDIR /opt/utils
 
 # If installing Java environment
 RUN ${ARG_JDK:-false}           && source /opt/utils/script-utils.sh \
-    && install_apt   ./install_list_jdk.apt \
+    && VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=3 \
+    && URL_OPENJDK="https://download.java.net/java/early_access/jdk${VERSION_OPENJDK}/${VERSION_OPENJDK_EA}/GPL/openjdk-${VERSION_OPENJDK}-ea+${VERSION_OPENJDK_EA}_linux-x64_bin.tar.gz" \
+    && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
+    && ln -s /opt/jdk/bin/* /usr/bin/ \
     && echo "@ Version of Java (java/javac):" && java -version && javac -version \
     && pip install -Uq beakerx pandas py4j  \
     && beakerx install \
     # TEMP fix: not compatible with JupyterLab 2.0
     # && jupyter labextension install beakerx-jupyterlab \
-    && jupyter labextension list  \
+    && jupyter labextension list \
     || true
 
 # If installing R environment
@@ -57,17 +60,19 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          || true \
     ) \
     && ( ${ARG_R_STUDIO:-false} \
-         && RSTUDIO_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
-         && RSTUDIO_VERSION=$(echo $RSTUDIO_VERSION | cut -d- -f1) \
-         && wget -qO- "https://download2.rstudio.org/server/bionic/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
+         && RSTUDIO_VERSION=`wget -qO - https://dailies.rstudio.com/rstudioserver/oss/ubuntu/x86_64/ | grep -oP "(?<=rstudio-server-)[0-9]\.[0-9]\.[0-9]+" | sort | tail -n 1` \
+         && wget -qO- "https://s3.amazonaws.com/rstudio-ide-build/server/bionic/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
          && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
+         && ln -s /opt/rstudio-server         /usr/lib/ \
          && ln -s /opt/rstudio-server/bin/rs* /usr/bin/ \
          # Allow RStudio server run as root user
          && mkdir -p /etc/rstudio \
-         && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
-         # Configuration to make RStudio server disable authentication and do not run as daemon
-         && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
          && echo "server-daemonize=0"     >> /etc/rstudio/rserver.conf \
+         # Configuration to make RStudio server disable authentication and do not run as daemon
+         && echo "server-user=root"       >> /etc/rstudio/rserver.conf \
+         && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
+         && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
+         && echo "auth-validate-users=0"  >> /etc/rstudio/rserver.conf \
          && printf '#!/bin/bash\nexport USER=root\nrserver --www-port=8888' > /usr/local/bin/start-rstudio.sh \
          && chmod u+x /usr/local/bin/start-rstudio.sh \
          # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
@@ -77,7 +82,7 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
          || true \
     ) \
     && ( ${ARG_R_STUDIO:-false} \
-         && RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-12.04/x86_64/VERSION) \
+         && RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
          && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
          && dpkg -i /tmp/rshiny.deb \
          && sed  -i 's/run_as shiny;/run_as root;/g'  /etc/shiny-server/shiny-server.conf \

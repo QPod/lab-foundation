@@ -16,8 +16,8 @@ libreadline-dev                 % GNU Readline: Command-line editing library
 libcurl4-gnutls-dev             % cURL (~1392 KB): ftp objects, urlread/urlwrite, required when installing pckages
 texinfo                         % makeinfo (~15 MB), documentation system for on-line information and printed output, required when installing pkg
 zlib1g-dev                      % Compression library
-openjdk-14-jdk-headless         % OpenJDK headless
 llvm-dev                        % LLVM (~239MB): required for Octave’s experimental just-in-time (JIT) compilation for speeding up the interpreter
+% openjdk-14-jdk-headless       % OpenJDK headless
 % ==== Strongly recommended: Maths, Matrices, Differential / Algebraic equations, Computational Geometry
 libglpk-dev                     % GLPK (~5071 KB): solving linear programs
 libarpack2-dev                  % ARPACK (~981 KB): eigs function, solution of large-scale eigenvalue problems 
