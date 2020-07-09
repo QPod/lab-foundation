@@ -59,11 +59,13 @@ RUN ${ARG_R:-false}             && source /opt/utils/script-utils.sh \
     && ( ${ARG_R_STUDIO:-false} \
          && RSTUDIO_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-server/current.ver) \
          && RSTUDIO_VERSION=$(echo $RSTUDIO_VERSION | cut -d- -f1) \
-         && wget -qO- "https://download2.rstudio.org/server/trusty/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
-         && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
-         && ln -s /opt/rstudio-server/bin/rs* /usr/bin/ \
+		 && apt-get install gdebi-core
+         && wget -qO- "https://download2.rstudio.org/server/trusty/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" # -O /tmp/rstudio.deb \
+         && gdebi rstudio-server-1.3.959-amd64.deb # dpkg -x rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /usr/lib/rstudio-server/ \
+         # && ln -s /opt/rstudio-server/bin/rs* /usr/bin/ \
          # Allow RStudio server run as root user
          && mkdir -p /etc/rstudio \
+		 && echo "server-user=root" >> /etc/rstudio/rserver.conf \
          && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
          # Configuration to make RStudio server disable authentication and do not run as daemon
          && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
