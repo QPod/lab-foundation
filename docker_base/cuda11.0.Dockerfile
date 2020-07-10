@@ -62,10 +62,14 @@ RUN  ${ARG_CUDNN_RUNTIME:false} \
 # If installing CUDA devel
 RUN  ${ARG_CUDA_DEVEL:false} \
   && apt-get install -y --no-install-recommends \
-        cuda-minimal-build-11-0=11.0.2-1 cuda-libraries-dev-11-0=11.0.2-1  cuda-command-line-tools-11-0=11.0.2-1 \
-        cuda-nvml-dev-11-0=11.0.167-1    libcublas-dev-11-0=${CUBLAS_VERSION} \
-        cuda-nvcc-11-0=11.0.194-1        cuda-nvprof-11-0=11.0.194-1 \
-        libnpp-dev-11-0=11.0.0.191-1     libcusparse-11-0=11.0.0.191-1     libcusparse-dev-11-0=11.0.0.191-1 \
+        # cuda-minimal-build-11-0=11.0.2-1 cuda-libraries-dev-11-0=11.0.2-1  cuda-command-line-tools-11-0=11.0.2-1 \
+        # cuda-nvml-dev-11-0=11.0.167-1    libcublas-dev-11-0=${CUBLAS_VERSION} \
+        # cuda-nvcc-11-0=11.0.194-1        cuda-nvprof-11-0=11.0.194-1 \
+        # libnpp-dev-11-0=11.0.0.191-1     libcusparse-11-0=11.0.0.191-1     libcusparse-dev-11-0=11.0.0.191-1 \
+        cuda-minimal-build-11-0   cuda-libraries-dev-11-0  cuda-command-line-tools-11-0 \
+        cuda-nvml-dev-11-0        libcublas-dev-11-0 \
+        cuda-nvcc-11-0            cuda-nvprof-11-0 \
+        libnpp-dev-11-0           libcusparse-11-0         libcusparse-dev-11-0 \
   && wget -nv https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_${NCCL_VERSION}-1+cuda11.0_x86_64.txz -O /tmp/nccl2.txz \
   && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl2.txz -C /usr/local/cuda/include/ --strip-components=2 --wildcards '*/include/*'      \
   && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl2.txz -C /usr/local/cuda/lib64/   --strip-components=2 --wildcards '*/lib/libnccl.so' \
