@@ -37,6 +37,10 @@ stages:
   - qpod
 
 jobs:
+  allow_failures:
+    - name: "base-cuda_10.2"
+    - name: "base-cuda_11.0"
+
   include:
     - name: "base"
       stage: base
