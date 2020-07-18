@@ -75,7 +75,7 @@ sleep 10s && docker logs QPod 2>&1|grep token=
 ⚠️ To use `QPod` with NVIDIA GPU machines with `nvidia-docker`, be sure to:
 
 - 👉 Use **Docker >= 19.03** and the command `nvidia-smi` works well on host machine
-- 👉 Add option (after `--restart=always`) in the `docker run` command to enable GPU access: `--gus all` (for older version of nvidia-container, use `--runtime nvidia`)  
+- 👉 Add option (after `--restart=always`) in the `docker run` command to enable GPU access: `--gpus all` (for older version of nvidia-container, use `--runtime nvidia`)  
 - 👉 Use `IMG="qpod/qpod:full-cuda"` or other images with cuda support
 
 #### For Windows, run this in [Terminal](https://github.com/microsoft/terminal) or CMD
@@ -108,7 +108,7 @@ Copy the printed hexadecimal string *after* `?token=` as the first-time login to
 
 ### Go! 🎉
 
-Access <a href="http://localhost:8888" target="_blank">http://localhost:8888</a> (or `http://ip-address:8888`) in your browser and paste the token you just copied to start the journey.
+Access `http://localhost:8888` (or `http://ip-address:8888`) in your browser and paste the token you just copied to start the journey.
 
 ## Additional Information
 
@@ -119,7 +119,7 @@ For a list of FAQ or other information, please refer to the [wiki page](https://
 ### Hardware
 
 The images are built based on `ubuntu:latest` and only tested on the `x86` platform.
-Minor modifications are expected to port to `ppc64le` platform.
+Minor modifications are expected to port to `arm64`, `ppc64le` platform.
 
 ### Package Management
 
