@@ -59,7 +59,6 @@ jobs:
       script:
         - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda10.1.Dockerfile"
           --build-arg "repository=${REPOSITORY}"
-        - alias_image "${TRAVIS_JOB_NAME}" "cuda"
         - docker rmi "${REPOSITORY}:base"
    
     - name: "base-cuda_10.2"
@@ -67,6 +66,7 @@ jobs:
       script:
         - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda10.2.Dockerfile"
           --build-arg "repository=${REPOSITORY}"
+        - alias_image "${TRAVIS_JOB_NAME}" "cuda"
         - docker rmi "${REPOSITORY}:base"
 
     - name: "base-cuda_11.0"
