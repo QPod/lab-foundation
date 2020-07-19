@@ -47,19 +47,26 @@ jobs:
       script:
         - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/Dockerfile"
 
+    - name: "base-cuda_10.0"
+      stage: cuda
+      script:
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda10.0.Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+        - docker rmi "${REPOSITORY}:base"
+
     - name: "base-cuda_10.1"
       stage: cuda
       script:
         - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda10.1.Dockerfile"
           --build-arg "repository=${REPOSITORY}"
-        - alias_image "${TRAVIS_JOB_NAME}" "cuda"
         - docker rmi "${REPOSITORY}:base"
-    
+   
     - name: "base-cuda_10.2"
       stage: cuda
       script:
         - build_image_squash "${TRAVIS_JOB_NAME}" "docker_base/cuda10.2.Dockerfile"
           --build-arg "repository=${REPOSITORY}"
+        - alias_image "${TRAVIS_JOB_NAME}" "cuda"
         - docker rmi "${REPOSITORY}:base"
 
     - name: "base-cuda_11.0"
@@ -121,6 +128,18 @@ jobs:
         - build_image_squash "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=cuda"
+          --build-arg "ARG_EXTEND_JUPYTER=true"
+          --build-arg "ARG_NODEJS=true"
+          --build-arg "ARG_LATEX_BASE=true"
+          --build-arg "ARG_LATEX_CJK=true"
+        - docker rmi "${REPOSITORY}:cuda"
+
+    - name: "jupyter-full-cuda_10.0"
+      stage: jpy
+      script:
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_jpy/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=base-cuda_10.0"
           --build-arg "ARG_EXTEND_JUPYTER=true"
           --build-arg "ARG_NODEJS=true"
           --build-arg "ARG_LATEX_BASE=true"
@@ -209,6 +228,20 @@ jobs:
         - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
           --build-arg "repository=${REPOSITORY}"
           --build-arg "base=jupyter-full-cuda"
+          --build-arg "ARG_MKL=true"
+          --build-arg "ARG_PY_DATABASE=true"
+          --build-arg "ARG_PY_DATASCIENCE=true"
+          --build-arg "ARG_PY_NLP=true"
+          --build-arg "ARG_PY_CV=true"
+          --build-arg "ARG_PY_BIOINFO=true"
+        - docker rmi "${REPOSITORY}:jupyter-full-cuda"
+
+    - name: "py-cuda_10.0"
+      stage: qpod
+      script:
+        - build_image_squash "${TRAVIS_JOB_NAME}" "docker_template/Dockerfile"
+          --build-arg "repository=${REPOSITORY}"
+          --build-arg "base=jupyter-full-cuda_10.0"
           --build-arg "ARG_MKL=true"
           --build-arg "ARG_PY_DATABASE=true"
           --build-arg "ARG_PY_DATASCIENCE=true"
