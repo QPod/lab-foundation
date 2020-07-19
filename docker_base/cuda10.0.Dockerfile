@@ -83,6 +83,7 @@ RUN  cd /tmp \
 
 # Clean up and display components version information...
 RUN  source /opt/utils/script-utils.sh \
+  && conda install -yq python=3.7 \
   && install__clean && cd \
   && echo "@ Version of image: building finished at:" `date` `uname -a` \
   && echo "@ System environment variables:" `printenv`
