@@ -110,10 +110,11 @@ setup_julia() {
     && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
     && mkdir -p /opt/julia/pkg \
     && echo 'import Libdl; push!(Libdl.DL_LOAD_PATH, "/opt/conda/lib")' >> /opt/julia/etc/julia/startup.jl \
-    && echo 'DEPOT_PATH[1]="/opt/julia/pkg"'                            >> /opt/julia/etc/julia/startup.jl \
-    && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
-    && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
-    && echo "@ Version of julia:" && julia -e 'using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,"==",v.version); end'
+    && echo 'DEPOT_PATH[1]="/opt/julia/pkg"'                            >> /opt/julia/etc/julia/startup.jl
+    
+    # && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
+    # && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
+    # && echo "@ Version of julia:" && julia -e 'using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,"==",v.version); end'
 }
 
 setup_octave() {
