@@ -35,9 +35,9 @@ setup_jupyter_kennels() {
     # && jupyter labextension install beakerx-jupyterlab \
 
     which julia \
-    && julia -e "using Pkg; pkg\"update\"; pkg\"add IJulia\"; pkg\"precompile\"" \ 
+    && julia -e "using Pkg; Pkg.add(\"IJulia\"); Pkg.precompile();" \
     && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
-    && echo "@ Version of julia:" && julia -e "using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,v.version); end" \
+    && echo "@ Version of julia:" && julia -e "using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,\"==\",v.version); end" \
     || true
 
     which go \
