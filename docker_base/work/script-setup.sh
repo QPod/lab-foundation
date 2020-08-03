@@ -105,27 +105,18 @@ setup_GO() {
     && install_tar_gz $GO_URL go \
     && ln -s /opt/go/bin/go /usr/bin/ \
     && echo  "GOPATH=/opt/go/path"     >> /etc/bash.bashrc \
-    && export GOPATH=/opt/go/path \
-    && go get -u github.com/gopherdata/gophernotes \
-    && mkdir -p /opt/conda/share/jupyter/kernels/gophernotes \
-    && cp $GOPATH/src/github.com/gopherdata/gophernotes/kernel/* /opt/conda/share/jupyter/kernels/gophernotes \
-    && ln -s $GOPATH/bin/gophernotes /usr/local/bin \
     && echo "@ Version of golang:" && go version && go list ...
 }
 
 
 setup_julia() {
-    JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
+       JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
     && install_tar_gz $JULIA_URL \
     && mv /opt/julia-* /opt/julia \
     && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
     && mkdir -p /opt/julia/pkg \
     && echo 'import Libdl; push!(Libdl.DL_LOAD_PATH, "/opt/conda/lib")' >> /opt/julia/etc/julia/startup.jl \
     && echo 'DEPOT_PATH[1]="/opt/julia/pkg"'                            >> /opt/julia/etc/julia/startup.jl
-    
-    # && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
-    # && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
-    # && echo "@ Version of julia:" && julia -e 'using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,"==",v.version); end'
 }
 
 setup_octave() {
@@ -140,8 +131,6 @@ setup_octave() {
     && make -j8 && make install -j8 \
     && cd /opt/utils && rm -rf /opt/octave-* \
     && echo "PATH=/opt/octave/bin:$PATH"     >> /etc/bash.bashrc \
-    && export PATH=/opt/octave/bin:$PATH \
-    && pip install -Uq octave_kernel \
     && install_octave    /opt/utils/install_list_octave.pkg \
     && echo "@ Version of Octave and installed packages:" \
     && /opt/octave/bin/octave --version  \

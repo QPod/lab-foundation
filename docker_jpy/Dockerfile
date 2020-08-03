@@ -24,9 +24,6 @@ RUN source /opt/utils/script-setup.sh && setup_node
 # Setup Jupyter: Basic Configurations and Extensions...
 RUN source /opt/utils/script-extend.sh && setup_jupyter
 
-# Install Bash Kernel kernel.
-RUN pip  install -Uq bash_kernel && python -m bash_kernel.install --sys-prefix
-
 # If installing more extension for Jupyter.
 RUN ${ARG_EXTEND_JUPYTER:-false} \
  && source /opt/utils/script-extend.sh && setup_jupyter_extend \
@@ -34,10 +31,7 @@ RUN ${ARG_EXTEND_JUPYTER:-false} \
 
 # If keeping NodeJS, then install NodeJS Kernel, else remove it to reduce image size.
 RUN ${ARG_NODEJS:-false} \
- && ( npm install -g --unsafe-perm --python=python2.7 ijavascript \
-      && /opt/node/bin/ijsinstall --install=global --spec-path=full \
-      && mv /usr/local/share/jupyter/kernels/javascript /opt/conda/share/jupyter/kernels/ \
-    ) \
+ && ( echo "Installing NodeJS kernel for jupyter ..." ) \
  || ( echo "Removing Node/NPM..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
 
 # If installing LaTex and LaTex CJK packages.

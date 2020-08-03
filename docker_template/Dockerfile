@@ -31,17 +31,10 @@ WORKDIR /opt/utils
 
 
 # If installing Java environment
-RUN ${ARG_JDK:-false} && source /opt/utils/script-setup.sh && setup_jdk \
-    && pip install -Uq beakerx pandas py4j  \
-    && beakerx install \
-    # TEMP fix: not compatible with JupyterLab 2.0
-    # && jupyter labextension install beakerx-jupyterlab \
-    && jupyter labextension list \
-    || true
+RUN ${ARG_JDK:-false} && source /opt/utils/script-setup.sh && setup_jdk || true
 
 # If installing R environment
-RUN ${ARG_R:-false}             && source /opt/utils/script-*.sh \
-    && setup_R \
+RUN ${ARG_R:-false}   && source /opt/utils/script-*.sh && setup_R \
     && ( ${ARG_R_DATASCIENCE:-false}  \
          && R -e "devtools::install_git('git://github.com/sorhawell/rgl.git',quiet=T,clean=T) # work around rgl, which has too many deps." \
          && install_apt   ./install_list_R_datascience.apt \
@@ -82,14 +75,10 @@ RUN source /opt/utils/script-utils.sh \
     && rm -f $(python -c 'import sys; print("/opt/conda/lib/python3.%s/site-packages/cytoolz/__init__.py" % sys.version_info.minor)')
 
 # Install golang and gophernotes (Jupyter kernel for golang)
-RUN ${ARG_GO:-false}        && source /opt/utils/script-setup.sh \
-    && setup_GO \
-    || true
+RUN ${ARG_GO:-false}  && source /opt/utils/script-setup.sh && setup_GO || true
 
 # Install Julia and IJulia
-RUN ${ARG_JULIA:-false}     && source /opt/utils/script-setup.sh \
-    && setup_julia \
-    || true
+RUN ${ARG_JULIA:-false}     && source /opt/utils/script-setup.sh && setup_julia || true
 
 # Install Octave and Octave kernal for Jupyter
 RUN ${ARG_OCTAVE:-false}    && source /opt/utils/script-setup.sh \
@@ -100,7 +89,7 @@ RUN ${ARG_OCTAVE:-false}    && source /opt/utils/script-setup.sh \
     || true
 
 # Clean up and display components version information...
-RUN  source /opt/utils/script-utils.sh \
-  && install__clean
+RUN source /opt/utils/script-extend.sh && setup_jupyter_kennels \
+  & source /opt/utils/script-utils.sh  && install__clean
 
 WORKDIR /root

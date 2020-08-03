@@ -13,6 +13,47 @@ setup_jupyter() {
         `jupyter notebook --version` `jupyter lab --version`
 }
 
+
+setup_jupyter_kennels() {
+    # Install Bash Kernel
+    pip install -Uq bash_kernel && python -m bash_kernel.install --sys-prefix
+
+    # Install NodeJS Kernel
+    which npm \
+    && npm install -g --unsafe-perm --python=python2.7 ijavascript \
+    && /opt/node/bin/ijsinstall --install=global --spec-path=full \
+    && mv /usr/local/share/jupyter/kernels/javascript /opt/conda/share/jupyter/kernels/ \
+    || true
+
+    which java \
+    && pip install -Uq beakerx pandas py4j  \
+    && beakerx install \
+    && jupyter labextension list \
+    || true
+    # TEMP fix: not compatible with JupyterLab 2.0
+    # && jupyter labextension install beakerx-jupyterlab \
+
+    which julia \
+    && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
+    && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
+    && echo "@ Version of julia:" && julia -e 'using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,"==",v.version); end' \
+    || true
+
+    which go \
+    && export GOPATH=/opt/go/path \
+    && go get -u github.com/gopherdata/gophernotes \
+    && mkdir -p /opt/conda/share/jupyter/kernels/gophernotes \
+    && cp $GOPATH/src/github.com/gopherdata/gophernotes/kernel/* /opt/conda/share/jupyter/kernels/gophernotes \
+    && ln -s $GOPATH/bin/gophernotes /usr/local/bin \
+    || true
+    
+    which octave \
+    && export PATH=/opt/octave/bin:$PATH \
+    && pip install -Uq octave_kernel \
+    || true
+}
+
+
 setup_jupyter_extend() {
        install_apt /opt/utils/install_list_JPY_extend.apt \
     && install_pip /opt/utils/install_list_JPY_extend.pip \
@@ -35,6 +76,7 @@ setup_jupyter_extend() {
     && jupyter serverextension list \
     && jupyter labextension list
 }
+
 
 setup_vscode() {
        VERSION_CODER=$(wget --no-check-certificate -qO- https://github.com/cdr/code-server/releases.atom | grep 'releases/tag' | head -1 ) \
