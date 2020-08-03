@@ -3,7 +3,8 @@ source /opt/utils/script-utils.sh
 setup_jupyter() {
     # TEMP fix: nbconver requires mistune<2,>0.8.1 for now
        pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub "mistune<2,>0.8.1" \
-    && mkdir -p /opt/conda/etc/jupyter/ && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \     
+    && mkdir -p /opt/conda/etc/jupyter/ \
+    && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \
     && jupyter nbextension     enable --py widgetsnbextension \
     && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \
     && echo "@ Version of Yarn:" `yarn -v` \
@@ -34,9 +35,9 @@ setup_jupyter_kennels() {
     # && jupyter labextension install beakerx-jupyterlab \
 
     which julia \
-    && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
+    && julia -e "using Pkg; pkg\"update\"; pkg\"add IJulia\"; pkg\"precompile\"" \ 
     && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
-    && echo "@ Version of julia:" && julia -e 'using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,"==",v.version); end' \
+    && echo "@ Version of julia:" && julia -e "using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,v.version); end" \
     || true
 
     which go \
@@ -79,12 +80,12 @@ setup_jupyter_extend() {
 
 
 setup_vscode() {
-       VERSION_CODER=$(wget --no-check-certificate -qO- https://github.com/cdr/code-server/releases.atom | grep 'releases/tag' | head -1 ) \
-    && VERSION_CODER=$(echo $VERSION_CODER | cut -d '"' -f6 | cut -d \/ -f8 ) \
+       VERSION_CODER=$(wget --no-check-certificate -qO- https://github.com/cdr/code-server/releases.atom | grep "releases/tag" | head -1 ) \
+    && VERSION_CODER=$(echo $VERSION_CODER | cut -d "\"" -f6 | cut -d \/ -f8 ) \
     && install_tar_gz "https://github.com/cdr/code-server/releases/download/${VERSION_CODER}/code-server-${VERSION_CODER}-linux-x86_64.tar.gz" \
     && mv /opt/code-server* /opt/code-server \
     && ln -s /opt/code-server/code-server /usr/bin/ \
-    && printf '#!/bin/bash\n/opt/code-server/code-server --port=8888 --auth=none --disable-telemetry $HOME\n' > /usr/local/bin/start-code-server.sh \
+    && printf "#!/bin/bash\n/opt/code-server/code-server --port=8888 --auth=none --disable-telemetry $HOME\n" > /usr/local/bin/start-code-server.sh \
     && chmod u+x /usr/local/bin/start-code-server.sh \
     && echo "@ coder-server Version:" && /opt/code-server/code-server -v
 }
