@@ -2,7 +2,7 @@ source /opt/utils/script-utils.sh
 
 setup_jupyter() {
     # TEMP fix: nbconver requires mistune<2,>0.8.1 for now
-       pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub 'mistune<2,>0.8.1' \
+       pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub "mistune<2,>0.8.1" \
     && mkdir -p /opt/conda/etc/jupyter/ && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \     
     && jupyter nbextension     enable --py widgetsnbextension \
     && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \

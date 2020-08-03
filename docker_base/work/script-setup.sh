@@ -32,6 +32,7 @@ setup_jdk() {
 }
 
 setup_node() {
+    # NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")"
        ARCH="x64" && NODEJS_VERSION_MAJOR="10" \
     && NODEJS_VERSION=$(wget --no-check-certificate -qO- https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | grep "v${NODEJS_VERSION_MAJOR}." | head -1 ) \
     && NODEJS_VERSION=$(echo $NODEJS_VERSION | cut -d '"' -f6 | cut -d \/ -f8 ) \

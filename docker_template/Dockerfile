@@ -74,22 +74,13 @@ RUN source /opt/utils/script-utils.sh \
     # TODO: TEMP Fix - https://github.com/pytoolz/cytoolz/issues/144
     && rm -f $(python -c 'import sys; print("/opt/conda/lib/python3.%s/site-packages/cytoolz/__init__.py" % sys.version_info.minor)')
 
-# Install golang and gophernotes (Jupyter kernel for golang)
-RUN ${ARG_GO:-false}  && source /opt/utils/script-setup.sh && setup_GO || true
 
-# Install Julia and IJulia
-RUN ${ARG_JULIA:-false}     && source /opt/utils/script-setup.sh && setup_julia || true
-
-# Install Octave and Octave kernal for Jupyter
-RUN ${ARG_OCTAVE:-false}    && source /opt/utils/script-setup.sh \
-    && setup_octave \
-    && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
-    && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
-    && echo "@ Version of julia:" && julia -e 'using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,"==",v.version); end' \
-    || true
+RUN ${ARG_GO:-false}      && source /opt/utils/script-setup.sh && setup_GO     || true
+RUN ${ARG_JULIA:-false}   && source /opt/utils/script-setup.sh && setup_julia  || true
+RUN ${ARG_OCTAVE:-false}  && source /opt/utils/script-setup.sh && setup_octave || true
 
 # Clean up and display components version information...
 RUN source /opt/utils/script-extend.sh && setup_jupyter_kennels \
-  & source /opt/utils/script-utils.sh  && install__clean
+ && source /opt/utils/script-utils.sh  && install__clean
 
 WORKDIR /root

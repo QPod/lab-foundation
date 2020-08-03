@@ -18,21 +18,17 @@ COPY work /opt/utils/
 ENTRYPOINT ["tini", "-g", "--"]
 
 
-# Install NodeJS (required to build JupyterLab Extensions later) # NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")"
+# Install NodeJS (required to build JupyterLab Extensions later)
 RUN source /opt/utils/script-setup.sh && setup_node
 
 # Setup Jupyter: Basic Configurations and Extensions...
 RUN source /opt/utils/script-extend.sh && setup_jupyter
 
 # If installing more extension for Jupyter.
-RUN ${ARG_EXTEND_JUPYTER:-false} \
- && source /opt/utils/script-extend.sh && setup_jupyter_extend \
- || true
+RUN ${ARG_EXTEND_JUPYTER:-false}  && source /opt/utils/script-extend.sh && setup_jupyter_extend || true
 
-# If keeping NodeJS, then install NodeJS Kernel, else remove it to reduce image size.
-RUN ${ARG_NODEJS:-false} \
- && ( echo "Installing NodeJS kernel for jupyter ..." ) \
- || ( echo "Removing Node/NPM..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
+# If not keeping NodeJS, remove NoedJS to reduce image size
+RUN ${ARG_NODEJS:-false} || ( echo "Removing Node/NPM..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
 
 # If installing LaTex and LaTex CJK packages.
 RUN source /opt/utils/script-utils.sh \
