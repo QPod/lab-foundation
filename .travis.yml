@@ -20,7 +20,7 @@ before_script:
         IMG="${IMG}-${TRAVIS_BRANCH}" ;
       fi ;
       REPOSITORY="${NAMESPACE}/${IMG}" ;
-      echo "=== ${REPOSITORY}"
+      echo "=== ${REPOSITORY}" ;
       docker build --squash --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" --build-arg "repository=${REPOSITORY}" "$@" "$(dirname $FILE)" ;
     }
   - alias_image() {
