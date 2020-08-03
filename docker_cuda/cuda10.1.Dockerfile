@@ -7,7 +7,7 @@
 # CUDNN devel    https://gitlab.com/nvidia/container-images/cuda/-/tree/master/dist/ubuntu18.04/10.1/devel/cudnn7/Dockerfile
 
 ARG repository
-FROM ${repository}:base
+FROM ${repository}:core
 
 LABEL maintainer="haobibo@gmail.com"
 

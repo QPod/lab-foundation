@@ -44,4 +44,5 @@ install__clean(){
   ( rm -rf /root/.* /tmp/.* /tmp/* /var/log/* /var/cache/* || true )
   chmod ugo+rwXt /tmp
   find /opt/conda/lib | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+  echo "@ System environment variables:" `printenv`
 }

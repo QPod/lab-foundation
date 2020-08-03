@@ -24,11 +24,22 @@ setup_conda() {
 
 
 setup_jdk() {
-       VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=3 \
+       VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=8 \
     && URL_OPENJDK="https://download.java.net/java/early_access/jdk${VERSION_OPENJDK}/${VERSION_OPENJDK_EA}/GPL/openjdk-${VERSION_OPENJDK}-ea+${VERSION_OPENJDK_EA}_linux-x64_bin.tar.gz" \
     && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
     && ln -s /opt/jdk/bin/* /usr/bin/ \
     && echo "@ Version of Java (java/javac):" && java -version && javac -version
+}
+
+setup_node() {
+       ARCH="x64" && NODEJS_VERSION_MAJOR="10" \
+    && NODEJS_VERSION=$(wget --no-check-certificate -qO- https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | grep "v${NODEJS_VERSION_MAJOR}." | head -1 ) \
+    && NODEJS_VERSION=$(echo $NODEJS_VERSION | cut -d '"' -f6 | cut -d \/ -f8 ) \
+    && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
+    && mv /opt/node* /opt/node \
+    && ln -s /opt/node/bin/* /usr/bin/ \
+    && echo "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
+    && echo "@ Version of Node/NPM:" `node -v` `npm -v`
 }
 
 

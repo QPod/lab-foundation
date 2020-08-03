@@ -19,15 +19,7 @@ ENTRYPOINT ["tini", "-g", "--"]
 
 
 # Install NodeJS (required to build JupyterLab Extensions later) # NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")"
-RUN cd /tmp && source /opt/utils/script-utils.sh \
- && ARCH="x64" && NODEJS_VERSION_MAJOR="10" \
- && NODEJS_VERSION=$(wget --no-check-certificate -qO- https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | grep "v${NODEJS_VERSION_MAJOR}." | head -1 ) \
- && NODEJS_VERSION=$(echo $NODEJS_VERSION | cut -d '"' -f6 | cut -d \/ -f8 ) \
- && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
- && mv /opt/node* /opt/node \
- && ln -s /opt/node/bin/* /usr/bin/ \
- && echo  "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
- && echo "@ Version of Node/NPM:" `node -v` `npm -v`
+RUN source /opt/utils/script-setup.sh && setup_node
 
 # Setup Jupyter: Basic Configurations and Extensions...
 RUN pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub 'mistune<2,>0.8.1' \
