@@ -19,9 +19,7 @@ before_script:
       if [ "$TRAVIS_BRANCH" != "master" ] ; then
         IMG="${IMG}-${TRAVIS_BRANCH}" ;
       fi ;
-      REPOSITORY="${NAMESPACE}/${IMG}" ;
-      echo "=== ${REPOSITORY}" ;
-      docker build --squash --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" --build-arg "repository=${REPOSITORY}" "$@" "$(dirname $FILE)" ;
+      docker build --squash --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" --build-arg "repository=${NAMESPACE}/${IMG}" "$@" "$(dirname $FILE)" ;
     }
   - alias_image() {
       IMG=$1; TAG_OLD=$2; TAG_NEW=$3; shift 3;

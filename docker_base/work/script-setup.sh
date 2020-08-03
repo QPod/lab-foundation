@@ -48,19 +48,21 @@ setup_R_rstudio() {
     && wget -qO- "https://s3.amazonaws.com/rstudio-ide-build/server/bionic/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
     && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
     && ln -s /opt/rstudio-server         /usr/lib/ \
-    && ln -s /opt/rstudio-server/bin/rs* /usr/bin/ \
+    && ln -s /opt/rstudio-server/bin/rs* /usr/bin/
+    
     # Allow RStudio server run as root user
-    && mkdir -p /etc/rstudio \
-    && echo "server-daemonize=0"     >> /etc/rstudio/rserver.conf \
     # Configuration to make RStudio server disable authentication and do not run as daemon
+    mkdir -p /etc/rstudio \
+    && echo "server-daemonize=0"     >> /etc/rstudio/rserver.conf \
     && echo "server-user=root"       >> /etc/rstudio/rserver.conf \
     && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
     && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
     && echo "auth-validate-users=0"  >> /etc/rstudio/rserver.conf \
     && printf '#!/bin/bash\nexport USER=root\nrserver --www-port=8888' > /usr/local/bin/start-rstudio.sh \
-    && chmod u+x /usr/local/bin/start-rstudio.sh \
+    && chmod u+x /usr/local/bin/start-rstudio.sh
+
     # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
-    && ( which pandoc          && rm /opt/rstudio-server/bin/pandoc/pandoc          || true ) \
+       ( which pandoc          && rm /opt/rstudio-server/bin/pandoc/pandoc          || true ) \
     && ( which pandoc-citeproc && rm /opt/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
     && echo "@ Version of rstudio-server:" && rstudio-server version
 }
@@ -72,14 +74,16 @@ setup_R_shiny() {
     && sed  -i 's/run_as shiny;/run_as root;/g'  /etc/shiny-server/shiny-server.conf \
     && sed  -i 's/3838/8888/g'                   /etc/shiny-server/shiny-server.conf \
     && printf '#!/bin/bash\nexport USER=root\nshiny-server' > /usr/local/bin/start-shiny-server.sh \
-    && chmod u+x /usr/local/bin/start-shiny-server.sh \
+    && chmod u+x /usr/local/bin/start-shiny-server.sh
+    
     # Remove shiny's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
-    && ( which pandoc          && rm /opt/shiny-server/ext/pandoc/pandoc          || true ) \
+       ( which pandoc          && rm /opt/shiny-server/ext/pandoc/pandoc          || true ) \
     && ( which pandoc-citeproc && rm /opt/shiny-server/ext/pandoc/pandoc-citeproc || true ) \
     && rm    /opt/shiny-server/ext/node/bin/shiny-server \
-    && ln -s /opt/shiny-server/ext/node/bin/node /opt/shiny-server/ext/node/bin/shiny-server \
+    && ln -s /opt/shiny-server/ext/node/bin/node /opt/shiny-server/ext/node/bin/shiny-server
+    
     # hack shiny-server to allow run in root user: https://github.com/rstudio/shiny-server/pull/391
-    && sed  -i 's/throw new Error/logger.warn/g'  /opt/shiny-server/lib/worker/app-worker.js \
+       sed  -i 's/throw new Error/logger.warn/g'  /opt/shiny-server/lib/worker/app-worker.js \
     && echo "@ Version of shiny-server:" && shiny-server --version
 }
 
@@ -116,12 +120,12 @@ setup_julia() {
 }
 
 setup_octave() {
+    # TEMPFIX: javac version
     source /opt/utils/script-utils.sh \
     && install_apt   /opt/utils/install_list_octave.apt \
     && OCTAVE_VERSION="5.2.0" \
     && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
     && cd /opt/octave-* \
-    # TEMPFIX: javac version
     && sed  -i 's/1.6/11/g' ./Makefile.in \
     && sed  -i 's/1.6/11/g' ./scripts/java/module.mk \
     && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
