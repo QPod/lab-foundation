@@ -20,7 +20,7 @@ before_script:
         IMG="${IMG}-${TRAVIS_BRANCH}" ;
       fi ;
       REPOSITORY="${NAMESPACE}/${IMG}" ;
-      docker build --squash --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" --build-arg "repository=${REPOSITORY}" "$@" "$(dirname $FILE)" ;
+      docker build --squash --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" --build-arg "BASE_REPO=${REPOSITORY}" "$@" "$(dirname $FILE)" ;
     }
   - alias_image() {
       IMG=$1; TAG_OLD=$2; TAG_NEW=$3; shift 3;
@@ -104,7 +104,7 @@ jobs:
       stage: jpy
       script:
         - build_image qpod jupyter-mini-cuda docker_jpy/Dockerfile
-          --build-arg "base=cuda"
+          --build-arg "BASE_TAG=cuda"
           --build-arg "ARG_EXTEND_JUPYTER=false"
           --build-arg "ARG_NODEJS=false"
           --build-arg "ARG_LATEX_BASE=false"
@@ -132,7 +132,7 @@ jobs:
       stage: jpy
       script:
         - build_image qpod jupyter-full-cuda docker_jpy/Dockerfile
-          --build-arg "base=cuda"
+          --build-arg "BASE_TAG=cuda"
           --build-arg "ARG_EXTEND_JUPYTER=true"
           --build-arg "ARG_NODEJS=true"
           --build-arg "ARG_LATEX_BASE=true"
@@ -142,7 +142,7 @@ jobs:
       stage: jpy
       script:
         - build_image qpod jupyter-full-cuda_10.0 docker_jpy/Dockerfile
-          --build-arg "base=base-cuda_10.0"
+          --build-arg "BASE_TAG=base-cuda_10.0"
           --build-arg "ARG_EXTEND_JUPYTER=true"
           --build-arg "ARG_NODEJS=true"
           --build-arg "ARG_LATEX_BASE=true"
@@ -153,14 +153,14 @@ jobs:
       stage: qpod
       script:
         - build_image qpod r-mini docker_template/Dockerfile
-          --build-arg "base=jupyter-mini"
+          --build-arg "BASE_TAG=jupyter-mini"
           --build-arg "ARG_R=true"
 
     - name: r-std
       stage: qpod
       script:
         - build_image qpod r-std docker_template/Dockerfile
-          --build-arg "base=jupyter-std"
+          --build-arg "BASE_TAG=jupyter-std"
           --build-arg "ARG_JDK=true"
           --build-arg "ARG_R=true"
           --build-arg "ARG_R_DATASCIENCE=true"
@@ -169,7 +169,7 @@ jobs:
       stage: qpod
       script:
         - build_image qpod r-latex docker_template/Dockerfile
-          --build-arg "base=jupyter-full"
+          --build-arg "BASE_TAG=jupyter-full"
           --build-arg "ARG_JDK=true"
           --build-arg "ARG_R=true"
           --build-arg "ARG_R_DATASCIENCE=true"
@@ -179,7 +179,7 @@ jobs:
       stage: qpod
       script:
         - build_image qpod r-studio docker_template/Dockerfile
-          --build-arg "base=jupyter-full"
+          --build-arg "BASE_TAG=jupyter-full"
           --build-arg "ARG_JDK=true"
           --build-arg "ARG_R=true"
           --build-arg "ARG_R_DATASCIENCE=true"
@@ -191,7 +191,7 @@ jobs:
       stage: qpod
       script:
         - build_image qpod py-std docker_template/Dockerfile
-          --build-arg "base=jupyter-std"
+          --build-arg "BASE_TAG=jupyter-std"
           --build-arg "ARG_MKL=true"
           --build-arg "ARG_PY_DATABASE=true"
           --build-arg "ARG_PY_DATASCIENCE=true"
@@ -203,7 +203,7 @@ jobs:
       stage: qpod
       script:
         - build_image qpod py-jdk docker_template/Dockerfile
-          --build-arg "base=jupyter-std"
+          --build-arg "BASE_TAG=jupyter-std"
           --build-arg "ARG_JDK=true"
           --build-arg "ARG_MKL=true"
           --build-arg "ARG_PY_DATABASE=true"
@@ -216,7 +216,7 @@ jobs:
       stage: qpod
       script:
         - build_image qpod py-cuda docker_template/Dockerfile
-          --build-arg "base=jupyter-full-cuda"
+          --build-arg "BASE_TAG=jupyter-full-cuda"
           --build-arg "ARG_MKL=true"
           --build-arg "ARG_PY_DATABASE=true"
           --build-arg "ARG_PY_DATASCIENCE=true"
@@ -228,7 +228,7 @@ jobs:
       stage: qpod
       script:
         - build_image qpod py-cuda_10.0 docker_template/Dockerfile
-          --build-arg "base=jupyter-full-cuda_10.0"
+          --build-arg "BASE_TAG=jupyter-full-cuda_10.0"
           --build-arg "ARG_MKL=true"
           --build-arg "ARG_PY_DATABASE=true"
           --build-arg "ARG_PY_DATASCIENCE=true"
@@ -240,28 +240,28 @@ jobs:
       stage: qpod
       script:
         - build_image qpod go docker_template/Dockerfile
-          --build-arg "base=jupyter-std"
+          --build-arg "BASE_TAG=jupyter-std"
           --build-arg "ARG_GO=true"
 
     - name: julia
       stage: qpod
       script:
         - build_image qpod julia docker_template/Dockerfile
-          --build-arg "base=jupyter-std"
+          --build-arg "BASE_TAG=jupyter-std"
           --build-arg "ARG_JULIA=true"
 
     - name: octave
       stage: qpod
       script:
         - build_image qpod octave docker_template/Dockerfile
-          --build-arg "base=jupyter-full"
+          --build-arg "BASE_TAG=jupyter-full"
           --build-arg "ARG_OCTAVE=true"
 
     - name: full
       stage: qpod
       script:
         - build_image qpod full docker_template/Dockerfile
-          --build-arg "base=jupyter-full"
+          --build-arg "BASE_TAG=jupyter-full"
           --build-arg "ARG_JDK=true"
           --build-arg "ARG_MKL=true"
           --build-arg "ARG_PY_DATABASE=true"
@@ -281,7 +281,7 @@ jobs:
       stage: qpod
       script:
         - build_image qpod full-cuda docker_template/Dockerfile
-          --build-arg "base=jupyter-full-cuda"
+          --build-arg "BASE_TAG=jupyter-full-cuda"
           --build-arg "ARG_JDK=true"
           --build-arg "ARG_MKL=true"
           --build-arg "ARG_PY_DATABASE=true"

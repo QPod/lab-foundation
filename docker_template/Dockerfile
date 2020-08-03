@@ -1,8 +1,8 @@
 # Distributed under the terms of the Modified BSD License.
 
-ARG repository
-ARG base
-FROM ${repository}:${base}
+ARG BASE_REPO
+ARG BASE_TAG
+FROM ${BASE_REPO}:${BASE_TAG}
 
 LABEL maintainer="haobibo@gmail.com"
 
