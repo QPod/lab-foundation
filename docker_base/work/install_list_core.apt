@@ -1,0 +1,5 @@
+% This file contains apt packages to be installed with apt-get install line by line.
+% Use percent char as line comment separator.
+
+build-essential cmake   % build essentials
+python2.7               % required for some legacy packages like node-gyp

@@ -1,8 +1,8 @@
 % This file contains apt packages to be installed with apt-get install line by line.
 % Use percent char as line comment separator.
 
-openssh-client          % To generate keys
-htop vim git            % Process Management, Editor, Version Control
-curl rsync p7zip-full   % Utilites
-iputils-ping            % ping command
-python2.7               % required for some legacy packages like node-gyp
+curl wget iputils-ping  % Network, Download, Ping command
+openssh-client          % Provide ssh client and generate keys
+htop vim git jq         % Process Management, Editor, Version Control
+unzip p7zip-full rsync  % File utilites
+lsb-release             % OS utilites

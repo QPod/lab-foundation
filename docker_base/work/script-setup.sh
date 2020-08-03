@@ -1,19 +1,137 @@
 
-setup_conda() {   
-    cd /tmp/ \
-    && wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-py38_4.8.3-Linux-$(arch).sh" -O conda.sh && bash /tmp/conda.sh -f -b -p /opt/conda \
+setup_conda() {
+    wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-py38_4.8.3-Linux-$(arch).sh" -O /tmp/conda.sh \
+    && bash /tmp/conda.sh -f -b -p /opt/conda \
     && conda config --system --prepend channels conda-forge \
     && conda config --system --set auto_update_conda false  \
     && conda config --system --set show_channel_urls true   \
     && conda config --set channel_priority strict \
-    && conda update --all --quiet --yes \
+    && conda update --all --quiet --yes
+
     # These conda pkgs shouldn't be removed (otherwise will cause RemoveError) since they are directly reqiuired by conda: pip setuptools pycosat pyopenssl requests ruamel_yaml python-libarchive-c
-    && CONDA_PY_PKGS=`conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;/python-libarchive-c/d;"` \
+    CONDA_PY_PKGS=`conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;/python-libarchive-c/d;"` \
     && conda remove --force -yq $CONDA_PY_PKGS \
-    && pip install -UIq pip setuptools $CONDA_PY_PKGS \
+    && pip install -UIq pip setuptools $CONDA_PY_PKGS
+
     # Replace system Python3 with Conda's Python, and take care of `lsb_releaes`
-    && rm /usr/bin/python3 && ln -s /opt/conda/bin/python /usr/bin/python3 \
-    && mv /usr/share/pyshared/lsb_release.py /usr/bin/ \
+    rm /usr/bin/python3 && ln -s /opt/conda/bin/python /usr/bin/python3 \
+    && mv /usr/share/pyshared/lsb_release.py /usr/bin/
+
     # Print Conda and Python packages information in the docker build log
-    && echo "@ Version of Conda & Python:" && conda info && conda list | grep -v "<pip>"
+    echo "@ Version of Conda & Python:" && conda info && conda list | grep -v "<pip>"
+}
+
+
+setup_jdk() {
+    source /opt/utils/script-utils.sh \
+    && VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=3 \
+    && URL_OPENJDK="https://download.java.net/java/early_access/jdk${VERSION_OPENJDK}/${VERSION_OPENJDK_EA}/GPL/openjdk-${VERSION_OPENJDK}-ea+${VERSION_OPENJDK_EA}_linux-x64_bin.tar.gz" \
+    && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
+    && ln -s /opt/jdk/bin/* /usr/bin/ \
+    && echo "@ Version of Java (java/javac):" && java -version && javac -version
+}
+
+
+setup_R() {
+    source /opt/utils/script-utils.sh \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
+    && echo "deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/" > /etc/apt/sources.list.d/cran.list \
+    && install_apt  ./install_list_R.apt \
+    && echo "@ Version of R:" && R -e "R.version.string;"  \
+    && ( type java && type R && R CMD javareconf || true ) \
+    && echo "options(repos=structure(c(CRAN='https://cloud.r-project.org')))" >> /etc/R/Rprofile.site
+}
+
+
+setup_R_rstudio() {
+    RSTUDIO_VERSION=`wget -qO - https://dailies.rstudio.com/rstudioserver/oss/ubuntu/x86_64/ | grep -oP "(?<=rstudio-server-)[0-9]\.[0-9]\.[0-9]+" | sort | tail -n 1` \
+    && wget -qO- "https://s3.amazonaws.com/rstudio-ide-build/server/bionic/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
+    && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
+    && ln -s /opt/rstudio-server         /usr/lib/ \
+    && ln -s /opt/rstudio-server/bin/rs* /usr/bin/ \
+    # Allow RStudio server run as root user
+    && mkdir -p /etc/rstudio \
+    && echo "server-daemonize=0"     >> /etc/rstudio/rserver.conf \
+    # Configuration to make RStudio server disable authentication and do not run as daemon
+    && echo "server-user=root"       >> /etc/rstudio/rserver.conf \
+    && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
+    && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
+    && echo "auth-validate-users=0"  >> /etc/rstudio/rserver.conf \
+    && printf '#!/bin/bash\nexport USER=root\nrserver --www-port=8888' > /usr/local/bin/start-rstudio.sh \
+    && chmod u+x /usr/local/bin/start-rstudio.sh \
+    # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
+    && ( which pandoc          && rm /opt/rstudio-server/bin/pandoc/pandoc          || true ) \
+    && ( which pandoc-citeproc && rm /opt/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
+    && echo "@ Version of rstudio-server:" && rstudio-server version
+}
+
+setup_R_shiny() {
+    RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
+    && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
+    && dpkg -i /tmp/rshiny.deb \
+    && sed  -i 's/run_as shiny;/run_as root;/g'  /etc/shiny-server/shiny-server.conf \
+    && sed  -i 's/3838/8888/g'                   /etc/shiny-server/shiny-server.conf \
+    && printf '#!/bin/bash\nexport USER=root\nshiny-server' > /usr/local/bin/start-shiny-server.sh \
+    && chmod u+x /usr/local/bin/start-shiny-server.sh \
+    # Remove shiny's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
+    && ( which pandoc          && rm /opt/shiny-server/ext/pandoc/pandoc          || true ) \
+    && ( which pandoc-citeproc && rm /opt/shiny-server/ext/pandoc/pandoc-citeproc || true ) \
+    && rm    /opt/shiny-server/ext/node/bin/shiny-server \
+    && ln -s /opt/shiny-server/ext/node/bin/node /opt/shiny-server/ext/node/bin/shiny-server \
+    # hack shiny-server to allow run in root user: https://github.com/rstudio/shiny-server/pull/391
+    && sed  -i 's/throw new Error/logger.warn/g'  /opt/shiny-server/lib/worker/app-worker.js \
+    && echo "@ Version of shiny-server:" && shiny-server --version
+}
+
+
+setup_GO() {
+    source /opt/utils/script-utils.sh \
+    && GO_VERSION=$(wget --no-check-certificate -qO- https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 ) \
+    && GO_VERSION=$(echo $GO_VERSION | grep -o 'go[^"/]*' | tail -n 1) \
+    && GO_URL="https://dl.google.com/go/$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
+    && install_tar_gz $GO_URL go \
+    && ln -s /opt/go/bin/go /usr/bin/ \
+    && echo  "GOPATH=/opt/go/path"     >> /etc/bash.bashrc \
+    && export GOPATH=/opt/go/path \
+    && go get -u github.com/gopherdata/gophernotes \
+    && mkdir -p /opt/conda/share/jupyter/kernels/gophernotes \
+    && cp $GOPATH/src/github.com/gopherdata/gophernotes/kernel/* /opt/conda/share/jupyter/kernels/gophernotes \
+    && ln -s $GOPATH/bin/gophernotes /usr/local/bin \
+    && echo "@ Version of golang:" && go version && go list ...
+}
+
+
+setup_julia() {
+    source /opt/utils/script-utils.sh \
+    && JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
+    && install_tar_gz $JULIA_URL \
+    && mv /opt/julia-* /opt/julia \
+    && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
+    && mkdir -p /opt/julia/pkg \
+    && echo 'import Libdl; push!(Libdl.DL_LOAD_PATH, "/opt/conda/lib")' >> /opt/julia/etc/julia/startup.jl \
+    && echo 'DEPOT_PATH[1]="/opt/julia/pkg"'                            >> /opt/julia/etc/julia/startup.jl \
+    && julia -e 'using Pkg; pkg"update"; pkg"add IJulia"; pkg"precompile"' \ 
+    && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
+    && echo "@ Version of julia:" && julia -e 'using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,"==",v.version); end'
+}
+
+setup_octave() {
+    source /opt/utils/script-utils.sh \
+    && install_apt   /opt/utils/install_list_octave.apt \
+    && OCTAVE_VERSION="5.2.0" \
+    && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
+    && cd /opt/octave-* \
+    # TEMPFIX: javac version
+    && sed  -i 's/1.6/11/g' ./Makefile.in \
+    && sed  -i 's/1.6/11/g' ./scripts/java/module.mk \
+    && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
+    && make -j8 && make install -j8 \
+    && cd /opt/utils && rm -rf /opt/octave-* \
+    && echo "PATH=/opt/octave/bin:$PATH"     >> /etc/bash.bashrc \
+    && export PATH=/opt/octave/bin:$PATH \
+    && pip install -Uq octave_kernel \
+    && install_octave    /opt/utils/install_list_octave.pkg \
+    && echo "@ Version of Octave and installed packages:" \
+    && /opt/octave/bin/octave --version  \
+    && /opt/octave/bin/octave --eval "pkg list"
 }

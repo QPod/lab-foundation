@@ -14,12 +14,6 @@ ARG ARG_LATEX_CJK=false
 
 COPY work /opt/utils/
 
-# Build and install tini, which will be entry point later...
-RUN cd /tmp \
- && TINI_VERSION=$(wget --no-check-certificate -qO- https://github.com/krallin/tini/releases.atom | grep 'releases/tag' | head -1 ) \
- && TINI_VERSION=$(echo $TINI_VERSION | cut -d '"' -f6 | cut -d \/ -f8 ) \
- && wget -qO- "https://github.com/krallin/tini/archive/${TINI_VERSION}.zip" -O tini.zip && unzip -q /tmp/tini.zip \
- && cmake /tmp/tini-* && make install && mv /tmp/tini /usr/local/bin/tini && chmod +x /usr/local/bin/tini
 
 ENTRYPOINT ["tini", "-g", "--"]
 

@@ -10,9 +10,9 @@ USER root
 
 ENV SHELL=/bin/bash \
     DEBIAN_FRONTEND=noninteractive \
-    LC_ALL=en_US.UTF-8 \
-    LC_TYPE=en_US.UTF-8 \
+    LC_ALL="" \
     LC_CTYPE=C.UTF-8 \
+    LC_TYPE=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
     HOME_DIR=/root
@@ -23,10 +23,9 @@ COPY work /opt/utils/
 
 # --> Install OS libraries and setup some configurations
 RUN cd /tmp \
- && apt-get -y update --fix-missing > /dev/null && apt-get -y -qq upgrade \
+ && apt-get  -y update --fix-missing > /dev/null && apt-get -y -qq upgrade \
  && apt-get -qq install -y --no-install-recommends \
-    apt-utils apt-transport-https ca-certificates lsb-release gnupg2 dirmngr wget jq locales sudo \
-    build-essential cmake unzip \
+    apt-utils apt-transport-https ca-certificates gnupg2 dirmngr locales sudo \
  && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
  && echo "en_US.UTF-8 UTF-8"             >  /etc/locale.gen && locale-gen \
  && echo "ALL ALL=(ALL) NOPASSWD: ALL"   >> /etc/sudoers \
@@ -37,12 +36,9 @@ RUN cd /tmp \
  # Install libraries libs, utilities
  && source /opt/utils/script-utils.sh \
  && install_apt /opt/utils/install_list_base.apt \
- && chmod 777 /tmp
-
-# --> Clean up and display components version information...
-RUN  source /opt/utils/script-utils.sh \
-  && install__clean && cd \
-  && echo "@ Version of image: building finished at:" `date` `uname -a` \
-  && echo "@ System environment variables:" `printenv`
+ # Clean up and display components version information...
+ && install__clean && cd \
+ && echo "@ Version of image: building finished at:" `date` `uname -a` \
+ && echo "@ System environment variables:" `printenv`
 
 WORKDIR $HOME_DIR
