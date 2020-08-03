@@ -154,127 +154,92 @@ jobs:
       script:
         - build_image qpod r-mini docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-mini"
-          --build-arg "ARG_R=true"
+          --build-arg "ARG_PROFILE_R=base"
 
     - name: r-std
       stage: qpod
       script:
         - build_image qpod r-std docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-std"
-          --build-arg "ARG_JDK=true"
-          --build-arg "ARG_R=true"
-          --build-arg "ARG_R_DATASCIENCE=true"
+          --build-arg "ARG_PROFILE_JDK=base"
+          --build-arg "ARG_PROFILE_R=base,datascience"
 
     - name: r-latex
       stage: qpod
       script:
         - build_image qpod r-latex docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-full"
-          --build-arg "ARG_JDK=true"
-          --build-arg "ARG_R=true"
-          --build-arg "ARG_R_DATASCIENCE=true"
-          --build-arg "ARG_LATEX_BASE=true"
+          --build-arg "ARG_PROFILE_R=base,datascience"
+          --build-arg "ARG_PROFILE_JDK=base"
 
     - name: r-studio
       stage: qpod
       script:
         - build_image qpod r-studio docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-full"
-          --build-arg "ARG_JDK=true"
-          --build-arg "ARG_R=true"
-          --build-arg "ARG_R_DATASCIENCE=true"
-          --build-arg "ARG_R_STUDIO=true"
-          --build-arg "ARG_LATEX_BASE=true"
-          --build-arg "ARG_LATEX_CJK=true"
+          --build-arg "ARG_PROFILE_JDK=base"
+          --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
 
     - name: py-std
       stage: qpod
       script:
         - build_image qpod py-std docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-std"
-          --build-arg "ARG_MKL=true"
-          --build-arg "ARG_PY_DATABASE=true"
-          --build-arg "ARG_PY_DATASCIENCE=true"
-          --build-arg "ARG_PY_NLP=true"
-          --build-arg "ARG_PY_CV=true"
-          --build-arg "ARG_PY_BIOINFO=true"
+          --build-arg "ARG_PROFILE_PY=database,datascience,nlp,cv,bioinfo"
 
     - name: py-jdk
       stage: qpod
       script:
         - build_image qpod py-jdk docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-std"
-          --build-arg "ARG_JDK=true"
-          --build-arg "ARG_MKL=true"
-          --build-arg "ARG_PY_DATABASE=true"
-          --build-arg "ARG_PY_DATASCIENCE=true"
-          --build-arg "ARG_PY_NLP=true"
-          --build-arg "ARG_PY_CV=true"
-          --build-arg "ARG_PY_BIOINFO=true"
+          --build-arg "ARG_PROFILE_JDK=true"
+          --build-arg "ARG_PROFILE_PY=database,datascience,nlp,cv,bioinfo"
 
     - name: py-cuda
       stage: qpod
       script:
         - build_image qpod py-cuda docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-full-cuda"
-          --build-arg "ARG_MKL=true"
-          --build-arg "ARG_PY_DATABASE=true"
-          --build-arg "ARG_PY_DATASCIENCE=true"
-          --build-arg "ARG_PY_NLP=true"
-          --build-arg "ARG_PY_CV=true"
-          --build-arg "ARG_PY_BIOINFO=true"
+          --build-arg "ARG_PROFILE_PY=database,datascience,nlp,cv,bioinfo"
 
     - name: py-cuda_10.0
       stage: qpod
       script:
         - build_image qpod py-cuda_10.0 docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-full-cuda_10.0"
-          --build-arg "ARG_MKL=true"
-          --build-arg "ARG_PY_DATABASE=true"
-          --build-arg "ARG_PY_DATASCIENCE=true"
-          --build-arg "ARG_PY_NLP=true"
-          --build-arg "ARG_PY_CV=true"
-          --build-arg "ARG_PY_BIOINFO=true"
+          --build-arg "ARG_PROFILE_PY=database,datascience,nlp,cv,bioinfo"
 
     - name: go
       stage: qpod
       script:
         - build_image qpod go docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-std"
-          --build-arg "ARG_GO=true"
+          --build-arg "ARG_PROFILE_GO=base"
 
     - name: julia
       stage: qpod
       script:
         - build_image qpod julia docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-std"
-          --build-arg "ARG_JULIA=true"
+          --build-arg "ARG_PROFILE_JULIA=base"
 
     - name: octave
       stage: qpod
       script:
         - build_image qpod octave docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-full"
-          --build-arg "ARG_OCTAVE=true"
+          --build-arg "ARG_PROFILE_OCTAVE=base"
 
     - name: full
       stage: qpod
       script:
         - build_image qpod full docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-full"
-          --build-arg "ARG_JDK=true"
-          --build-arg "ARG_MKL=true"
-          --build-arg "ARG_PY_DATABASE=true"
-          --build-arg "ARG_PY_DATASCIENCE=true"
-          --build-arg "ARG_PY_NLP=true"
-          --build-arg "ARG_PY_CV=true"
-          --build-arg "ARG_PY_BIOINFO=true"
-          --build-arg "ARG_R=true"
-          --build-arg "ARG_R_DATASCIENCE=true"
-          --build-arg "ARG_R_STUDIO=true"
-          --build-arg "ARG_GO=true"
-          --build-arg "ARG_JULIA=true"
-          --build-arg "ARG_OCTAVE=false"
+          --build-arg "ARG_PROFILE_JDK=base"
+          --build-arg "ARG_PROFILE_PY=database,datascience,nlp,cv,bioinfo"
+          --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
+          --build-arg "ARG_PROFILE_GO=base"
+          --build-arg "ARG_PROFILE_JULIA=base"
         - alias_image qpod full latest
 
     - name: full-cuda
@@ -282,19 +247,11 @@ jobs:
       script:
         - build_image qpod full-cuda docker_template/Dockerfile
           --build-arg "BASE_TAG=jupyter-full-cuda"
-          --build-arg "ARG_JDK=true"
-          --build-arg "ARG_MKL=true"
-          --build-arg "ARG_PY_DATABASE=true"
-          --build-arg "ARG_PY_DATASCIENCE=true"
-          --build-arg "ARG_PY_NLP=true"
-          --build-arg "ARG_PY_CV=true"
-          --build-arg "ARG_PY_BIOINFO=true"
-          --build-arg "ARG_R=true"
-          --build-arg "ARG_R_DATASCIENCE=true"
-          --build-arg "ARG_R_STUDIO=true"
-          --build-arg "ARG_GO=true"
-          --build-arg "ARG_JULIA=true"
-          --build-arg "ARG_OCTAVE=false"
+          --build-arg "ARG_PROFILE_JDK=base"
+          --build-arg "ARG_PROFILE_PY=database,datascience,nlp,cv,bioinfo"
+          --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
+          --build-arg "ARG_PROFILE_GO=base"
+          --build-arg "ARG_PROFILE_JULIA=base"
         - alias_image qpod full-cuda latest-cuda
 
 
