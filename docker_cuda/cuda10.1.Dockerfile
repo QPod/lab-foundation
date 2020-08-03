@@ -6,8 +6,9 @@
 # CUDA  devel:   https://gitlab.com/nvidia/container-images/cuda/-/tree/master/dist/ubuntu18.04/10.1/devel/Dockerfile
 # CUDNN devel    https://gitlab.com/nvidia/container-images/cuda/-/tree/master/dist/ubuntu18.04/10.1/devel/cudnn7/Dockerfile
 
-ARG repository
-FROM ${repository}:core
+ARG BASE_REPO
+ARG BASE_TAG
+FROM ${BASE_REPO}:${BASE_TAG:-core}
 
 LABEL maintainer="haobibo@gmail.com"
 
