@@ -83,7 +83,7 @@ jobs:
       stage: cuda
       script:
         - build_image qpod base-cuda_10.2 docker_cuda/cuda10.2.Dockerfile
-        - alias_image base-cuda_10.2 cuda
+        - alias_image qpod base-cuda_10.2 cuda
 
     - name: base-cuda_11.0
       stage: cuda
@@ -275,7 +275,7 @@ jobs:
           --build-arg "ARG_GO=true"
           --build-arg "ARG_JULIA=true"
           --build-arg "ARG_OCTAVE=false"
-        - alias_image full latest
+        - alias_image qpod full latest
 
     - name: full-cuda
       stage: qpod
@@ -295,7 +295,7 @@ jobs:
           --build-arg "ARG_GO=true"
           --build-arg "ARG_JULIA=true"
           --build-arg "ARG_OCTAVE=false"
-        - alias_image full-cuda latest-cuda
+        - alias_image qpod full-cuda latest-cuda
 
 
 notifications:
