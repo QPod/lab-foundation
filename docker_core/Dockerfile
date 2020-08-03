@@ -6,7 +6,7 @@ FROM ${repository}:base
 LABEL maintainer="haobibo@gmail.com"
 
 
-RUN source /opt/utils/script-*.sh \
+RUN source /opt/utils/script-utils.sh \
  && install_apt /opt/utils/install_list_core.apt
 
 # Build and install tini, which will be entry point later...
@@ -18,7 +18,7 @@ RUN cd /tmp \
 
 ENV PATH=/opt/conda/bin:$PATH
 
-RUN source /opt/utils/script-*.sh \
+RUN source /opt/utils/script-setup.sh \
  ## --> Install Python3 (Miniconda3), replace conda packages with pip source.
  && setup_conda \
  ## --> Clean up and display components version information...

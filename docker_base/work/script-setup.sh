@@ -1,3 +1,4 @@
+source /opt/utils/script-utils.sh
 
 setup_conda() {
     wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O /tmp/conda.sh \
@@ -23,8 +24,7 @@ setup_conda() {
 
 
 setup_jdk() {
-    source /opt/utils/script-utils.sh \
-    && VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=3 \
+       VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=3 \
     && URL_OPENJDK="https://download.java.net/java/early_access/jdk${VERSION_OPENJDK}/${VERSION_OPENJDK_EA}/GPL/openjdk-${VERSION_OPENJDK}-ea+${VERSION_OPENJDK_EA}_linux-x64_bin.tar.gz" \
     && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
     && ln -s /opt/jdk/bin/* /usr/bin/ \
@@ -33,8 +33,7 @@ setup_jdk() {
 
 
 setup_R() {
-    source /opt/utils/script-utils.sh \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
+       apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
     && echo "deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/" > /etc/apt/sources.list.d/cran.list \
     && install_apt  ./install_list_R.apt \
     && echo "@ Version of R:" && R -e "R.version.string;"  \
@@ -68,7 +67,7 @@ setup_R_rstudio() {
 }
 
 setup_R_shiny() {
-    RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
+       RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
     && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
     && dpkg -i /tmp/rshiny.deb \
     && sed  -i 's/run_as shiny;/run_as root;/g'  /etc/shiny-server/shiny-server.conf \
@@ -89,8 +88,7 @@ setup_R_shiny() {
 
 
 setup_GO() {
-    source /opt/utils/script-utils.sh \
-    && GO_VERSION=$(wget --no-check-certificate -qO- https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 ) \
+       GO_VERSION=$(wget --no-check-certificate -qO- https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 ) \
     && GO_VERSION=$(echo $GO_VERSION | grep -o 'go[^"/]*' | tail -n 1) \
     && GO_URL="https://dl.google.com/go/$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
@@ -106,8 +104,7 @@ setup_GO() {
 
 
 setup_julia() {
-    source /opt/utils/script-utils.sh \
-    && JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
+    JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
     && install_tar_gz $JULIA_URL \
     && mv /opt/julia-* /opt/julia \
     && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
@@ -121,8 +118,7 @@ setup_julia() {
 
 setup_octave() {
     # TEMPFIX: javac version
-    source /opt/utils/script-utils.sh \
-    && install_apt   /opt/utils/install_list_octave.apt \
+       install_apt   /opt/utils/install_list_octave.apt \
     && OCTAVE_VERSION="5.2.0" \
     && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
     && cd /opt/octave-* \
