@@ -20,7 +20,8 @@ before_script:
         IMG="${IMG}-${TRAVIS_BRANCH}" ;
       fi ;
       REPOSITORY="${NAMESPACE}/${IMG}" ;
-      docker build --squash --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" "$@" "$(dirname $FILE)" ;
+      echo "=== ${REPOSITORY}"
+      docker build --squash --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" --build-arg "repository=${REPOSITORY}" "$@" "$(dirname $FILE)" ;
     }
   - alias_image() {
       IMG=$1; TAG_OLD=$2; TAG_NEW=$3; shift 3;
@@ -47,6 +48,7 @@ after_script:
 
 stages:
   - base
+  - core
   - cuda
   - jpy
   - qpod
@@ -63,10 +65,10 @@ jobs:
         - build_image qpod base docker_base/Dockerfile
 
     - name: core
-      stage: base
+      stage: core
       script:
         - build_image qpod core docker_core/Dockerfile
-          --build-arg "repository=${REPOSITORY}"
+          
 
     - name: base-cuda_10.0
       stage: cuda
