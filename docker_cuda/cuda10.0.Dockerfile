@@ -81,9 +81,7 @@ RUN  cd /tmp \
   && make && make install \
   && apt-get -qq remove -y libncurses5-dev
 
-# Clean up and display components version information...
+# This cuda image is left for legacy tensorflow 1.1x, which requires python 3.7
 RUN  source /opt/utils/script-utils.sh \
   && conda install -yq python=3.7 \
-  && install__clean && cd \
-  && echo "@ Version of image: building finished at:" `date` `uname -a` \
-  && echo "@ System environment variables:" `printenv`
+  && install__clean

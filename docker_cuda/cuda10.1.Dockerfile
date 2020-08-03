@@ -82,8 +82,4 @@ RUN  cd /tmp \
   && make && make install \
   && apt-get -qq remove -y libncurses5-dev
 
-# Clean up and display components version information...
-RUN  source /opt/utils/script-utils.sh \
-  && install__clean && cd \
-  && echo "@ Version of image: building finished at:" `date` `uname -a` \
-  && echo "@ System environment variables:" `printenv`
+RUN  source /opt/utils/script-utils.sh && install__clean

@@ -18,10 +18,5 @@ RUN cd /tmp \
 
 ENV PATH=/opt/conda/bin:$PATH
 
-RUN source /opt/utils/script-setup.sh \
- ## --> Install Python3 (Miniconda3), replace conda packages with pip source.
- && setup_conda \
- ## --> Clean up and display components version information...
- && install__clean && cd \
- && echo "@ Version of image: building finished at:" `date` `uname -a` \
- && echo "@ System environment variables:" `printenv`
+## --> Install Python3 (Miniconda3), replace conda packages with pip source.
+RUN source /opt/utils/script-setup.sh && setup_conda && install__clean

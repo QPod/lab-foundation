@@ -31,8 +31,7 @@ WORKDIR /opt/utils
 
 
 # If installing Java environment
-RUN ${ARG_JDK:-false}           && source /opt/utils/script-setup.sh \
-    && setup_jdk \
+RUN ${ARG_JDK:-false} && source /opt/utils/script-setup.sh && setup_jdk \
     && pip install -Uq beakerx pandas py4j  \
     && beakerx install \
     # TEMP fix: not compatible with JupyterLab 2.0
