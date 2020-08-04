@@ -26,8 +26,8 @@ RUN [[ ${ARG_PROFILE_OCTAVE} == *"base"* ]] && source /opt/utils/script-setup.sh
 RUN [[ ${ARG_PROFILE_R}      == *"base"* ]] && source /opt/utils/script-*.sh && setup_R \
     && ([[ ${ARG_PROFILE_R}  == *"datascience"* ]]  \
         && R -e "devtools::install_git('git://github.com/sorhawell/rgl.git',quiet=T,clean=T) # work around rgl, which has too many deps." \
-        && install_apt   ./install_list_R_datascience.apt \
-        && install_R     ./install_list_R_datascience.R   \
+        && install_apt   /opt/utils/install_list_R_datascience.apt \
+        && install_R     /opt/utils/install_list_R_datascience.R   \
         || true \
     ) \
     && ([[ ${ARG_PROFILE_R}  == *"rstudio"* ]] && setup_R_studio || true ) \
@@ -36,9 +36,9 @@ RUN [[ ${ARG_PROFILE_R}      == *"base"* ]] && source /opt/utils/script-*.sh && 
     || true
 
 # If on a x86_64 architecture, install MKL for acceleration; Installing conda packages if provided.
-RUN ( [[ `arch` == "x86_64" ]] && ( echo "mkl" >> ./install_list.conda ) || true ) \
- && source /opt/utils/script-utils.sh && ( install_conda ./install_list.conda || true ) \
- && echo "@ Conda Info and Packages:"  && conda info && conda list | grep -v "pypi"
+RUN ( [[ `arch` == "x86_64" ]] &&        ( echo "mkl" >> /opt/utils/install_list.conda ) || true ) \
+ && source /opt/utils/script-utils.sh && ( install_conda /opt/utils/install_list.conda   || true ) \
+ && echo "@ Conda Info and Packages:" &&   conda info && conda list | grep -v "pypi"
 
 # If installing Python packages
 RUN source /opt/utils/script-utils.sh \
