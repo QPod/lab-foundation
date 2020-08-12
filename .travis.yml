@@ -99,7 +99,21 @@ jobs:
       stage: fabric
       script:
         - build_image qpod python-datascience docker_fabric/Dockerfile
-          --build-args="ARG_PROFILE_PYTHON=datascience"
+          --build-arg "ARG_PROFILE_PYTHON=datascience"
+
+    - name: 
+      stage: fabric
+      script:
+        - build_image qpod r-mini docker_fabric/Dockerfile
+          --build-arg "ARG_PROFILE_R=base,rstudio"
+    
+    - name: 
+      stage: fabric
+      script:
+        - build_image qpod r-full docker_fabric/Dockerfile
+          --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
+
+      
 
 
 notifications:
