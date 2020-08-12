@@ -69,7 +69,9 @@ jobs:
         - build_image qpod core docker_core/Dockerfile
         - alias_image qpod core python-mini
 
-
+#-------------------------------------------------------------------------------
+# GPU: base-cuda_10.0, base-cuda_10.1, base-cuda_10.2 (cuda), base-cuda_11.0
+#-------------------------------------------------------------------------------
     # - name: base-cuda_10.0
     #   stage: cuda
     #   script:
@@ -91,30 +93,56 @@ jobs:
     #   script:
     #     - build_image qpod base-cuda_11.0 docker_cuda/cuda11.0.Dockerfile
 
+#-------------------------------------------------------------------------------
+# Python: (mini - same as core as aliased above), datascience, bioinfo, nlp, cv, full
+#-------------------------------------------------------------------------------
 
-    - name: 
-      stage: fabric
-      script:
-        - build_image qpod python-mini docker_fabric/Dockerfile
-    
     - name: python-datascience
       stage: fabric
       script:
         - build_image qpod python-datascience docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_PYTHON=datascience"
+          --build-arg "ARG_PROFILE_PYTHON=datascience,database"
+
+    - name: python-bioinfo
+      stage: fabric
+      script:
+        - build_image qpod python-datascience docker_fabric/Dockerfile
+          --build-arg "ARG_PROFILE_PYTHON=datascience,bioinfo"
+
+    - name: python-nlp
+      stage: fabric
+      script:
+        - build_image qpod python-datascience docker_fabric/Dockerfile
+          --build-arg "ARG_PROFILE_PYTHON=datascience,nlp"
+
+    - name: python-cv
+      stage: fabric
+      script:
+        - build_image qpod python-datascience docker_fabric/Dockerfile
+          --build-arg "ARG_PROFILE_PYTHON=datascience,cv"
+
+    - name: python-full
+      stage: fabric
+      script:
+        - build_image qpod python-datascience docker_fabric/Dockerfile
+          --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo"
+
+#-------------------------------------------------------------------------------
+#    R: mini, full
+#-------------------------------------------------------------------------------
 
     - name: r-mini
       stage: fabric
       script:
         - build_image qpod r-mini docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_R=base,rstudio"
-    
+          --build-arg "ARG_PROFILE_R=base"
+
     - name: r-full
       stage: fabric
       script:
         - build_image qpod r-full docker_fabric/Dockerfile
           --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
-
+          --build-arg "ARG_PROFILE_LATEX=base,cjk"
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4

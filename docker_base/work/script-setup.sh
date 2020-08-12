@@ -36,8 +36,8 @@ setup_jdk() {
 setup_node() {
     # NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")"
        ARCH="x64" && NODEJS_VERSION_MAJOR="10" \
-    && NODEJS_VERSION=$(wget --no-check-certificate -qO- https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | grep "v${NODEJS_VERSION_MAJOR}." | head -1 ) \
-    && NODEJS_VERSION=$(echo $NODEJS_VERSION | cut -d '"' -f6 | cut -d \/ -f8 ) \
+    && NODEJS_VERSION=$(wget --no-check-certificate -qO- https://github.com/nodejs/node/releases.atom | grep "releases/tag" | grep "v${NODEJS_VERSION_MAJOR}." | head -1 ) \
+    && NODEJS_VERSION=$(echo $NODEJS_VERSION | cut -d "\"" -f6 | cut -d \/ -f8 ) \
     && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
     && mv /opt/node* /opt/node \
     && ln -s /opt/node/bin/* /usr/bin/ \
@@ -52,7 +52,7 @@ setup_R_base() {
     && install_apt  ./install_list_R.apt \
     && echo "@ Version of R:" && R -e "R.version.string;"  \
     && ( type java && type R && R CMD javareconf || true ) \
-    && echo "options(repos=structure(c(CRAN='https://cloud.r-project.org')))" >> /etc/R/Rprofile.site \
+    && echo "options(repos=structure(c(CRAN=\"https://cloud.r-project.org\")))" >> /etc/R/Rprofile.site \
     && echo "@ Version of R:" && R --version 
 }
 
@@ -72,7 +72,7 @@ setup_R_rstudio() {
     && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
     && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
     && echo "auth-validate-users=0"  >> /etc/rstudio/rserver.conf \
-    && printf '#!/bin/bash\nexport USER=root\nrserver --www-port=8888' > /usr/local/bin/start-rstudio.sh \
+    && printf "#!/bin/bash\nexport USER=root\nrserver --www-port=8888" > /usr/local/bin/start-rstudio.sh \
     && chmod u+x /usr/local/bin/start-rstudio.sh
 
     # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
@@ -86,9 +86,9 @@ setup_R_shiny() {
        RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
     && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
     && dpkg -i /tmp/rshiny.deb \
-    && sed  -i 's/run_as shiny;/run_as root;/g'  /etc/shiny-server/shiny-server.conf \
-    && sed  -i 's/3838/8888/g'                   /etc/shiny-server/shiny-server.conf \
-    && printf '#!/bin/bash\nexport USER=root\nshiny-server' > /usr/local/bin/start-shiny-server.sh \
+    && sed  -i "s/run_as shiny;/run_as root;/g"  /etc/shiny-server/shiny-server.conf \
+    && sed  -i "s/3838/8888/g"                   /etc/shiny-server/shiny-server.conf \
+    && printf "#!/bin/bash\nexport USER=root\nshiny-server" > /usr/local/bin/start-shiny-server.sh \
     && chmod u+x /usr/local/bin/start-shiny-server.sh
     
     # Remove shiny's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
@@ -98,7 +98,7 @@ setup_R_shiny() {
     && ln -s /opt/shiny-server/ext/node/bin/node /opt/shiny-server/ext/node/bin/shiny-server
     
     # hack shiny-server to allow run in root user: https://github.com/rstudio/shiny-server/pull/391
-       sed  -i 's/throw new Error/logger.warn/g'  /opt/shiny-server/lib/worker/app-worker.js \
+       sed  -i "s/throw new Error/logger.warn/g"  /opt/shiny-server/lib/worker/app-worker.js \
     && echo "@ Version of shiny-server:" && shiny-server --version
 }
 
@@ -106,12 +106,12 @@ setup_R_shiny() {
 setup_R_datascience() {
       install_apt  /opt/utils/install_list_R_datascience.apt \
    && install_R    /opt/utils/install_list_R_datascience.R \
-   && R -e "devtools::install_git('git://github.com/sorhawell/rgl.git',quiet=T,clean=T) # work around rgl, which has too many deps." \
+   && R -e "devtools::install_git(\"git://github.com/sorhawell/rgl.git\",quiet=T,clean=T) # work around rgl, which has too many deps."
 }
 
 
 setup_GO() {
-       GO_VERSION=$(wget --no-check-certificate -qO- https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 ) \
+       GO_VERSION=$(wget --no-check-certificate -qO- https://github.com/golang/go/releases.atom | grep "releases/tag" | head -1 ) \
     && GO_VERSION=$(echo $GO_VERSION | grep -o 'go[^"/]*' | tail -n 1) \
     && GO_URL="https://dl.google.com/go/$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
@@ -127,8 +127,8 @@ setup_julia() {
     && mv /opt/julia-* /opt/julia \
     && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
     && mkdir -p /opt/julia/pkg \
-    && echo 'import Libdl; push!(Libdl.DL_LOAD_PATH, "/opt/conda/lib")' >> /opt/julia/etc/julia/startup.jl \
-    && echo 'DEPOT_PATH[1]="/opt/julia/pkg"'                            >> /opt/julia/etc/julia/startup.jl \
+    && echo "import Libdl; push!(Libdl.DL_LOAD_PATH, \"/opt/conda/lib\")" >> /opt/julia/etc/julia/startup.jl \
+    && echo "DEPOT_PATH[1]=\"/opt/julia/pkg\""                            >> /opt/julia/etc/julia/startup.jl \
     && echo "@ Version of Julia" && julia --version
 }
 
@@ -139,8 +139,8 @@ setup_octave() {
     && OCTAVE_VERSION="5.2.0" \
     && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
     && cd /opt/octave-* \
-    && sed  -i 's/1.6/11/g' ./Makefile.in \
-    && sed  -i 's/1.6/11/g' ./scripts/java/module.mk \
+    && sed  -i "s/1.6/11/g" ./Makefile.in \
+    && sed  -i "s/1.6/11/g" ./scripts/java/module.mk \
     && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
     && make -j8 && make install -j8 \
     && cd /opt/utils && rm -rf /opt/octave-* \
