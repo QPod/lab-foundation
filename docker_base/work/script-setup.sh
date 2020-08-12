@@ -105,8 +105,7 @@ setup_GO() {
     && GO_URL="https://dl.google.com/go/$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
     && ln -s /opt/go/bin/go /usr/bin/ \
-    && echo  "GOPATH=/opt/go/path"     >> /etc/bash.bashrc \
-    && echo "@ Version of golang:" && go version && go list ...
+    && echo  "GOPATH=/opt/go/path"     >> /etc/bash.bashrc
 }
 
 
@@ -134,6 +133,5 @@ setup_octave() {
     && echo "PATH=/opt/octave/bin:$PATH"     >> /etc/bash.bashrc \
     && install_octave    /opt/utils/install_list_octave.pkg \
     && echo "@ Version of Octave and installed packages:" \
-    && /opt/octave/bin/octave --version  \
-    && /opt/octave/bin/octave --eval "pkg list"
+    && /opt/octave/bin/octave --version
 }
