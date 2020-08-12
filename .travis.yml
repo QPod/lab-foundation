@@ -54,8 +54,8 @@ stages:
 
 jobs:
   allow_failures:
-    - name: "base-cuda_10.2"
-    - name: "base-cuda_11.0"
+    - name: "cuda_10.2"
+    - name: "cuda_11.0"
 
   include:
     - name: base
@@ -70,28 +70,28 @@ jobs:
         - alias_image qpod core python-mini
 
 #-------------------------------------------------------------------------------
-# GPU: base-cuda_10.0, base-cuda_10.1, base-cuda_10.2 (cuda), base-cuda_11.0
+# GPU: cuda_10.0, cuda_10.1, cuda_10.2 (cuda), cuda_11.0
 #-------------------------------------------------------------------------------
-    # - name: base-cuda_10.0
+    # - name: cuda_10.0
     #   stage: cuda
     #   script:
-    #     - build_image qpod base-cuda_10.0 docker_cuda/cuda10.0.Dockerfile
+    #     - build_image qpod cuda_10.0 docker_cuda/cuda10.0.Dockerfile
 
-    # - name: base-cuda_10.1
+    # - name: cuda_10.1
     #   stage: cuda
     #   script:
-    #     - build_image qpod base-cuda_10.1 docker_cuda/cuda10.1.Dockerfile
+    #     - build_image qpod cuda_10.1 docker_cuda/cuda10.1.Dockerfile
    
-    # - name: base-cuda_10.2
+    # - name: cuda_10.2
     #   stage: cuda
     #   script:
-    #     - build_image qpod base-cuda_10.2 docker_cuda/cuda10.2.Dockerfile
-    #     - alias_image qpod base-cuda_10.2 cuda
+    #     - build_image qpod cuda_10.2 docker_cuda/cuda10.2.Dockerfile
+    #     - alias_image qpod cuda_10.2 cuda
 
-    # - name: base-cuda_11.0
+    # - name: cuda_11.0
     #   stage: cuda
     #   script:
-    #     - build_image qpod base-cuda_11.0 docker_cuda/cuda11.0.Dockerfile
+    #     - build_image qpod cuda_11.0 docker_cuda/cuda11.0.Dockerfile
 
 #-------------------------------------------------------------------------------
 # Python: (mini - same as core as aliased above), datascience, bioinfo, nlp, cv, full
@@ -128,13 +128,12 @@ jobs:
           --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo"
 
 #-------------------------------------------------------------------------------
-#    R: mini, full
+#    R: base, full
 #-------------------------------------------------------------------------------
-
-    - name: r-mini
+    - name: r
       stage: fabric
       script:
-        - build_image qpod r-mini docker_fabric/Dockerfile
+        - build_image qpod r docker_fabric/Dockerfile
           --build-arg "ARG_PROFILE_R=base"
 
     - name: r-full
@@ -143,6 +142,52 @@ jobs:
         - build_image qpod r-full docker_fabric/Dockerfile
           --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
           --build-arg "ARG_PROFILE_LATEX=base,cjk"
+
+#-------------------------------------------------------------------------------
+#    NodeJS: base
+#-------------------------------------------------------------------------------
+  - name: node
+    stage: fabric
+    script:
+      - build_image qpod node docker_fabric/Dockerfile
+        --build-arg "ARG_PROFILE_NODEJS=base"
+
+#-------------------------------------------------------------------------------
+#    Java: base
+#-------------------------------------------------------------------------------
+    - name: java
+      stage: fabric
+      script:
+        - build_image qpod java docker_fabric/Dockerfile
+          --build-arg "ARG_PROFILE_JDK=base"
+
+#-------------------------------------------------------------------------------
+#    Julia: base
+#-------------------------------------------------------------------------------
+    - name: julia
+      stage: fabric
+      script:
+        - build_image qpod julia docker_fabric/Dockerfile
+          --build-arg "ARG_PROFILE_JULIA=base"
+
+#-------------------------------------------------------------------------------
+#    Go: base
+#-------------------------------------------------------------------------------
+    - name: go
+      stage: fabric
+      script:
+        - build_image qpod go docker_fabric/Dockerfile
+          --build-arg "ARG_PROFILE_GO=base"
+
+#-------------------------------------------------------------------------------
+#    Octave: mini
+#-------------------------------------------------------------------------------
+    - name: ovtave
+      stage: fabric
+      script:
+        - build_image qpod octave docker_fabric/Dockerfile
+          --build-arg "ARG_PROFILE_OCTAVE=base"
+
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4

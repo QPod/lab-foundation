@@ -45,16 +45,18 @@ install__clean(){
   chmod ugo+rwXt /tmp
   find /opt/conda/lib | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
   echo "@ System environment variables:" `printenv`
+  true
 }
 
 # function to list installed packages
 list_installed_packages() {
   type pip    && echo "@ Version of Python and packages:" && python --version && pip list
   type conda  && echo "@ Version of Conda and packages:"  && conda info && conda list
-  type node   && echo "@ Version of NodeJS and packages:" && node --version && npm --version && npm list -g
+  type node   && echo "@ Version of NodeJS and packages:" && node --version && npm --version && npm list -g --depth 0
   type java   && echo "@ Version of Java (java/javac):"   && java -version && javac -version
   type R      && echo "@ Version of R and libraries:"     && R --version && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]"
   type julia  && echo "@ Version of Julia and packages"   && julia --version && julia -e "using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,\"==\",v.version); end"
   type go     && echo "@ Version of golang and packages:" && go version && go list ...
   type octave && echo "@ Version of Octave and packages:" && octave --version && octave --eval "pkg list"
+  true
 }
