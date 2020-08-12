@@ -64,31 +64,13 @@ jobs:
 
     - name: core
       stage: core
-      script: build_image qpod core docker_core/Dockerfile && alias_image qpod core python-mini
+      script: build_image qpod core docker_core/Dockerfile && alias_image qpod core py
 
-#-------------------------------------------------------------------------------
-# GPU: cuda_10.0, cuda_10.1, cuda_10.2 (cuda), cuda_11.0
-#-------------------------------------------------------------------------------
-    # - name: cuda_10.0
-    #   stage: cuda
-    #   script: build_image qpod cuda_10.0 docker_cuda/cuda10.0.Dockerfile
-
-    # - name: cuda_10.1
-    #   stage: cuda
-    #   script: build_image qpod cuda_10.1 docker_cuda/cuda10.1.Dockerfile
-   
-    # - name: cuda_10.2
-    #   stage: cuda
-    #   script: build_image qpod cuda_10.2 docker_cuda/cuda10.2.Dockerfile && alias_image qpod cuda_10.2 cuda
-
-    # - name: cuda_11.0
-    #   stage: cuda
-    #   script: build_image qpod cuda_11.0 docker_cuda/cuda11.0.Dockerfile
 
 #-------------------------------------------------------------------------------
 # Python: (mini - same as core as aliased above), datascience, bioinfo, nlp, cv, full
 #-------------------------------------------------------------------------------
-    - name: py-datascience
+    - name: py-data
       stage: fabric
       script: build_image qpod py-data    docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database"
 
@@ -169,6 +151,26 @@ jobs:
       script: build_image qpod full docker_fabric/Dockerfile        
               --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions"
               --build-arg "ARG_PROFILE_VSCODE=base"
+
+#===============================================================================
+# GPU: cuda_10.0, cuda_10.1, cuda_10.2 (cuda), cuda_11.0
+#-------------------------------------------------------------------------------
+    - name: cuda_10.0
+      stage: cuda
+      script: build_image qpod cuda_10.0 docker_cuda/cuda10.0.Dockerfile
+
+    - name: cuda_10.1
+      stage: cuda
+      script: build_image qpod cuda_10.1 docker_cuda/cuda10.1.Dockerfile
+
+    - name: cuda_10.2
+      stage: cuda
+      script: build_image qpod cuda_10.2 docker_cuda/cuda10.2.Dockerfile && alias_image qpod cuda_10.2 cuda
+
+    - name: cuda_11.0
+      stage: cuda
+      script: build_image qpod cuda_11.0 docker_cuda/cuda11.0.Dockerfile
+
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4
