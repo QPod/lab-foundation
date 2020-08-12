@@ -1,6 +1,6 @@
 source /opt/utils/script-utils.sh
 
-setup_jupyter() {
+setup_jupyter_base() {
     # TEMP fix: nbconver requires mistune<2,>0.8.1 for now
        pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub "mistune<2,>0.8.1" \
     && mkdir -p /opt/conda/etc/jupyter/ \
@@ -54,7 +54,7 @@ setup_jupyter_kennels() {
 }
 
 
-setup_jupyter_extend() {
+setup_jupyter_extensions() {
        install_apt /opt/utils/install_list_JPY_extend.apt \
     && install_pip /opt/utils/install_list_JPY_extend.pip \
     && ipcluster nbextension enable
@@ -78,7 +78,7 @@ setup_jupyter_extend() {
 }
 
 
-setup_vscode() {
+setup_vscode_base() {
        VERSION_CODER=$(wget --no-check-certificate -qO- https://github.com/cdr/code-server/releases.atom | grep "releases/tag" | head -1 ) \
     && VERSION_CODER=$(echo $VERSION_CODER | cut -d "\"" -f6 | cut -d \/ -f8 ) \
     && install_tar_gz "https://github.com/cdr/code-server/releases/download/${VERSION_CODER}/code-server-${VERSION_CODER}-linux-x86_64.tar.gz" \

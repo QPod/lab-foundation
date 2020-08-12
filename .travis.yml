@@ -146,10 +146,29 @@ jobs:
 #-------------------------------------------------------------------------------
 #    Octave: mini
 #-------------------------------------------------------------------------------
-    - name: octave
+    # - name: octave
+    #   stage: fabric
+    #   script: build_image qpod octave     docker_fabric/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
+#-------------------------------------------------------------------------------
+#    fabric-full
+#-------------------------------------------------------------------------------
+    - name: fabric-full
       stage: fabric
-      script: build_image qpod octave     docker_fabric/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
+      script: build_image qpod fabric-full docker_fabric/Dockerfile        
+              --build-arg "ARG_PROFILE_PYTHON=base"
+              --build-arg "ARG_PROFILE_R=base"                
+              --build-arg "ARG_PROFILE_JAVA=base"
+              --build-arg "ARG_PROFILE_GO=base"
+              --build-arg "ARG_PROFILE_JULIA=base"
 
+#-------------------------------------------------------------------------------
+#    IDE
+#-------------------------------------------------------------------------------
+    - name: full
+      stage: ide
+      script: build_image qpod full docker_fabric/Dockerfile        
+              --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions"
+              --build-arg "ARG_PROFILE_VSCODE=base"
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4

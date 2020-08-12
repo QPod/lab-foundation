@@ -2,28 +2,30 @@
 
 ARG BASE_REPO
 ARG BASE_TAG
-FROM ${BASE_REPO}:${BASE_TAG:-core}
+FROM ${BASE_REPO}:${BASE_TAG:-fabric-full}
 
 LABEL maintainer="haobibo@gmail.com"
 
-ARG ARG_EXTEND_JUPYTER=true
-ARG ARG_EXTEND_VSCODE=true
+# base,kernels,extensions
+ARG ARG_PROFILE_JUPYTER=base
+
+# base
+ARG ARG_PROFILE_VSCODE=base
+
 ARG ARG_REMOVE_NODEJS=false
 
 COPY work /opt/utils/
 
 # Setup Jupyter: Basic Configurations and Extensions...
-RUN source /opt/utils/script-extend.sh && setup_jupyter \
- && source /opt/utils/script-extend.sh && setup_jupyter_kennels
-
-# If installing more extension for Jupyter.
-RUN ${ARG_EXTEND_JUPYTER:-false} && source /opt/utils/script-extend.sh && setup_jupyter_extend || true
+RUN source /opt/utils/script-extend.sh \
+ && for profile in $(echo $ARG_PROFILE_JUPYTER | tr "," "\n") ; do ( setup_jupyter_${profile} || true ) ; done
 
 # If not keeping NodeJS, remove NoedJS to reduce image size
 RUN ${ARG_REMOVE_NODEJS:-false}  || ( echo "Removing Node/NPM..." && rm -rf /usr/bin/node /usr/bin/npm /usr/bin/npx /opt/node )
 
 # If installing coder-server  # https://github.com/cdr/code-server/releases
-RUN ${ARG_EXTEND_VSCODE:-false}     && source /opt/utils/script-utils.sh && setup_vscode || true
+RUN source /opt/utils/script-extend.sh \
+ && for profile in $(echo $ARG_PROFILE_VSCODE | tr "," "\n") ; do ( setup_vscode_${profile} || true ) ; done
 
 # Clean up and display components version information...
 RUN source /opt/utils/script-utils.sh  && install__clean
