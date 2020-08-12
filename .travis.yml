@@ -67,53 +67,53 @@ jobs:
       stage: core
       script:
         - build_image qpod core docker_core/Dockerfile
-          
+        - alias_image qpod core python-mini
 
-    - name: base-cuda_10.0
-      stage: cuda
-      script:
-        - build_image qpod base-cuda_10.0 docker_cuda/cuda10.0.Dockerfile
 
-    - name: base-cuda_10.1
-      stage: cuda
-      script:
-        - build_image qpod base-cuda_10.1 docker_cuda/cuda10.1.Dockerfile
+    # - name: base-cuda_10.0
+    #   stage: cuda
+    #   script:
+    #     - build_image qpod base-cuda_10.0 docker_cuda/cuda10.0.Dockerfile
+
+    # - name: base-cuda_10.1
+    #   stage: cuda
+    #   script:
+    #     - build_image qpod base-cuda_10.1 docker_cuda/cuda10.1.Dockerfile
    
-    - name: base-cuda_10.2
-      stage: cuda
-      script:
-        - build_image qpod base-cuda_10.2 docker_cuda/cuda10.2.Dockerfile
-        - alias_image qpod base-cuda_10.2 cuda
+    # - name: base-cuda_10.2
+    #   stage: cuda
+    #   script:
+    #     - build_image qpod base-cuda_10.2 docker_cuda/cuda10.2.Dockerfile
+    #     - alias_image qpod base-cuda_10.2 cuda
 
-    - name: base-cuda_11.0
-      stage: cuda
-      script:
-        - build_image qpod base-cuda_11.0 docker_cuda/cuda11.0.Dockerfile
+    # - name: base-cuda_11.0
+    #   stage: cuda
+    #   script:
+    #     - build_image qpod base-cuda_11.0 docker_cuda/cuda11.0.Dockerfile
+
 
     - name: 
       stage: fabric
       script:
         - build_image qpod python-mini docker_fabric/Dockerfile
     
-    - name: 
+    - name: python-datascience
       stage: fabric
       script:
         - build_image qpod python-datascience docker_fabric/Dockerfile
           --build-arg "ARG_PROFILE_PYTHON=datascience"
 
-    - name: 
+    - name: r-mini
       stage: fabric
       script:
         - build_image qpod r-mini docker_fabric/Dockerfile
           --build-arg "ARG_PROFILE_R=base,rstudio"
     
-    - name: 
+    - name: r-full
       stage: fabric
       script:
         - build_image qpod r-full docker_fabric/Dockerfile
           --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
-
-      
 
 
 notifications:

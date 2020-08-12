@@ -1,7 +1,8 @@
 source /opt/utils/script-utils.sh
 
+
 setup_conda() {
-    wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O /tmp/conda.sh \
+       wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O /tmp/conda.sh \
     && bash /tmp/conda.sh -f -b -p /opt/conda \
     && conda config --system --prepend channels conda-forge \
     && conda config --system --set auto_update_conda false  \
@@ -15,7 +16,7 @@ setup_conda() {
     && pip install -UIq pip setuptools $CONDA_PY_PKGS
 
     # Replace system Python3 with Conda's Python, and take care of `lsb_releaes`
-    rm /usr/bin/python3 && ln -s /opt/conda/bin/python /usr/bin/python3 \
+       rm /usr/bin/python3 && ln -s /opt/conda/bin/python /usr/bin/python3 \
     && mv /usr/share/pyshared/lsb_release.py /usr/bin/
 
     # Print Conda and Python packages information in the docker build log
@@ -31,6 +32,7 @@ setup_jdk() {
     && echo "@ Version of Java (java/javac):" && java -version && javac -version
 }
 
+
 setup_node() {
     # NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")"
        ARCH="x64" && NODEJS_VERSION_MAJOR="10" \
@@ -44,18 +46,19 @@ setup_node() {
 }
 
 
-setup_R() {
+setup_R_base() {
        apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
     && echo "deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/" > /etc/apt/sources.list.d/cran.list \
     && install_apt  ./install_list_R.apt \
     && echo "@ Version of R:" && R -e "R.version.string;"  \
     && ( type java && type R && R CMD javareconf || true ) \
-    && echo "options(repos=structure(c(CRAN='https://cloud.r-project.org')))" >> /etc/R/Rprofile.site
+    && echo "options(repos=structure(c(CRAN='https://cloud.r-project.org')))" >> /etc/R/Rprofile.site \
+    && echo "@ Version of R:" && R --version 
 }
 
 
 setup_R_rstudio() {
-    RSTUDIO_VERSION=`wget -qO - https://dailies.rstudio.com/rstudioserver/oss/ubuntu/x86_64/ | grep -oP "(?<=rstudio-server-)[0-9]\.[0-9]\.[0-9]+" | sort | tail -n 1` \
+       RSTUDIO_VERSION=`wget -qO - https://dailies.rstudio.com/rstudioserver/oss/ubuntu/x86_64/ | grep -oP "(?<=rstudio-server-)[0-9]\.[0-9]\.[0-9]+" | sort | tail -n 1` \
     && wget -qO- "https://s3.amazonaws.com/rstudio-ide-build/server/bionic/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
     && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
     && ln -s /opt/rstudio-server         /usr/lib/ \
@@ -63,7 +66,7 @@ setup_R_rstudio() {
     
     # Allow RStudio server run as root user
     # Configuration to make RStudio server disable authentication and do not run as daemon
-    mkdir -p /etc/rstudio \
+       mkdir -p /etc/rstudio \
     && echo "server-daemonize=0"     >> /etc/rstudio/rserver.conf \
     && echo "server-user=root"       >> /etc/rstudio/rserver.conf \
     && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
@@ -77,6 +80,7 @@ setup_R_rstudio() {
     && ( which pandoc-citeproc && rm /opt/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
     && echo "@ Version of rstudio-server:" && rstudio-server version
 }
+
 
 setup_R_shiny() {
        RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
@@ -99,13 +103,21 @@ setup_R_shiny() {
 }
 
 
+setup_R_datascience() {
+      install_apt  /opt/utils/install_list_R_datascience.apt \
+   && install_R    /opt/utils/install_list_R_datascience.R \
+   && R -e "devtools::install_git('git://github.com/sorhawell/rgl.git',quiet=T,clean=T) # work around rgl, which has too many deps." \
+}
+
+
 setup_GO() {
        GO_VERSION=$(wget --no-check-certificate -qO- https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 ) \
     && GO_VERSION=$(echo $GO_VERSION | grep -o 'go[^"/]*' | tail -n 1) \
     && GO_URL="https://dl.google.com/go/$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
     && ln -s /opt/go/bin/go /usr/bin/ \
-    && echo  "GOPATH=/opt/go/path"     >> /etc/bash.bashrc
+    && echo "GOPATH=/opt/go/path"     >> /etc/bash.bashrc \
+    && echo "@ Version of golang and packages:" && go version 
 }
 
 
@@ -116,8 +128,10 @@ setup_julia() {
     && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
     && mkdir -p /opt/julia/pkg \
     && echo 'import Libdl; push!(Libdl.DL_LOAD_PATH, "/opt/conda/lib")' >> /opt/julia/etc/julia/startup.jl \
-    && echo 'DEPOT_PATH[1]="/opt/julia/pkg"'                            >> /opt/julia/etc/julia/startup.jl
+    && echo 'DEPOT_PATH[1]="/opt/julia/pkg"'                            >> /opt/julia/etc/julia/startup.jl \
+    && echo "@ Version of Julia" && julia --version
 }
+
 
 setup_octave() {
     # TEMPFIX: javac version

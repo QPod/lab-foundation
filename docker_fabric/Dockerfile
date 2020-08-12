@@ -44,12 +44,7 @@ RUN source /opt/utils/script-*.sh \
 
 # If installing R environment
 RUN source /opt/utils/script-*.sh \
- && for profile in $(echo $ARG_PROFILE_R | tr "," "\n") ; do ( setup_${profile} || true ) ; done \
- && ( [[ ${ARG_PROFILE_R}  == *"datascience"* ]] \
- &&   R -e "devtools::install_git('git://github.com/sorhawell/rgl.git',quiet=T,clean=T) # work around rgl, which has too many deps." \
- &&   install_apt  /opt/utils/install_list_R_datascience.apt \
- &&   install_R    /opt/utils/install_list_R_datascience.R   \
- ||   true )
+ && for profile in $(echo $ARG_PROFILE_R | tr "," "\n") ; do ( setup_R_${profile} || true ) ; done
 
 # If on a x86_64 architecture and install data science pkgs, install MKL for acceleration; Installing conda packages if provided.
 RUN ( [[ `arch` == "x86_64" && ${ARG_PROFILE_PYTHON} == *"datascience"* ]] && ( echo "mkl" >> /opt/utils/install_list.conda ) || true ) \
@@ -67,4 +62,4 @@ RUN source /opt/utils/script-utils.sh \
  && rm -f $(python -c 'import sys; print("/opt/conda/lib/python3.%s/site-packages/cytoolz/__init__.py" % sys.version_info.minor)')
 
 # Clean up and display components version information...
-RUN source /opt/utils/script-utils.sh  && install__clean
+RUN source /opt/utils/script-utils.sh && list_installed_packages && install__clean
