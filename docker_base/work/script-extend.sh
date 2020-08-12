@@ -37,7 +37,6 @@ setup_jupyter_kennels() {
     which julia \
     && julia -e "using Pkg; Pkg.add(\"IJulia\"); Pkg.precompile();" \
     && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
-    && echo "@ Version of julia:" && julia -e "using Pkg; for(k,v) in Pkg.dependencies(); println(v.name,\"==\",v.version); end" \
     || true
 
     which go \
