@@ -24,12 +24,18 @@ setup_conda() {
 }
 
 
-setup_jdk() {
+setup_java_base() {
        VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=8 \
     && URL_OPENJDK="https://download.java.net/java/early_access/jdk${VERSION_OPENJDK}/${VERSION_OPENJDK_EA}/GPL/openjdk-${VERSION_OPENJDK}-ea+${VERSION_OPENJDK_EA}_linux-x64_bin.tar.gz" \
     && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
     && ln -s /opt/jdk/bin/* /usr/bin/ \
     && echo "@ Version of Java (java/javac):" && java -version && javac -version
+}
+
+setup_java_maven() {
+      MAVEN_VERSION="3.6.3" \
+   && install_zip "http://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip" \
+   && mv /opt/apache-maven-${MAVEN_VERSION} /opt/maven
 }
 
 

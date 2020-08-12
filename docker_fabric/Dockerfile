@@ -8,7 +8,7 @@ LABEL maintainer="haobibo@gmail.com"
 
 ARG ARG_PROFILE_NODEJS=base
 
-ARG ARG_PROFILE_JDK
+ARG ARG_PROFILE_JAVA
 
 # base,datascience,rstudio,rshiny
 ARG ARG_PROFILE_R
@@ -30,7 +30,7 @@ COPY work /opt/utils/
 # NodeJS is required to build JupyterLab Extensions later
 RUN [[ ${ARG_PROFILE_NODEJS} == *"base"* ]] && source /opt/utils/script-setup.sh && setup_node   || true
 
-RUN [[ ${ARG_PROFILE_JDK}    == *"base"* ]] && source /opt/utils/script-setup.sh && setup_jdk    || true
+RUN [[ ${ARG_PROFILE_JAVA}   == *"base"* ]] && source /opt/utils/script-setup.sh && setup_java   || true
 
 RUN [[ ${ARG_PROFILE_GO}     == *"base"* ]] && source /opt/utils/script-setup.sh && setup_GO     || true
 
@@ -39,11 +39,11 @@ RUN [[ ${ARG_PROFILE_JULIA}  == *"base"* ]] && source /opt/utils/script-setup.sh
 RUN [[ ${ARG_PROFILE_OCTAVE} == *"base"* ]] && source /opt/utils/script-setup.sh && setup_octave || true
 
 # If installing LaTex and LaTex CJK packages.
-RUN source /opt/utils/script-*.sh \
- && for profile in $(echo $ARG_PROFILE_LATEX | tr "," "\n") ; do ( install_pip "/opt/utils/install_list_latex_${profile}.pip" || true ) ; done
+RUN source /opt/utils/script-utils.sh \
+ && for profile in $(echo $ARG_PROFILE_LATEX | tr "," "\n") ; do ( install_apt "/opt/utils/install_list_latex_${profile}.apt" || true ) ; done
 
 # If installing R environment
-RUN source /opt/utils/script-*.sh \
+RUN source /opt/utils/script-setup.sh \
  && for profile in $(echo $ARG_PROFILE_R | tr "," "\n") ; do ( setup_R_${profile} || true ) ; done
 
 # If on a x86_64 architecture and install data science pkgs, install MKL for acceleration; Installing conda packages if provided.

@@ -60,133 +60,95 @@ jobs:
   include:
     - name: base
       stage: base
-      script:
-        - build_image qpod base docker_base/Dockerfile
+      script: build_image qpod base docker_base/Dockerfile
 
     - name: core
       stage: core
-      script:
-        - build_image qpod core docker_core/Dockerfile
-        - alias_image qpod core python-mini
+      script: build_image qpod core docker_core/Dockerfile && alias_image qpod core python-mini
 
 #-------------------------------------------------------------------------------
 # GPU: cuda_10.0, cuda_10.1, cuda_10.2 (cuda), cuda_11.0
 #-------------------------------------------------------------------------------
     # - name: cuda_10.0
     #   stage: cuda
-    #   script:
-    #     - build_image qpod cuda_10.0 docker_cuda/cuda10.0.Dockerfile
+    #   script: build_image qpod cuda_10.0 docker_cuda/cuda10.0.Dockerfile
 
     # - name: cuda_10.1
     #   stage: cuda
-    #   script:
-    #     - build_image qpod cuda_10.1 docker_cuda/cuda10.1.Dockerfile
+    #   script: build_image qpod cuda_10.1 docker_cuda/cuda10.1.Dockerfile
    
     # - name: cuda_10.2
     #   stage: cuda
-    #   script:
-    #     - build_image qpod cuda_10.2 docker_cuda/cuda10.2.Dockerfile
-    #     - alias_image qpod cuda_10.2 cuda
+    #   script: build_image qpod cuda_10.2 docker_cuda/cuda10.2.Dockerfile && alias_image qpod cuda_10.2 cuda
 
     # - name: cuda_11.0
     #   stage: cuda
-    #   script:
-    #     - build_image qpod cuda_11.0 docker_cuda/cuda11.0.Dockerfile
+    #   script: build_image qpod cuda_11.0 docker_cuda/cuda11.0.Dockerfile
 
 #-------------------------------------------------------------------------------
 # Python: (mini - same as core as aliased above), datascience, bioinfo, nlp, cv, full
 #-------------------------------------------------------------------------------
-
-    - name: python-datascience
+    - name: py-datascience
       stage: fabric
-      script:
-        - build_image qpod python-datascience docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_PYTHON=datascience,database"
+      script: build_image qpod py-data    docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database"
 
-    - name: python-bioinfo
+    - name: py-bioinfo
       stage: fabric
-      script:
-        - build_image qpod python-datascience docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_PYTHON=datascience,bioinfo"
+      script: build_image qpod py-bioinfo docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,bioinfo"
 
-    - name: python-nlp
+    - name: py-nlp
       stage: fabric
-      script:
-        - build_image qpod python-datascience docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_PYTHON=datascience,nlp"
+      script: build_image qpod py-nlp     docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp"
 
-    - name: python-cv
+    - name: py-cv
       stage: fabric
-      script:
-        - build_image qpod python-datascience docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_PYTHON=datascience,cv"
+      script: build_image qpod py-cv      docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,cv"
 
-    - name: python-full
+    - name: py-full
       stage: fabric
-      script:
-        - build_image qpod python-datascience docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo"
+      script: build_image qpod py-full    docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo"
 
 #-------------------------------------------------------------------------------
 #    R: base, full
 #-------------------------------------------------------------------------------
     - name: r
       stage: fabric
-      script:
-        - build_image qpod r docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_R=base"
+      script: build_image qpod r          docker_fabric/Dockerfile --build-arg "ARG_PROFILE_R=base"
 
     - name: r-full
       stage: fabric
-      script:
-        - build_image qpod r-full docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
-          --build-arg "ARG_PROFILE_LATEX=base,cjk"
+      script: build_image qpod r-full     docker_fabric/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" --build-arg "ARG_PROFILE_LATEX=base,cjk"
 
 #-------------------------------------------------------------------------------
 #    NodeJS: base
 #-------------------------------------------------------------------------------
     - name: node
       stage: fabric
-      script:
-        - build_image qpod node docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_NODEJS=base"
-
+      script: build_image qpod node       docker_fabric/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base"
 #-------------------------------------------------------------------------------
 #    Java: base
 #-------------------------------------------------------------------------------
     - name: java
       stage: fabric
-      script:
-        - build_image qpod java docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_JDK=base"
-
+      script: build_image qpod java       docker_fabric/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"
 #-------------------------------------------------------------------------------
 #    Julia: base
 #-------------------------------------------------------------------------------
     - name: julia
       stage: fabric
-      script:
-        - build_image qpod julia docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_JULIA=base"
-
+      script: build_image qpod julia      docker_fabric/Dockerfile --build-arg "ARG_PROFILE_JULIA=base"
 #-------------------------------------------------------------------------------
 #    Go: base
 #-------------------------------------------------------------------------------
     - name: go
       stage: fabric
-      script:
-        - build_image qpod go docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_GO=base"
-
+      script: build_image qpod go         docker_fabric/Dockerfile --build-arg "ARG_PROFILE_GO=base"
 #-------------------------------------------------------------------------------
 #    Octave: mini
 #-------------------------------------------------------------------------------
-    - name: ovtave
+    - name: octave
       stage: fabric
-      script:
-        - build_image qpod octave docker_fabric/Dockerfile
-          --build-arg "ARG_PROFILE_OCTAVE=base"
+      script: build_image qpod octave     docker_fabric/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
 
 
 notifications:
