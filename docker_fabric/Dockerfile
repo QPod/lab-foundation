@@ -62,4 +62,4 @@ RUN source /opt/utils/script-utils.sh \
  && rm -f $(python -c 'import sys; print("/opt/conda/lib/python3.%s/site-packages/cytoolz/__init__.py" % sys.version_info.minor)')
 
 # Clean up and display components version information...
-RUN source /opt/utils/script-utils.sh && list_installed_packages && install__clean
+RUN source /opt/utils/script-utils.sh && install__clean && list_installed_packages
