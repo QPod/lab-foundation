@@ -26,33 +26,30 @@ setup_jupyter_kernels() {
 
        which R \
     && R -e "install.packages('IRkernel')" \
-    && R -e "IRkernel::installspec(user=FALSE)"
+    && R -e "IRkernel::installspec(user=FALSE)" \
+    && mv /usr/local/share/jupyter/kernels/ir /opt/conda/share/jupyter/kernels/
 
        which java \
     && pip install -Uq beakerx pandas py4j  \
     && beakerx install \
-    && jupyter labextension list \
-    || true
+    && jupyter labextension list
     # TEMP fix: not compatible with JupyterLab 2.0
     # && jupyter labextension install beakerx-jupyterlab \
 
        which julia \
     && julia -e "using Pkg; Pkg.add(\"IJulia\"); Pkg.precompile();" \
-    && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
-    || true
+    && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/
 
        which go \
     && export GOPATH=/opt/go/path \
     && go get -u github.com/gopherdata/gophernotes \
     && mkdir -p /opt/conda/share/jupyter/kernels/gophernotes \
     && cp $GOPATH/src/github.com/gopherdata/gophernotes/kernel/* /opt/conda/share/jupyter/kernels/gophernotes \
-    && ln -s $GOPATH/bin/gophernotes /usr/local/bin \
-    || true
+    && ln -s $GOPATH/bin/gophernotes /usr/local/bin
     
        which octave \
     && export PATH=/opt/octave/bin:$PATH \
-    && pip install -Uq octave_kernel \
-    || true
+    && pip install -Uq octave_kernel
 
     echo "@ Installed Jupyter Kernels:" \
     && jupyter kernelspec list
