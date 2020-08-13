@@ -51,6 +51,9 @@ setup_jupyter_kennels() {
     && export PATH=/opt/octave/bin:$PATH \
     && pip install -Uq octave_kernel \
     || true
+
+    echo "@ Installed Jupyter Kernels:" \
+    && jupyter kernelspec list
 }
 
 

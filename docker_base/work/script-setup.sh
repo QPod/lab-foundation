@@ -40,11 +40,12 @@ setup_java_maven() {
 
 
 setup_node() {
-    # NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")"
-       ARCH="x64" && NODEJS_VERSION_MAJOR="10" \
+    # NODEJS_VERSION_MAJOR="v14" &&
+       ARCH="x64" \
     && NODEJS_VERSION=$(wget --no-check-certificate -qO- https://github.com/nodejs/node/releases.atom | grep "releases/tag" | grep "v${NODEJS_VERSION_MAJOR}." | head -1 ) \
     && NODEJS_VERSION=$(echo $NODEJS_VERSION | cut -d "\"" -f6 | cut -d \/ -f8 ) \
-    && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
+    && NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")" \
+    && install_tar_gz "https://nodejs.org/download/release/latest-${NODEJS_VERSION_MAJOR}.x/node-${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
     && mv /opt/node* /opt/node \
     && ln -s /opt/node/bin/* /usr/bin/ \
     && echo "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
@@ -88,7 +89,7 @@ setup_R_rstudio() {
 }
 
 
-setup_R_shiny() {
+setup_R_rshiny() {
        RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
     && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
     && dpkg -i /tmp/rshiny.deb \
