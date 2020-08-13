@@ -44,12 +44,7 @@ after_script:
       echo "Not pushing ${IMGS} in PR ...";
     fi
 
-stages:
-  - base
-  - core
-  - fabric
-  - ide
-  - cuda
+stages: [base, core, fabric, ide, cuda]
 
 jobs:
   allow_failures:
