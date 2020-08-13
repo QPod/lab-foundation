@@ -19,14 +19,16 @@ setup_jupyter_kernels() {
     # Install Bash Kernel
     pip install -Uq bash_kernel && python -m bash_kernel.install --sys-prefix
 
-    # Install NodeJS Kernel
-    which npm \
+       which npm \
     && npm install -g --unsafe-perm --python=python2.7 ijavascript \
     && /opt/node/bin/ijsinstall --install=global --spec-path=full \
-    && mv /usr/local/share/jupyter/kernels/javascript /opt/conda/share/jupyter/kernels/ \
-    || true
+    && mv /usr/local/share/jupyter/kernels/javascript /opt/conda/share/jupyter/kernels/
 
-    which java \
+       which R \
+    && R -e "install.packages('IRkernel')" \
+    && R -e "IRkernel::installspec(user=FALSE)"
+
+       which java \
     && pip install -Uq beakerx pandas py4j  \
     && beakerx install \
     && jupyter labextension list \
@@ -34,12 +36,12 @@ setup_jupyter_kernels() {
     # TEMP fix: not compatible with JupyterLab 2.0
     # && jupyter labextension install beakerx-jupyterlab \
 
-    which julia \
+       which julia \
     && julia -e "using Pkg; Pkg.add(\"IJulia\"); Pkg.precompile();" \
     && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/ \
     || true
 
-    which go \
+       which go \
     && export GOPATH=/opt/go/path \
     && go get -u github.com/gopherdata/gophernotes \
     && mkdir -p /opt/conda/share/jupyter/kernels/gophernotes \
@@ -47,7 +49,7 @@ setup_jupyter_kernels() {
     && ln -s $GOPATH/bin/gophernotes /usr/local/bin \
     || true
     
-    which octave \
+       which octave \
     && export PATH=/opt/octave/bin:$PATH \
     && pip install -Uq octave_kernel \
     || true
