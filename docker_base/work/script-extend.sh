@@ -15,7 +15,7 @@ setup_jupyter_base() {
 }
 
 
-setup_jupyter_kennels() {
+setup_jupyter_kernels() {
     # Install Bash Kernel
     pip install -Uq bash_kernel && python -m bash_kernel.install --sys-prefix
 

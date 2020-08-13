@@ -42,7 +42,7 @@ RUN [[ ${ARG_PROFILE_OCTAVE} == *"base"* ]] && source /opt/utils/script-setup.sh
 RUN source /opt/utils/script-utils.sh \
  && for profile in $(echo $ARG_PROFILE_LATEX | tr "," "\n") ; do ( install_apt "/opt/utils/install_list_latex_${profile}.apt" || true ) ; done
 
-# If installing R environment
+# If installing R environment - put this after Java ready to configure rJava
 RUN source /opt/utils/script-setup.sh \
  && for profile in $(echo $ARG_PROFILE_R | tr "," "\n") ; do ( setup_R_${profile} || true ) ; done
 

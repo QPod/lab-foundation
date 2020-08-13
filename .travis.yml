@@ -93,8 +93,10 @@ jobs:
 
     - name: r-full
       stage: fabric
-      script: build_image qpod r-full     docker_fabric/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" --build-arg "ARG_PROFILE_LATEX=base,cjk"
-
+      script: build_image qpod r-full     docker_fabric/Dockerfile
+              --build-arg "ARG_PROFILE_JAVA=base"
+              --build-arg "ARG_PROFILE_LATEX=base,cjk"
+              --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
 #-------------------------------------------------------------------------------
 #    NodeJS: base
 #-------------------------------------------------------------------------------

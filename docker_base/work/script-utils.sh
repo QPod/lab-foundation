@@ -51,7 +51,7 @@ install__clean(){
 # function to list installed packages
 list_installed_packages() {
   type pip    && echo "@ Version of Python and packages:" && python --version && pip list
-  type conda  && echo "@ Version of Conda and packages:"  && conda info && conda list
+  type conda  && echo "@ Version of Conda and packages:"  && conda info && conda list | grep -v "<pip>"
   type node   && echo "@ Version of NodeJS and packages:" && node --version && npm --version && npm list -g --depth 0
   type java   && echo "@ Version of Java (java/javac):"   && java -version && javac -version
   type R      && echo "@ Version of R and libraries:"     && R --version && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]"
