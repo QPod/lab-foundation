@@ -8,6 +8,8 @@ LABEL maintainer="haobibo@gmail.com"
 
 USER root
 
+COPY work /opt/utils/
+
 ENV SHELL=/bin/bash \
     DEBIAN_FRONTEND=noninteractive \
     LC_ALL="" \
@@ -32,6 +34,6 @@ RUN cd /tmp \
  && echo '[ $BASH ] && [ -f /etc/bash_profile ] && . /etc/bash_profile'	>> /etc/bash.bashrc \
  && echo '[ $BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc'		>> /etc/bash.bashrc \
  # Clean up and display components version information...
- && install__clean
+ && source /opt/utils/script-utils.sh && install__clean
 
 WORKDIR $HOME_DIR

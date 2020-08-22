@@ -7,7 +7,7 @@ env:
     - REGISTRY_URL: "docker.io"  # docker.io or other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
 
 install:
-  - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart && docker info
+  - echo '{"features": {"buildkit": true}, "experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart && docker info
 
 before_script:
   - echo IP=$(curl -s http://ifconfig.me/ip)
@@ -20,7 +20,7 @@ before_script:
         IMG="${IMG}-${TRAVIS_BRANCH}" ;
       fi ;
       REPOSITORY="${NAMESPACE}/${IMG}" ;
-      docker build --squash --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" --build-arg "BASE_REPO=${REPOSITORY}" "$@" "$(dirname $FILE)" ;
+      docker build --squash --compress --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" --build-arg "BASE_REPO=${REPOSITORY}" "$@" "$(dirname $FILE)" ;
     }
   - alias_image() {
       IMG_1=$1; TAG_1=$2; IMG_2=$3; TAG_2=$4; shift 4;
