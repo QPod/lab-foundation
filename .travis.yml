@@ -7,13 +7,12 @@ env:
     - REGISTRY_URL: "docker.io"  # docker.io or other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
 
 install:
-  - echo '{"features": {"buildkit": true}, "experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart && docker info
+  - echo '{"experimental":true,"features":{"buildkit":true}}' | sudo tee /etc/docker/daemon.json && sudo service docker restart && docker info
 
 before_script:
   - echo IP=$(curl -s http://ifconfig.me/ip)
   - CI_PROJECT_NAMESPACE=$([[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "$(dirname ${TRAVIS_REPO_SLUG})" || echo "$(dirname ${TRAVIS_PULL_REQUEST_SLUG})")
   - export NAMESPACE=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
-  - VER() { echo `date +%Y.%m%d` ; }
   - build_image() {
       IMG=$1; TAG=$2; FILE=$3; shift 3;
       if [ "$TRAVIS_BRANCH" != "master" ] ; then
@@ -29,6 +28,7 @@ before_script:
       fi ;
       docker tag "${NAMESPACE}/${IMG_1}:${TAG_1}" "${NAMESPACE}/${IMG_2}:${TAG_2}" ;
     }
+  - VER() { echo `date +%Y.%m%d` ; }
 
 after_script:
   - docker image prune --force && docker images
