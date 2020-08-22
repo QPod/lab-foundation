@@ -45,6 +45,7 @@ install__clean(){
   chmod ugo+rwXt /tmp
   find /opt/conda/lib | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
   echo "@ System environment variables:" && for e in $(echo $(printenv) | tr " " "\n") ; do echo $e ; done
+  echo "@ Version of image: building finished at:" `date` `uname -a`
   true
 }
 

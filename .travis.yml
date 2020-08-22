@@ -13,6 +13,7 @@ before_script:
   - echo IP=$(curl -s http://ifconfig.me/ip)
   - CI_PROJECT_NAMESPACE=$([[ "$TRAVIS_PULL_REQUEST_SLUG" = "" ]] && echo "$(dirname ${TRAVIS_REPO_SLUG})" || echo "$(dirname ${TRAVIS_PULL_REQUEST_SLUG})")
   - export NAMESPACE=$(echo "${REGISTRY_URL}/${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
+  - VER() { echo `date +%Y.%m%d` ; }
   - build_image() {
       IMG=$1; TAG=$2; FILE=$3; shift 3;
       if [ "$TRAVIS_BRANCH" != "master" ] ; then
@@ -22,11 +23,11 @@ before_script:
       docker build --squash --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" --build-arg "BASE_REPO=${REPOSITORY}" "$@" "$(dirname $FILE)" ;
     }
   - alias_image() {
-      IMG=$1; TAG_OLD=$2; TAG_NEW=$3; shift 3;
+      IMG_1=$1; TAG_1=$2; IMG_2=$3; TAG_2=$4; shift 4;
       if [ "$TRAVIS_BRANCH" != "master" ] ; then
-        IMG="${IMG}-${TRAVIS_BRANCH}" ;
+        IMG_1="${IMG_1}-${TRAVIS_BRANCH}" ; IMG_2="${IMG_2}-${TRAVIS_BRANCH}" ;
       fi ;
-      docker tag "${NAMESPACE}/${IMG}:${TAG_OLD}" "${NAMESPACE}/${IMG}:${TAG_NEW}" ;
+      docker tag "${NAMESPACE}/${IMG_1}:${TAG_1}" "${NAMESPACE}/${IMG_2}:${TAG_2}" ;
     }
 
 after_script:
@@ -44,7 +45,7 @@ after_script:
       echo "Not pushing ${IMGS} in PR ...";
     fi
 
-stages: [base, core, fabric, ide, cuda]
+stages: [atom, base, core, dev, cuda]
 
 jobs:
   allow_failures:
@@ -52,87 +53,97 @@ jobs:
     - name: "cuda_11.0"
 
   include:
+    - name: atom
+      stage: atom
+      script: build_image atom VER docker_atom/Dockerfile
+
     - name: base
       stage: base
-      script: build_image qpod base docker_base/Dockerfile
-
-    - name: core
-      stage: core
-      script: build_image qpod core docker_core/Dockerfile && alias_image qpod core py
-
+      script:
+        - export DATE=`date +%Y.%m%d`
+        - build_image base VER docker_base/Dockerfile
+        - alias_image base VER py-mini VER
 
 #-------------------------------------------------------------------------------
-# Python: (mini - same as core as aliased above), datascience, bioinfo, nlp, cv, full
+# Python: (mini - same as `base` as aliased above), datascience, bioinfo, nlp, cv, full
 #-------------------------------------------------------------------------------
     - name: py-data
-      stage: fabric
-      script: build_image qpod py-data    docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database"
+      stage: core
+      script: build_image py-data VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database"
 
     - name: py-bioinfo
-      stage: fabric
-      script: build_image qpod py-bioinfo docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,bioinfo"
+      stage: core
+      script: build_image py-bio  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,bioinfo"
 
     - name: py-nlp
-      stage: fabric
-      script: build_image qpod py-nlp     docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp"
+      stage: core
+      script: build_image py-nlp  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp"
 
     - name: py-cv
-      stage: fabric
-      script: build_image qpod py-cv      docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,cv"
+      stage: core
+      script: build_image py-cv   VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,cv"
 
-    - name: py-full
-      stage: fabric
-      script: build_image qpod py-full    docker_fabric/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo"
+    - name: py-std
+      stage: core
+      script: build_image py-std  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo"
 
+    - name: py-jdk
+      stage: base
+      script: build_image py-jdk  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo" --build-arg "ARG_PROFILE_JAVA=base"
 #-------------------------------------------------------------------------------
-#    R: base, full
+#    R: mini, std, latex, studio
 #-------------------------------------------------------------------------------
-    - name: r
-      stage: fabric
-      script: build_image qpod r          docker_fabric/Dockerfile --build-arg "ARG_PROFILE_R=base"
+    - name: r-mini
+      stage: core
+      script: build_image r-mini  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base"
+
+    - name: r-std
+      stage: core
+      script: build_image r-std   VER docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base"
+
+    - name: r-latex
+      stage: core
+      script: build_image r-latex VER docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
 
     - name: r-full
-      stage: fabric
-      script: build_image qpod r-full     docker_fabric/Dockerfile
-              --build-arg "ARG_PROFILE_JAVA=base"
-              --build-arg "ARG_PROFILE_LATEX=base,cjk"
-              --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
+      stage: core
+      script: build_image r-full  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
 #-------------------------------------------------------------------------------
 #    NodeJS: base
 #-------------------------------------------------------------------------------
     - name: node
-      stage: fabric
-      script: build_image qpod node       docker_fabric/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base"
+      stage: core
+      script: build_image node    VER docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base"
 #-------------------------------------------------------------------------------
 #    Java: base
 #-------------------------------------------------------------------------------
-    - name: java
-      stage: fabric
-      script: build_image qpod java       docker_fabric/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"
+    - name: jdk
+      stage: core
+      script: build_image jdk     VER docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"
 #-------------------------------------------------------------------------------
 #    Julia: base
 #-------------------------------------------------------------------------------
     - name: julia
-      stage: fabric
-      script: build_image qpod julia      docker_fabric/Dockerfile --build-arg "ARG_PROFILE_JULIA=base"
+      stage: core
+      script: build_image julia   VER docker_core/Dockerfile --build-arg "ARG_PROFILE_JULIA=base"
 #-------------------------------------------------------------------------------
 #    Go: base
 #-------------------------------------------------------------------------------
     - name: go
-      stage: fabric
-      script: build_image qpod go         docker_fabric/Dockerfile --build-arg "ARG_PROFILE_GO=base"
+      stage: core
+      script: build_image go      VER docker_core/Dockerfile --build-arg "ARG_PROFILE_GO=base"
 #-------------------------------------------------------------------------------
-#    Octave: mini
+#    core: mini
 #-------------------------------------------------------------------------------
     # - name: octave
     #   stage: fabric
-    #   script: build_image qpod octave     docker_fabric/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
+    #   script: build_image octave  VER   docker_core/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
 #-------------------------------------------------------------------------------
-#    fabric-full
+#    core: full
 #-------------------------------------------------------------------------------
-    - name: fabric-full
-      stage: fabric
-      script: build_image qpod fabric-full docker_fabric/Dockerfile        
+    - name: core
+      stage: core
+      script: build_image core    VER docker_core/Dockerfile        
               --build-arg "ARG_PROFILE_PYTHON=base"
               --build-arg "ARG_PROFILE_R=base"                
               --build-arg "ARG_PROFILE_JAVA=base"
@@ -140,11 +151,11 @@ jobs:
               --build-arg "ARG_PROFILE_JULIA=base"
 
 #-------------------------------------------------------------------------------
-#    IDE
+#    dev
 #-------------------------------------------------------------------------------
-    - name: full
-      stage: ide
-      script: build_image qpod full docker_ide/Dockerfile        
+    - name: dev
+      stage: dev
+      script: build_image dev docker_dev/Dockerfile
               --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions"
               --build-arg "ARG_PROFILE_VSCODE=base"
 
@@ -153,19 +164,19 @@ jobs:
 #-------------------------------------------------------------------------------
     - name: cuda_10.0
       stage: cuda
-      script: build_image qpod cuda_10.0 docker_cuda/cuda10.0.Dockerfile
+      script: build_image cuda cuda_10.0 docker_cuda/cuda10.0.Dockerfile
 
     - name: cuda_10.1
       stage: cuda
-      script: build_image qpod cuda_10.1 docker_cuda/cuda10.1.Dockerfile
+      script: build_image cuda cuda_10.1 docker_cuda/cuda10.1.Dockerfile
 
     - name: cuda_10.2
       stage: cuda
-      script: build_image qpod cuda_10.2 docker_cuda/cuda10.2.Dockerfile && alias_image qpod cuda_10.2 cuda
+      script: build_image cuda cuda_10.2 docker_cuda/cuda10.2.Dockerfile && alias_image qpod cuda_10.2 cuda
 
     - name: cuda_11.0
       stage: cuda
-      script: build_image qpod cuda_11.0 docker_cuda/cuda11.0.Dockerfile
+      script: build_image cuda cuda_11.0 docker_cuda/cuda11.0.Dockerfile
 
 
 notifications:

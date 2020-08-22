@@ -8,7 +8,7 @@
 
 ARG BASE_REPO
 ARG BASE_TAG
-FROM ${BASE_REPO}:${BASE_TAG:-core}
+FROM ${BASE_REPO}:${BASE_TAG:-base}
 
 LABEL maintainer="haobibo@gmail.com"
 

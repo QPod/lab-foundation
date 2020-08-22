@@ -2,7 +2,7 @@
 
 ARG BASE_REPO
 ARG BASE_TAG
-FROM ${BASE_REPO}:${BASE_TAG:-fabric-full}
+FROM ${BASE_REPO}:${BASE_TAG:-core}
 
 LABEL maintainer="haobibo@gmail.com"
 
