@@ -1,8 +1,9 @@
 # Distributed under the terms of the Modified BSD License.
 
-ARG BASE_REPO
-ARG BASE_TAG
-FROM ${BASE_REPO}:${BASE_TAG:-core}
+ARG BASE_NAMESPACE
+ARG BASE_IMG="base"
+FROM ${BASE_NAMESPACE}${BASE_IMG}
+
 
 LABEL maintainer="haobibo@gmail.com"
 

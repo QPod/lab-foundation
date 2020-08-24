@@ -1,8 +1,8 @@
 # Distributed under the terms of the Modified BSD License.
 
 # default value: Latest LTS version of Ubuntu (https://hub.docker.com/_/ubuntu)
-ARG base=ubuntu:latest
-FROM ${base:-base}
+
+FROM ubuntu:latest
 
 LABEL maintainer="haobibo@gmail.com"
 
@@ -29,7 +29,7 @@ RUN cd /tmp \
     lsb-release curl wget iputils-ping unzip p7zip-full rsync \
  && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
  && echo "en_US.UTF-8 UTF-8"             >  /etc/locale.gen && locale-gen \
- && echo "ALL ALL=(ALL) NOPASSWD: ALL"   >> /etc/sudoers \
+ && echo "ALL ALL=(ALL) NOPASSWD:ALL"    >> /etc/sudoers \
  && mv /root/.bashrc /etc/bash_profile \
  && echo '[ $BASH ] && [ -f /etc/bash_profile ] && . /etc/bash_profile'	>> /etc/bash.bashrc \
  && echo '[ $BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc'		>> /etc/bash.bashrc \
