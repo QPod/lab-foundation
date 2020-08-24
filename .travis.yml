@@ -175,5 +175,17 @@ jobs:
       script: build_image cuda cuda_11.0 docker_cuda/cuda11.0.Dockerfile
 
 
+    - name: py-cuda-10.0
+      stage: cuda
+      script: build_image py-cuda-10.0 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.0"
+
+    - name: py-cuda-10.1
+      stage: cuda
+      script: build_image py-cuda-10.1 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.1"
+
+    - name: py-cuda-10.2
+      stage: cuda
+      script: build_image py-cuda-10.2 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.2"
+
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4

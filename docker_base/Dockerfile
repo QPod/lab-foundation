@@ -28,4 +28,6 @@ RUN source /opt/utils/script-setup.sh && setup_conda \
  && rm -rf $(echo $TO_DEL_1 $TO_DEL_2) \
  && TO_REPLACE="/bin/python3;/bin/python3.8;/usr/bin/python3;/usr/bin/python3.8" \
  && for F in $(echo ${TO_REPLACE} | tr ";" "\n") ; do ( rm -f ${F} && ln -s /opt/conda/bin/python ${F} ) ; done \
+ # Take care of `lsb_releaes`
+ && mv /usr/share/pyshared/lsb_release.py /usr/bin/ \
  && install__clean
