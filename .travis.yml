@@ -19,6 +19,7 @@ before_script:
       IMG=$1; TAG=$2; FILE=$3; shift 3;
       [[ "$TRAVIS_BRANCH" == "master" ]] && BASE_NAMESPACE="${NAMESPACE}" || BASE_NAMESPACE="${NAMESPACE}0${TRAVIS_BRANCH}" ;
       docker build --squash --compress --force-rm=true -t "${BASE_NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${BASE_NAMESPACE}" "$@" "$(dirname $FILE)" ;
+      docker tag "${BASE_NAMESPACE}/${IMG}:${TAG}" "${BASE_NAMESPACE}/${IMG}:${VER}"
     }
   - alias_image() {
       IMG_1=$1; TAG_1=$2; IMG_2=$3; TAG_2=$4; shift 4;
@@ -52,94 +53,94 @@ jobs:
   include:
     - name: atom
       stage: atom
-      script: build_image atom VER docker_atom/Dockerfile
+      script: build_image atom latest docker_atom/Dockerfile
 
     - name: base
       stage: base
       script:
-        - build_image base VER docker_base/Dockerfile
-        - alias_image base VER py-mini VER
+        - build_image base latest docker_base/Dockerfile
+        - alias_image base latest py-mini latest
 
 #-------------------------------------------------------------------------------
 # Python: (mini - same as `base` as aliased above), datascience, bioinfo, nlp, cv, full
 #-------------------------------------------------------------------------------
     - name: py-data
       stage: core
-      script: build_image py-data VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database"
+      script: build_image py-data latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database"
 
     - name: py-bioinfo
       stage: core
-      script: build_image py-bio  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,bioinfo"
+      script: build_image py-bio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,bioinfo"
 
     - name: py-nlp
       stage: core
-      script: build_image py-nlp  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp"
+      script: build_image py-nlp  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp"
 
     - name: py-cv
       stage: core
-      script: build_image py-cv   VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,cv"
+      script: build_image py-cv   latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,cv"
 
     - name: py-std
       stage: core
-      script: build_image py-std  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo"
+      script: build_image py-std  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo"
 
     - name: py-jdk
       stage: core
-      script: build_image py-jdk  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo" --build-arg "ARG_PROFILE_JAVA=base"
+      script: build_image py-jdk  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo" --build-arg "ARG_PROFILE_JAVA=base"
 #-------------------------------------------------------------------------------
 #    R: mini, std, latex, studio
 #-------------------------------------------------------------------------------
     - name: r-mini
       stage: core
-      script: build_image r-mini  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base"
+      script: build_image r-mini  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base"
 
     - name: r-std
       stage: core
-      script: build_image r-std   VER docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base"
+      script: build_image r-std   latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base"
 
     - name: r-latex
       stage: core
-      script: build_image r-latex VER docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
+      script: build_image r-latex latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
 
     - name: r-full
       stage: core
-      script: build_image r-full  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
+      script: build_image r-full  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
 #-------------------------------------------------------------------------------
 #    NodeJS: base
 #-------------------------------------------------------------------------------
     - name: node
       stage: core
-      script: build_image node    VER docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base"
+      script: build_image node    latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base"
 #-------------------------------------------------------------------------------
 #    Java: base
 #-------------------------------------------------------------------------------
     - name: jdk
       stage: core
-      script: build_image jdk     VER docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"
+      script: build_image jdk     latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"
 #-------------------------------------------------------------------------------
 #    Julia: base
 #-------------------------------------------------------------------------------
     - name: julia
       stage: core
-      script: build_image julia   VER docker_core/Dockerfile --build-arg "ARG_PROFILE_JULIA=base"
+      script: build_image julia   latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JULIA=base"
 #-------------------------------------------------------------------------------
 #    Go: base
 #-------------------------------------------------------------------------------
     - name: go
       stage: core
-      script: build_image go      VER docker_core/Dockerfile --build-arg "ARG_PROFILE_GO=base"
+      script: build_image go      latest docker_core/Dockerfile --build-arg "ARG_PROFILE_GO=base"
 #-------------------------------------------------------------------------------
 #    core: mini
 #-------------------------------------------------------------------------------
     # - name: octave
     #   stage: fabric
-    #   script: build_image octave  VER docker_core/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
+    #   script: build_image octave  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
 #-------------------------------------------------------------------------------
 #    core: full
 #-------------------------------------------------------------------------------
     - name: core
       stage: core
-      script: build_image core    VER docker_core/Dockerfile        
+      script: build_image core    latest docker_core/Dockerfile        
               --build-arg "ARG_PROFILE_PYTHON=base"
               --build-arg "ARG_PROFILE_R=base"                
               --build-arg "ARG_PROFILE_JAVA=base"
@@ -151,7 +152,7 @@ jobs:
 #-------------------------------------------------------------------------------
     - name: dev
       stage: dev
-      script: build_image dev  VER docker_dev/Dockerfile --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" --build-arg "ARG_PROFILE_VSCODE=base"
+      script: build_image dev  latest docker_dev/Dockerfile --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" --build-arg "ARG_PROFILE_VSCODE=base"
 
 #===============================================================================
 # GPU: cuda_10.0, cuda_10.1, cuda_10.2 (cuda), cuda_11.0
