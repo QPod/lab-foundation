@@ -17,18 +17,13 @@ before_script:
   - export VER=`date +%Y.%m%d`
   - build_image() {
       IMG=$1; TAG=$2; FILE=$3; shift 3;
-      if [ "$TRAVIS_BRANCH" != "master" ] ; then
-        NAMESPACE="${NAMESPACE}0${TRAVIS_BRANCH}" ;
-      fi ;
-      REPOSITORY="${NAMESPACE}/${IMG}" ;
-      docker build --squash --compress --force-rm=true -t "${REPOSITORY}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "$(dirname $FILE)" ;
+      [[ "$TRAVIS_BRANCH" == "master" ]] && BASE_NAMESPACE="${NAMESPACE}" || BASE_NAMESPACE="${NAMESPACE}0${TRAVIS_BRANCH}" ;
+      docker build --squash --compress --force-rm=true -t "${BASE_NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${BASE_NAMESPACE}" "$@" "$(dirname $FILE)" ;
     }
   - alias_image() {
       IMG_1=$1; TAG_1=$2; IMG_2=$3; TAG_2=$4; shift 4;
-      if [ "$TRAVIS_BRANCH" != "master" ] ; then
-        NAMESPACE="${NAMESPACE}0${TRAVIS_BRANCH}" ;
-      fi ;
-      docker tag "${NAMESPACE}/${IMG_1}:${TAG_1}" "${NAMESPACE}/${IMG_2}:${TAG_2}" ;
+      [[ "$TRAVIS_BRANCH" == "master" ]] && BASE_NAMESPACE="${NAMESPACE}" || BASE_NAMESPACE="${NAMESPACE}0${TRAVIS_BRANCH}" ;
+      docker tag "${BASE_NAMESPACE}/${IMG_1}:${TAG_1}" "${BASE_NAMESPACE}/${IMG_2}:${TAG_2}" ;
     }
   - 
 
@@ -62,7 +57,7 @@ jobs:
     - name: base
       stage: base
       script:
-        - build_image base VER docker_base/Dockerfile --build-arg "BASE_REPO=atom-${TRAVIS_BRANCH}"
+        - build_image base VER docker_base/Dockerfile
         - alias_image base VER py-mini VER
 
 #-------------------------------------------------------------------------------
