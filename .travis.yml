@@ -5,7 +5,7 @@ dist: bionic
 env:
   global:
     - REGISTRY_URL: "docker.io"  # docker.io or other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
-    - DOCKER_BUILDKIT: 1
+    - DOCKER_BUILDKIT: 0
 
 install:
   - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart && docker info
