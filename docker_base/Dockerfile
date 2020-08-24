@@ -9,7 +9,7 @@ LABEL maintainer="haobibo@gmail.com"
 COPY work /opt/utils/
 
 RUN source      /opt/utils/script-utils.sh \
- && install_apt /opt/utils/install_list_core.apt
+ && install_apt /opt/utils/install_list_base.apt
 
 # Build and install tini, which will be entry point later...
 RUN cd /tmp \
