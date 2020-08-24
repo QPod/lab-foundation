@@ -5,7 +5,7 @@ dist: bionic
 env:
   global:
     - REGISTRY_URL: "docker.io"  # docker.io or other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
-    - DOCKER_BUILDKIT: 1
+    - DOCKER_BUILDKIT: 0
 
 install:
   - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart && docker info
@@ -25,6 +25,7 @@ before_script:
       IMG_1=$1; TAG_1=$2; IMG_2=$3; TAG_2=$4; shift 4;
       [[ "$TRAVIS_BRANCH" == "master" ]] && BASE_NAMESPACE="${NAMESPACE}" || BASE_NAMESPACE="${NAMESPACE}0${TRAVIS_BRANCH}" ;
       docker tag "${BASE_NAMESPACE}/${IMG_1}:${TAG_1}" "${BASE_NAMESPACE}/${IMG_2}:${TAG_2}" ;
+      docker tag "${BASE_NAMESPACE}/${IMG_2}:${TAG_2}" "${BASE_NAMESPACE}/${IMG_2}:${VER}" ;
     }
   - 
 
