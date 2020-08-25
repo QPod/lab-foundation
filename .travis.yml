@@ -160,19 +160,19 @@ jobs:
 #-------------------------------------------------------------------------------
     - name: cuda_10.0
       stage: cuda-base
-      script: build_image cuda cuda_10.0 docker_cuda/cuda10.0.Dockerfile
+      script: build_image cuda_10.0 latest docker_cuda/cuda10.0.Dockerfile
 
     - name: cuda_10.1
       stage: cuda-base
-      script: build_image cuda cuda_10.1 docker_cuda/cuda10.1.Dockerfile
+      script: build_image cuda_10.1 latest docker_cuda/cuda10.1.Dockerfile
 
     - name: cuda_10.2
       stage: cuda-base
-      script: build_image cuda cuda_10.2 docker_cuda/cuda10.2.Dockerfile && alias_image cuda cuda_10.2 cuda cuda
+      script: build_image cuda_10.2 latest docker_cuda/cuda10.2.Dockerfile
 
     - name: cuda_11.0
       stage: cuda-base
-      script: build_image cuda cuda_11.0 docker_cuda/cuda11.0.Dockerfile
+      script: build_image cuda_11.0 latest docker_cuda/cuda11.0.Dockerfile
 
 
     - name: py-cuda-10.0
