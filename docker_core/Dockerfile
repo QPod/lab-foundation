@@ -50,11 +50,21 @@ RUN ( [[ `arch` == "x86_64" && ${ARG_PROFILE_PYTHON} == *"datascience"* ]] && ( 
 # If installing Python packages
 RUN source /opt/utils/script-utils.sh \
  && ( [[ ${ARG_PROFILE_PYTHON} == *"datascience"* ]] \
-      && ( which nvidia-smi && echo "tensorflow % tf-gpu "                >> /opt/utils/install_list_PY_datascience.pip || true ) \
       && ( which R          && echo "rpy2  % Install rpy2 if R exists"    >> /opt/utils/install_list_PY_datascience.pip || true ) \
       && ( which java       && echo "py4j  % Install py4j if Java exists" >> /opt/utils/install_list_PY_datascience.pip || true ) \
       || true ) \
  && for profile in $(echo $ARG_PROFILE_PYTHON | tr "," "\n") ; do ( install_pip "/opt/utils/install_list_PY_${profile}.pip" || true ) ; done \
+ # Handle tensorflow installation 1.x/2.x, cpu/gpu
+ && ( [[ ${ARG_PROFILE_PYTHON} == *"tf"* ]] \
+      && TF=$( [ -x "$(command -v nvidia-smi)" ] && echo "tensorflow-gpu" || echo "tensorflow") \
+      && V=$([[ ${ARG_PROFILE_PYTHON} == *"tf1"* ]] && echo "1" || echo "2" ) \
+      && pip install --pre -U "${TF}==${V}.*" \
+      || true ) \
+ # Handle pytorch installation 1.x only, cpu/gpu
+ && ( [[ ${ARG_PROFILE_PYTHON} == *"torch"* ]] \
+      && IDX=$( [ -x "$(command -v nvidia-smi)" ] && echo "cu${CUDA_VER//./}" || echo "cpu" ) \
+      && pip install --pre -U torch torchvision -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
+      || true ) \
  ## TODO: TEMP Fix - https://github.com/pytoolz/cytoolz/issues/144
  && rm -f $(python -c 'import sys; print("/opt/conda/lib/python3.%s/site-packages/cytoolz/__init__.py" % sys.version_info.minor)')
 

@@ -44,7 +44,7 @@ after_script:
       echo "Not pushing ${IMGS} in PR ...";
     fi
 
-stages: [atom, base, core, dev, cuda-base, cuda-py]
+stages: [atom, base, core, dev, cuda-base, cuda-core, cuda-dev]
 
 jobs:
   allow_failures:
@@ -142,12 +142,12 @@ jobs:
     - name: core
       stage: core
       script: build_image core    latest docker_core/Dockerfile        
-              --build-arg "ARG_PROFILE_PYTHON=base"
-              --build-arg "ARG_PROFILE_R=base"                
-              --build-arg "ARG_PROFILE_JAVA=base"
+              --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bioinfo,chem,tf2,torch"
+              --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
+              --build-arg "ARG_PROFILE_JAVA=base,maven"
               --build-arg "ARG_PROFILE_GO=base"
               --build-arg "ARG_PROFILE_JULIA=base"
-
+              --build-arg "ARG_PROFILE_LATEX=base,cjk"
 #-------------------------------------------------------------------------------
 #    dev
 #-------------------------------------------------------------------------------
@@ -176,16 +176,47 @@ jobs:
 
 
     - name: py-cuda-10.0
-      stage: cuda-py
-      script: build_image py-cuda-10.0 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.0"
+      stage: cuda-core
+      script:
+        - build_image py-cuda-10.0 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=tf1,datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.0"
+        - alias_image py-cuda-10.0 latest tf1 latest
 
     - name: py-cuda-10.1
-      stage: cuda-py
-      script: build_image py-cuda-10.1 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.1"
+      stage: cuda-core
+      script:
+        - build_image py-cuda-10.1 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=tf2,datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.1"
+        - alias_image py-cuda-10.1 latest tf2 latest
 
     - name: py-cuda-10.2
-      stage: cuda-py
-      script: build_image py-cuda-10.2 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.2"
+      stage: cuda-core
+      script:
+        - build_image py-cuda-10.2 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=torch,datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.2"
+        - alias_image py-cuda-10.2 latest torch latest
+#-------------------------------------------------------------------------------
+#    core: full
+#-------------------------------------------------------------------------------
+    - name: full-cuda
+      stage: cuda-core
+      script:
+        - build_image full-cuda-10.1 latest docker_core/Dockerfile
+          --build-arg "BASE_IMG=cuda_10.1"
+          --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bioinfo,chem,tf2,torch"
+          --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
+          --build-arg "ARG_PROFILE_JAVA=base,maven"
+          --build-arg "ARG_PROFILE_GO=base"
+          --build-arg "ARG_PROFILE_JULIA=base"
+          --build-arg "ARG_PROFILE_LATEX=base,cjk"
+        - alias_image full-cuda-10.1 latest full-cuda latest
+#-------------------------------------------------------------------------------
+#    dev
+#-------------------------------------------------------------------------------
+    - name: cuda-full-dev
+      stage: cuda-dev
+      script:
+        - build_image dev latest docker_dev/Dockerfile
+          --build-arg "BASE_IMG=cuda_10.1"
+          --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions"
+          --build-arg "ARG_PROFILE_VSCODE=base"
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4
