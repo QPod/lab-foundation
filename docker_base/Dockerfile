@@ -26,6 +26,7 @@ RUN source /opt/utils/script-setup.sh && setup_conda \
  && TO_DEL_1=$(/bin/python3.8 -c 'import sys; print(" ".join(sys.path))') \
  && TO_DEL_2=$(/usr/bin/python3.8 -c 'import sys; print(" ".join(sys.path))') \
  && rm -rf $(echo $TO_DEL_1 $TO_DEL_2) \
+ && ln -s /opt/conda/lib/python3.8 /usr/lib/ \
  && TO_REPLACE="/bin/python3;/bin/python3.8;/usr/bin/python3;/usr/bin/python3.8" \
  && for F in $(echo ${TO_REPLACE} | tr ";" "\n") ; do ( rm -f ${F} && ln -s /opt/conda/bin/python ${F} ) ; done \
  # Take care of `lsb_releaes`

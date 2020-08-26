@@ -210,7 +210,7 @@ jobs:
 #-------------------------------------------------------------------------------
 #    dev
 #-------------------------------------------------------------------------------
-    - name: cuda-full-dev
+    - name: cuda-dev
       stage: cuda-dev
       script:
         - build_image dev latest docker_dev/Dockerfile
