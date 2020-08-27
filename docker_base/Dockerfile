@@ -18,7 +18,7 @@ RUN cd /tmp \
  && wget -qO- "https://github.com/krallin/tini/archive/${TINI_VERSION}.zip" -O tini.zip && unzip -q /tmp/tini.zip \
  && cmake /tmp/tini-* && make install && mv /tmp/tini /usr/local/bin/tini && chmod +x /usr/local/bin/tini
 
-ENV PATH=/opt/conda/bin:$PATH
+ENV PATH=/opt/conda/bin:/opt/conda/local/bin:$PATH
 
 ## --> Install Python3 (Miniconda3), replace conda packages with pip source.
 RUN source /opt/utils/script-setup.sh && setup_conda \

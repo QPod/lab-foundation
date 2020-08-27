@@ -1,5 +1,0 @@
-% This file contains apt packages to be installed with apt-get install line by line.
-% Use percent char as line comment separator.
-
-r-base                  % CRAN R language base
-r-base-dev              % required when building and install some R libraries

@@ -1,9 +1,5 @@
 % This file contains apt packages to be installed with apt-get install line by line.
 % Use percent char as line comment separator.
 
-libcurl4-openssl-dev    % required when building R package curl
-libxml2-dev             % required to build and install R package xml2
-libssl-dev              % required when building python packages: cryptography
-libffi-dev              % required when building python packages: cffi
 psmisc libapparmor1     % required to install RStudio server
 libpq-dev               % required to build packages to connect to PostgreSQL
