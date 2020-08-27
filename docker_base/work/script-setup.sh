@@ -21,11 +21,12 @@ setup_conda() {
 
 
 setup_java_base() {
-       VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=8 \
-    && URL_OPENJDK="https://download.java.net/java/early_access/jdk${VERSION_OPENJDK}/${VERSION_OPENJDK_EA}/GPL/openjdk-${VERSION_OPENJDK}-ea+${VERSION_OPENJDK_EA}_linux-x64_bin.tar.gz" \
-    && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
-    && ln -s /opt/jdk/bin/* /usr/bin/ \
-    && echo "@ Version of Java (java/javac):" && java -version && javac -version
+   #   VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=8 \
+   #   && URL_OPENJDK="https://download.java.net/java/early_access/jdk${VERSION_OPENJDK}/${VERSION_OPENJDK_EA}/GPL/openjdk-${VERSION_OPENJDK}-ea+${VERSION_OPENJDK_EA}_linux-x64_bin.tar.gz" \
+      URL_OPENJDK="https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_linux-x64_bin.tar.gz" \
+   && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
+   && ln -s /opt/jdk/bin/* /usr/bin/ \
+   && echo "@ Version of Java (java/javac):" && java -version && javac -version
 }
 
 setup_java_maven() {
