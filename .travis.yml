@@ -134,7 +134,7 @@ jobs:
 #    Octave: base
 #-------------------------------------------------------------------------------
     - name: octave
-      stage: fabric
+      stage: core
       script: build_image octave  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
 #-------------------------------------------------------------------------------
 #    core: full
