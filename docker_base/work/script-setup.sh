@@ -139,16 +139,17 @@ setup_julia() {
 
 setup_octave() {
     # TEMPFIX: javac version
-       install_apt   /opt/utils/install_list_octave.apt \
-    && OCTAVE_VERSION="5.2.0" \
-    && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
-    && cd /opt/octave-* \
-    && sed  -i "s/1.6/11/g" ./Makefile.in \
-    && sed  -i "s/1.6/11/g" ./scripts/java/module.mk \
-    && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
-    && make -j8 && make install -j8 \
-    && cd /opt/utils && rm -rf /opt/octave-* \
-    && echo "PATH=/opt/octave/bin:$PATH"     >> /etc/bash.bashrc \
+    # && OCTAVE_VERSION="5.2.0" \
+    # && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
+    # && cd /opt/octave-* \
+    # && sed  -i "s/1.6/11/g" ./Makefile.in \
+    # && sed  -i "s/1.6/11/g" ./scripts/java/module.mk \
+    # && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
+    # && make -j8 && make install -j8 \
+    # && cd /opt/utils && rm -rf /opt/octave-* \
+    # && echo "PATH=/opt/octave/bin:$PATH"     >> /etc/bash.bashrc \
+
+       install_apt       /opt/utils/install_list_octave.apt \
     && install_octave    /opt/utils/install_list_octave.pkg \
     && echo "@ Version of Octave and installed packages:" \
     && /opt/octave/bin/octave --version

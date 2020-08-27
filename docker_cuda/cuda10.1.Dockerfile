@@ -83,4 +83,5 @@ RUN  cd /tmp \
   && make && make install \
   && apt-get -qq remove -y libncurses5-dev
 
-RUN  source /opt/utils/script-utils.sh && install__clean
+RUN type nvidia-smi \
+ && source /opt/utils/script-utils.sh && install__clean

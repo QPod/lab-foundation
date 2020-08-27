@@ -103,9 +103,9 @@ jobs:
       stage: core
       script: build_image r-latex latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
 
-    - name: r-full
+    - name: r-studio
       stage: core
-      script: build_image r-full  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
+      script: build_image r-studio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
 #-------------------------------------------------------------------------------
 #    NodeJS: base
 #-------------------------------------------------------------------------------
@@ -131,11 +131,11 @@ jobs:
       stage: core
       script: build_image go      latest docker_core/Dockerfile --build-arg "ARG_PROFILE_GO=base"
 #-------------------------------------------------------------------------------
-#    core: mini
+#    Octave: base
 #-------------------------------------------------------------------------------
-    # - name: octave
-    #   stage: fabric
-    #   script: build_image octave  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
+    - name: octave
+      stage: fabric
+      script: build_image octave  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
 #-------------------------------------------------------------------------------
 #    core: full
 #-------------------------------------------------------------------------------
@@ -148,6 +148,7 @@ jobs:
               --build-arg "ARG_PROFILE_JAVA=base,maven"
               --build-arg "ARG_PROFILE_GO=base"
               --build-arg "ARG_PROFILE_JULIA=base"
+              --build-arg "ARG_PROFILE_OCTAVE=base"
               --build-arg "ARG_PROFILE_LATEX=base,cjk"
 #-------------------------------------------------------------------------------
 #    dev
@@ -216,7 +217,7 @@ jobs:
       stage: cuda-dev
       script:
         - build_image dev latest docker_dev/Dockerfile
-          --build-arg "BASE_IMG=cuda_10.1"
+          --build-arg "BASE_IMG=full-cuda_10.1"
           --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions"
           --build-arg "ARG_PROFILE_VSCODE=base"
 

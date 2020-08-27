@@ -82,7 +82,6 @@ RUN  cd /tmp \
   && make && make install \
   && apt-get -qq remove -y libncurses5-dev
 
-# This cuda image is left for legacy tensorflow 1.1x, which requires python 3.7
-RUN  source /opt/utils/script-utils.sh \
-  && conda install -yq python=3.7 \
-  && install__clean
+# This cuda image is left for legacy tensorflow 1.x, which requires python 3.7
+RUN type nvidia-smi \
+ && source /opt/utils/script-utils.sh && conda install -yq python=3.7 && install__clean
