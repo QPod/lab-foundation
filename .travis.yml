@@ -63,15 +63,11 @@ jobs:
         - alias_image base latest py-mini latest
 
 #-------------------------------------------------------------------------------
-# Python: (mini - same as `base` as aliased above), datascience, bioinfo, nlp, cv, full
+# Python: (mini - same as `base` as aliased above), datascience, bio, chem, nlp, cv, full
 #-------------------------------------------------------------------------------
     - name: py-data
       stage: core
       script: build_image py-data latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database"
-
-    - name: py-bioinfo
-      stage: core
-      script: build_image py-bio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,bioinfo"
 
     - name: py-nlp
       stage: core
@@ -81,13 +77,21 @@ jobs:
       stage: core
       script: build_image py-cv   latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,cv"
 
+    - name: py-bio
+      stage: core
+      script: build_image py-bio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,bio"
+
+    - name: py-chem
+      stage: core
+      script: build_image py-bio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,chem"
+
     - name: py-std
       stage: core
-      script: build_image py-std  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo"
+      script: build_image py-std  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bio,chem"
 
     - name: py-jdk
       stage: core
-      script: build_image py-jdk  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bioinfo" --build-arg "ARG_PROFILE_JAVA=base"
+      script: build_image py-jdk  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bio,chem" --build-arg "ARG_PROFILE_JAVA=base"
 #-------------------------------------------------------------------------------
 #    R: mini, std, latex, studio
 #-------------------------------------------------------------------------------
@@ -142,7 +146,7 @@ jobs:
     - name: core
       stage: core
       script: build_image core    latest docker_core/Dockerfile        
-              --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bioinfo,chem,tf2,torch"
+              --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bio,chem,tf2,torch"
               --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
               --build-arg "ARG_PROFILE_NODEJS=base"
               --build-arg "ARG_PROFILE_JAVA=base,maven"
@@ -202,7 +206,7 @@ jobs:
       script:
         - build_image full-cuda-10.1 latest docker_core/Dockerfile
           --build-arg "BASE_IMG=cuda_10.1"
-          --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bioinfo,chem,tf2,torch"
+          --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bio,chem,tf2,torch"
           --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
           --build-arg "ARG_PROFILE_NODEJS=base"
           --build-arg "ARG_PROFILE_JAVA=base,maven"
@@ -217,7 +221,7 @@ jobs:
       stage: cuda-dev
       script:
         - build_image dev latest docker_dev/Dockerfile
-          --build-arg "BASE_IMG=full-cuda_10.1"
+          --build-arg "BASE_IMG=full-cuda"
           --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions"
           --build-arg "ARG_PROFILE_VSCODE=base"
 
