@@ -108,9 +108,11 @@ setup_R_rshiny() {
 
 
 setup_R_datascience() {
+   # firstly install rgl stub to work around, which has too many deps, but required by some libs
+   R -e "devtools::install_git(\"git://github.com/sorhawell/rgl.git\",quiet=T,clean=T)"
+
       install_apt  /opt/utils/install_list_R_datascience.apt \
    && install_R    /opt/utils/install_list_R_datascience.R
-   # R -e "devtools::install_git(\"git://github.com/sorhawell/rgl.git\",quiet=T,clean=T) # work around rgl, which has too many deps."
 }
 
 
