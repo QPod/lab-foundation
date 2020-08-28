@@ -59,13 +59,13 @@ setup_jupyter_extensions() {
     install_apt /opt/utils/install_list_JPY_extend.apt \
   && install_pip /opt/utils/install_list_JPY_extend.pip
 
-  ipcluster nbextension enable
   jupyter nbextension install --sys-prefix --py ipyparallel
   jupyter nbextension enable --sys-prefix --py ipyparallel
   jupyter serverextension enable --sys-prefix --py ipyparallel
+  ipcluster nbextension enable
 
-  jupyter contrib nbextension install --sys-prefix
   jupyter nbextensions_configurator enable --sys-prefix
+  jupyter contrib nbextension install --sys-prefix
 
   jupyter serverextension enable  --sys-prefix --py jupyterlab_git
  
