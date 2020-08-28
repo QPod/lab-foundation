@@ -20,8 +20,8 @@ ARG ARG_CUDNN_DEVEL=true
 ENV CUDA_VER 10.2
 ENV CUDA_VERSION ${CUDA_VER}.89
 ENV CUDA_PKG_VERSION 10-2=$CUDA_VERSION-1
-ENV NCCL_VERSION 2.7.3
-ENV CUDNN_VERSION 8.0.0.180
+ENV NCCL_VERSION 2.7.8
+ENV CUDNN_VERSION 8.0.2.39
 ENV CUBLAS_VERSION 10.2.2.89-1
 
 ENV NVIDIA_VISIBLE_DEVICES=all \
@@ -47,18 +47,13 @@ RUN  wget -qO- "https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1
 # If installing CUDA runtime
 RUN  ${ARG_CUDA_RUNTIME:-false} \
   && apt-get install -y --no-install-recommends \
-        cuda-libraries-$CUDA_PKG_VERSION    cuda-nvtx-$CUDA_PKG_VERSION \
-        cuda-nvtx-$CUDA_PKG_VERSION         libcublas10=$CUBLAS_VERSION \
-  && wget -nv https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda10.2_x86_64.txz -O /tmp/nccl1.txz \
-  && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl1.txz -C /usr/local/cuda/lib64/ --strip-components=2 --wildcards '*/lib/libnccl.so.*' \
-  && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl1.txz -C /usr/lib/pkgconfig/    --strip-components=3 --wildcards '*/lib/pkgconfig/*'  \
-  && ldconfig \
+        cuda-libraries-$CUDA_PKG_VERSION cuda-nvtx-$CUDA_PKG_VERSION cuda-npp-$CUDA_PKG_VERSION \
+        libcublas10=$CUBLAS_VERSION libnccl2=$NCCL_VERSION-1+cuda$CUDA_VER \
   || true
 
 # If installing CUDNN runtime
 RUN  ${ARG_CUDNN_RUNTIME:false} \
-  && wget -nv https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.0/Ubuntu18_04-x64/libcudnn8_8.0.0.180-1+cuda10.2_amd64.deb -O /tmp/cudnn1.deb \
-  && dpkg -i /tmp/cudnn1.deb \
+  && apt-get install -y --no-install-recommends libcudnn8=$CUDNN_VERSION-1+cuda$CUDA_VER \
   || true
 
 # If installing CUDA devel
@@ -67,17 +62,13 @@ RUN  ${ARG_CUDA_DEVEL:false} \
         cuda-nvml-dev-$CUDA_PKG_VERSION       cuda-command-line-tools-$CUDA_PKG_VERSION \
         cuda-nvprof-$CUDA_PKG_VERSION         cuda-npp-dev-$CUDA_PKG_VERSION \
         cuda-libraries-dev-$CUDA_PKG_VERSION  cuda-minimal-build-$CUDA_PKG_VERSION   \
-        libcublas-dev=$CUBLAS_VERSION \
-  && wget -nv https://developer.download.nvidia.com/compute/redist/nccl/v2.7/nccl_2.7.3-1+cuda10.2_x86_64.txz -O /tmp/nccl2.txz \
-  && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl2.txz -C /usr/local/cuda/include/ --strip-components=2 --wildcards '*/include/*'      \
-  && tar --no-same-owner --keep-old-files --lzma -xvf /tmp/nccl2.txz -C /usr/local/cuda/lib64/   --strip-components=2 --wildcards '*/lib/libnccl.so' \
+        libcublas-dev=$CUBLAS_VERSION         libnccl-dev=$NCCL_VERSION-1+cuda$CUDA_VER \
   || true
 
 # If installing CUDNN devel
 RUN  ${ARG_CUDNN_DEVEL:false} \
-  && wget -nv https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.0/Ubuntu18_04-x64/libcudnn8_8.0.0.180-1+cuda10.2_amd64.deb -O  /tmp/cudnn2.deb \
-  && wget -nv https://developer.download.nvidia.com/compute/redist/cudnn/v8.0.0/Ubuntu18_04-x64/libcudnn8-dev_8.0.0.180-1+cuda10.2_amd64.deb -O /tmp/cudnn-dev.deb \
-  && dpkg -i /tmp/cudnn2.deb && dpkg -i /tmp/cudnn-dev.deb \
+  &&  apt-get install -y --no-install-recommends \
+        libcudnn8=$CUDNN_VERSION-1+cuda$CUDA_VER libcudnn8-dev=$CUDNN_VERSION-1+cuda$CUDA_VER \
   || true
 
 # Install Utilities `nvtop`
