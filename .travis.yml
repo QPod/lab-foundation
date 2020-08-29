@@ -47,8 +47,8 @@ after_script:
 stages: [atom, base, core, cuda-base, cuda-core, dev]
 
 jobs:
-  allow_failures:
-    - name: "cuda_11.0"
+#  allow_failures:
+#    - name: "cuda_11.0"
 
   include:
     - name: atom
