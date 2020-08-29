@@ -6,7 +6,6 @@ setup_jupyter_base() {
   && mkdir -p /opt/conda/etc/jupyter/ \
   && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \
   && jupyter nbextension     enable --py widgetsnbextension \
-  && ln -s /opt/conda/bin/jlpm /usr/bin/yarn \
   && echo "@ Version of Yarn:" `yarn -v` \
   && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
   && mv /opt/utils/start-*.sh /usr/local/bin/ && chmod +x /usr/local/bin/start-*.sh \

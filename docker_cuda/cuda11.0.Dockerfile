@@ -47,7 +47,7 @@ RUN  wget -qO- "https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1
 # If installing CUDA runtime
 RUN  ${ARG_CUDA_RUNTIME:-false} \
   && apt-get install -y --no-install-recommends \
-        cuda-libraries-11-0=11.0.3-1  libnpp-11-0=11.1.0.254-1  cuda-nvtx-11-0=11.0.167-1 \
+        cuda-libraries-11-0=11.0.3-1  libnpp-11-0=11.1.0.245-1  cuda-nvtx-11-0=11.0.167-1 \
         libcublas-11-0=11.2.0.252-1   libnccl2=$NCCL_VERSION-1+cuda11.0 \
   || true
 
@@ -62,7 +62,7 @@ RUN  ${ARG_CUDA_DEVEL:false} \
         cuda-minimal-build-11-0=11.0.3-1 cuda-libraries-dev-11-0=11.0.3-1  cuda-command-line-tools-11-0=11.0.3-1 \
         cuda-nvml-dev-11-0=11.0.167-1    libcublas-dev-11-0=${CUBLAS_VERSION} \
         libnccl-dev=2.7.8-1+cuda11.0     cuda-nvprof-11-0=11.0.221-1 \
-        libnpp-dev-11-0=11.1.0.254-1     libcusparse-11-0=11.1.1.254-1     libcusparse-dev-11-0=11.1.1.254-1 \
+        libnpp-dev-11-0=11.1.0.245-1     libcusparse-11-0=11.1.1.245-1     libcusparse-dev-11-0=11.1.1.245-1 \
   || true
 
 # If installing CUDNN devel

@@ -45,8 +45,9 @@ setup_node() {
     && install_tar_gz "https://nodejs.org/download/release/latest-${NODEJS_VERSION_MAJOR}.x/node-${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
     && mv /opt/node* /opt/node \
     && ln -s /opt/node/bin/* /usr/bin/ \
+    && npm install -g yarn \
     && echo "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
-    && echo "@ Version of Node/NPM:" `node -v` `npm -v`
+    && echo "@ Version of Node, npm, and yarn:" `node -v` `npm -v` `yarn -v`
 }
 
 
