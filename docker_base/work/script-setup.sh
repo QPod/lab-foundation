@@ -32,7 +32,9 @@ setup_java_base() {
 setup_java_maven() {
       MAVEN_VERSION="3.6.3" \
    && install_zip "http://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip" \
-   && mv /opt/apache-maven-${MAVEN_VERSION} /opt/maven
+   && mv /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
+   && ln -s /opt/maven/bin/mvn* /usr/bin/ \
+   && echo "@ Version of Maven:" && mvn --version
 }
 
 
@@ -132,7 +134,7 @@ setup_julia() {
        JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
     && install_tar_gz $JULIA_URL \
     && mv /opt/julia-* /opt/julia \
-    && ln -fs /opt/julia/bin/julia /usr/local/bin/julia \
+    && ln -fs /opt/julia/bin/julia /usr/bin/julia \
     && mkdir -p /opt/julia/pkg \
     && echo "import Libdl; push!(Libdl.DL_LOAD_PATH, \"/opt/conda/lib\")" >> /opt/julia/etc/julia/startup.jl \
     && echo "DEPOT_PATH[1]=\"/opt/julia/pkg\""                            >> /opt/julia/etc/julia/startup.jl \

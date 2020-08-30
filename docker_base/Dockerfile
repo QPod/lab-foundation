@@ -16,21 +16,16 @@ RUN cd /tmp \
  && TINI_VERSION=$(wget --no-check-certificate -qO- https://github.com/krallin/tini/releases.atom | grep 'releases/tag' | head -1 ) \
  && TINI_VERSION=$(echo $TINI_VERSION | cut -d '"' -f6 | cut -d \/ -f8 ) \
  && wget -qO- "https://github.com/krallin/tini/archive/${TINI_VERSION}.zip" -O tini.zip && unzip -q /tmp/tini.zip \
- && cmake /tmp/tini-* && make install && mv /tmp/tini /usr/local/bin/tini && chmod +x /usr/local/bin/tini
+ && cmake /tmp/tini-* && make install && mv /tmp/tini /usr/bin/tini && chmod +x /usr/bin/tini
 
 ENV PATH=/opt/conda/bin:$PATH
 
 ## --> Install Python3 (Miniconda3), replace conda packages with pip source.
 RUN source /opt/utils/script-setup.sh && setup_conda \
- # Replace system Python3 with Conda's Python
- # && cp -rn /lib/python3.8/*     /opt/conda/lib/python3.8/ \
- # && cp -rn /usr/lib/python3.8/* /opt/conda/lib/python3.8/ \
- # && TO_DEL_1=$(/bin/python3.8 -c 'import sys; print(" ".join(sys.path))') \
- # && TO_DEL_2=$(/usr/bin/python3.8 -c 'import sys; print(" ".join(sys.path))') \
- # && rm -rf $(echo $TO_DEL_1 $TO_DEL_2) \
- # && ln -s /opt/conda/lib/python3.8 /usr/lib/ \
- && TO_REPLACE="/bin/python3;/bin/python3.8;/usr/bin/python3;/usr/bin/python3.8" \
+ # Replace system Python3 with Conda's Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu
+ && cp --verbose -rn /usr/lib/python3.8/* /opt/conda/lib/python3.8/ \
+ && rm --verbose -rf $(/usr/bin/python3.8 -c 'import sys; print(" ".join(sys.path))') /usr/lib/python3* /usr/share/pyshared/ \
+ && ln -s /opt/conda/lib/python3.8 /usr/lib/ \
+ && TO_REPLACE="/usr/bin/python3;/usr/bin/python3.8" \
  && for F in $(echo ${TO_REPLACE} | tr ";" "\n") ; do ( rm -f ${F} && ln -s /opt/conda/bin/python ${F} ) ; done \
- # Take care of `lsb_releaes`
- && mv /usr/share/pyshared/lsb_release.py /usr/bin/ \
  && install__clean

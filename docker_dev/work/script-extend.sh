@@ -31,9 +31,7 @@ setup_jupyter_kernels() {
     which java \
   && pip install -Uq beakerx pandas py4j  \
   && beakerx install \
-  && jupyter labextension list
-  # TEMP fix: not compatible with JupyterLab 2.0
-  # && jupyter labextension install beakerx-jupyterlab \
+  && jupyter labextension install beakerx-jupyterlab
 
     which julia \
   && julia -e "using Pkg; Pkg.add(\"IJulia\"); Pkg.precompile();" \
