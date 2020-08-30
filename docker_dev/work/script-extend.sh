@@ -42,7 +42,7 @@ setup_jupyter_kernels() {
   && go get -u github.com/gopherdata/gophernotes \
   && mkdir -p /opt/conda/share/jupyter/kernels/gophernotes \
   && cp $GOPATH/src/github.com/gopherdata/gophernotes/kernel/* /opt/conda/share/jupyter/kernels/gophernotes \
-  && ln -s $GOPATH/bin/gophernotes /usr/local/bin
+  && ln -s $GOPATH/bin/gophernotes /usr/bin/
   
     which octave \
   && export PATH=/opt/octave/bin:$PATH \
