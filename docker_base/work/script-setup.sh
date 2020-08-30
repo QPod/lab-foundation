@@ -46,8 +46,8 @@ setup_node() {
     && NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")" \
     && install_tar_gz "https://nodejs.org/download/release/latest-${NODEJS_VERSION_MAJOR}.x/node-${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
     && mv /opt/node* /opt/node \
+    && npm install -g npm yarn \
     && ln -s /opt/node/bin/* /usr/bin/ \
-    && npm install -g yarn \
     && echo "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
     && echo "@ Version of Node, npm, and yarn:" `node -v` `npm -v` `yarn -v`
 }
@@ -125,7 +125,6 @@ setup_GO() {
     && GO_URL="https://dl.google.com/go/$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
     && ln -s /opt/go/bin/go /usr/bin/ \
-    && echo "GOPATH=/opt/go/path"     >> /etc/bash.bashrc \
     && echo "@ Version of golang and packages:" && go version 
 }
 
@@ -151,8 +150,7 @@ setup_octave() {
     # && sed  -i "s/1.6/11/g" ./scripts/java/module.mk \
     # && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
     # && make -j8 && make install -j8 \
-    # && cd /opt/utils && rm -rf /opt/octave-* \
-    # && echo "PATH=/opt/octave/bin:$PATH"     >> /etc/bash.bashrc \
+    # && cd /opt/utils && rm -rf /opt/octave-*
 
        install_apt       /opt/utils/install_list_octave.apt \
     && install_octave    /opt/utils/install_list_octave.pkg \
