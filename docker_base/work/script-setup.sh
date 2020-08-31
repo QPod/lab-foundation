@@ -49,7 +49,7 @@ setup_node() {
     && echo  "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
     && export PATH=/opt/node/bin:$PATH \
     && npm install -g npm yarn \
-    && ln -s /opt/node/bin/* /usr/bin/ \    
+    && ln -s /opt/node/bin/* /usr/bin/ \
     && echo "@ Version of Node, npm, and yarn:" `node -v` `npm -v` `yarn -v`
 }
 
