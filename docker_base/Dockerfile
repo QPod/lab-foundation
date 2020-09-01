@@ -13,15 +13,14 @@ RUN source      /opt/utils/script-utils.sh \
 
 # Build and install tini, which will be entry point later...
 RUN cd /tmp \
- && TINI_VERSION=$(wget --no-check-certificate -qO- https://github.com/krallin/tini/releases.atom | grep 'releases/tag' | head -1 ) \
- && TINI_VERSION=$(echo $TINI_VERSION | cut -d '"' -f6 | cut -d \/ -f8 ) \
- && wget -qO- "https://github.com/krallin/tini/archive/${TINI_VERSION}.zip" -O tini.zip && unzip -q /tmp/tini.zip \
+ && TINI_VERSION=$(curl -sL https://github.com/krallin/tini/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+' ) \
+ && curl -o tini.zip -sL "https://github.com/krallin/tini/archive/v${TINI_VERSION}.zip" && unzip -q /tmp/tini.zip \
  && cmake /tmp/tini-* && make install && mv /tmp/tini /usr/bin/tini && chmod +x /usr/bin/tini
 
 ENV PATH=/opt/conda/bin:$PATH
 
-## --> Install Python3 (Miniconda3), replace conda packages with pip source.
-RUN source /opt/utils/script-setup.sh && setup_conda \
+## --> Install Python3 (Miniconda3)
+RUN source /opt/utils/script-setup.sh && setup_conda && install__clean
  # Replace system Python3 with Conda's Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu
  # && cp --verbose -rn /usr/lib/python3.8/* /opt/conda/lib/python3.8/ \
  # && mv /usr/share/pyshared/lsb_release.py /usr/bin/ \
@@ -29,4 +28,4 @@ RUN source /opt/utils/script-setup.sh && setup_conda \
  # && ln -s /opt/conda/lib/python3.8 /usr/lib/ \
  # && TO_REPLACE="/usr/bin/python3;/usr/bin/python3.8" \
  # && for F in $(echo ${TO_REPLACE} | tr ";" "\n") ; do ( rm -f ${F} && ln -s /opt/conda/bin/python ${F} ) ; done \
- && install__clean
+ 

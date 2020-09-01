@@ -39,12 +39,11 @@ setup_java_maven() {
 
 
 setup_node() {
-    # NODEJS_VERSION_MAJOR="v14" &&
+    # NODEJS_VERSION_MAJOR="v14" && grep "v${NODEJS_VERSION_MAJOR}."
        ARCH="x64" \
-    && NODEJS_VERSION=$(wget --no-check-certificate -qO- https://github.com/nodejs/node/releases.atom | grep "releases/tag" | grep "v${NODEJS_VERSION_MAJOR}." | head -1 ) \
-    && NODEJS_VERSION=$(echo $NODEJS_VERSION | cut -d "\"" -f6 | cut -d \/ -f8 ) \
-    && NODEJS_VERSION_MAJOR="$(cut -d '.' -f 1 <<< "$NODEJS_VERSION")" \
-    && install_tar_gz "https://nodejs.org/download/release/latest-${NODEJS_VERSION_MAJOR}.x/node-${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
+    && NODEJS_VERSION=$(curl -sL https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+') \
+    && NODEJS_VERSION_MAJOR=$(echo ${NODEJS_VERSION} | cut -d '.' -f1 ) \
+    && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-v${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
     && mv /opt/node* /opt/node \
     && echo  "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
     && export PATH=/opt/node/bin:$PATH \
@@ -66,7 +65,7 @@ setup_R_base() {
 
 
 setup_R_rstudio() {
-       RSTUDIO_VERSION=`wget -qO - https://dailies.rstudio.com/rstudioserver/oss/ubuntu/x86_64/ | grep -oP "(?<=rstudio-server-)[0-9]\.[0-9]\.[0-9]+" | sort | tail -n 1` \
+       RSTUDIO_VERSION=`curl -sL https://dailies.rstudio.com/rstudioserver/oss/ubuntu/x86_64/ | grep -Po "(?<=rstudio-server-)[0-9]\.[0-9]\.[0-9]+" | sort | tail -n 1` \
     && wget -qO- "https://s3.amazonaws.com/rstudio-ide-build/server/bionic/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
     && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
     && ln -s /opt/rstudio-server         /usr/lib/ \
@@ -91,7 +90,7 @@ setup_R_rstudio() {
 
 
 setup_R_rshiny() {
-       RSHINY_VERSION=$(wget --no-check-certificate -qO- https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
+       RSHINY_VERSION=$(curl -sL https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
     && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
     && dpkg -i /tmp/rshiny.deb \
     && sed  -i "s/run_as shiny;/run_as root;/g"  /etc/shiny-server/shiny-server.conf \
@@ -121,9 +120,8 @@ setup_R_datascience() {
 
 
 setup_GO() {
-       GO_VERSION=$(wget --no-check-certificate -qO- https://github.com/golang/go/releases.atom | grep "releases/tag" | head -1 ) \
-    && GO_VERSION=$(echo $GO_VERSION | grep -o 'go[^"/]*' | tail -n 1) \
-    && GO_URL="https://dl.google.com/go/$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
+       GO_VERSION=$(curl -sL https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+') \
+    && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
     && install_tar_gz $GO_URL go \
     && ln -s /opt/go/bin/go /usr/bin/ \
     && echo "@ Version of golang and packages:" && go version 

@@ -80,9 +80,8 @@ setup_jupyter_extensions() {
 
 
 setup_vscode_base() {
-     VERSION_CODER=$(wget --no-check-certificate -qO- https://github.com/cdr/code-server/releases.atom | grep "releases/tag" | head -1 ) \
-  && VERSION_CODER=$(echo $VERSION_CODER | cut -d "\"" -f6 | cut -d \/ -f8 ) \
-  && install_tar_gz "https://github.com/cdr/code-server/releases/download/${VERSION_CODER}/code-server-${VERSION_CODER}-linux-x86_64.tar.gz" \
+     VERSION_CODER=$(curl -sL https://github.com/cdr/code-server/releases.atom | grep "releases/tag" | head -1 | grep -Po '(\d[\d|.]+)') \
+  && install_tar_gz "https://github.com/cdr/code-server/releases/download/v${VERSION_CODER}/code-server-${VERSION_CODER}-linux-x86_64.tar.gz" \
   && mv /opt/code-server* /opt/code-server \
   && ln -s /opt/code-server/bin/code-server /usr/bin/ \
   && printf "#!/bin/bash\n/opt/code-server/bin/code-server --port=8888 --auth=none --disable-telemetry $HOME\n" > /usr/local/bin/start-code-server.sh \

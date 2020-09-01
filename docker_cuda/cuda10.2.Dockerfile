@@ -34,7 +34,7 @@ ENV NVIDIA_VISIBLE_DEVICES=all \
 LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
 
 # Installing CUDA base
-RUN  wget -qO- "https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub"    | apt-key add - \
+RUN  curl -sL "https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub"  | apt-key add - \
   && echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /"             > /etc/apt/sources.list.d/cuda.list \
   && echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list \
   && apt-get update \
