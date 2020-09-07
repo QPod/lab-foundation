@@ -205,7 +205,7 @@ jobs:
           --build-arg "ARG_PROFILE_GO=base"
           --build-arg "ARG_PROFILE_JULIA=base"
           --build-arg "ARG_PROFILE_LATEX=base,cjk"
-        - alias_image full-cuda-10.1 latest full-cuda latest
+        - alias_image full-cuda-10.1 latest core-cuda latest
 
 #===============================================================================
 #    dev: core-dev & cuda-dev
