@@ -3,7 +3,9 @@ language: minimal
 dist: bionic
 
 branches:
-  only: master, devops
+  only:
+    - master
+    - devops
 
 notifications:
   slack: q-pod:lrzKf5Ff1Ao1MGclzElR23j4    
