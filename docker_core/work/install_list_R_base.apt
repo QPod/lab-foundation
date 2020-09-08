@@ -1,0 +1,10 @@
+% This file contains apt packages to be installed with apt-get install line by line.
+% Use percent char as line comment separator.
+
+r-base                  % CRAN R language base
+r-base-dev              % required when building and install some R libraries
+libcurl4-openssl-dev    % required when building R package curl
+libxml2-dev             % required to build R package xml2
+libssl-dev              % required to build R package openssl
+libgit2-dev             % required to build R package git2r
+libssh2-1-dev           % required to build R package git2r

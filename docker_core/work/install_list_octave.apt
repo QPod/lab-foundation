@@ -1,14 +1,16 @@
-% Install dependencies for octave:
+% Install octave and build dependencies:
 %% https://wiki.octave.org/Octave_for_Debian_systems#Install_dependencies
 %% https://octave.org/doc/interpreter/External-Packages.html
+
+octave
 % ==== Required build tools
 gcc g++                         % C/C++ compiler
 gfortran                        % fortran compiler required to build Octave
 make                            % GNU make
 automake-1.15                   % automake
 % ==== Required external packages
-% libblas-dev                   % BLAS: Basic Linear Algebra Subroutine: slow, unmaintained, and suffers from certain bugs in corner case inputs
-libopenblas-dev                 % Accelerated BLAS library: https://www.openblas.net
+libblas-dev                     % BLAS: Basic Linear Algebra Subroutine: slow, unmaintained, and suffers from certain bugs in corner case inputs
+% libopenblas-dev               % Accelerated BLAS library: https://www.openblas.net
 liblapack-dev                   % LAPACK: Linear Algebra Package
 libpcre3-dev                    % PCRE: Perl Compatible Regular Expression
 % ==== Strongly recommended
@@ -17,7 +19,7 @@ libcurl4-gnutls-dev             % cURL (~1392 KB): ftp objects, urlread/urlwrite
 texinfo                         % makeinfo (~15 MB), documentation system for on-line information and printed output, required when installing pkg
 zlib1g-dev                      % Compression library
 llvm-dev                        % LLVM (~239MB): required for Octave’s experimental just-in-time (JIT) compilation for speeding up the interpreter
-% openjdk-14-jdk-headless       % OpenJDK headless
+% openjdk-14-jdk-headless       % OpenJDK headless, not installing as OpenJDK installed independently
 % ==== Strongly recommended: Maths, Matrices, Differential / Algebraic equations, Computational Geometry
 libglpk-dev                     % GLPK (~5071 KB): solving linear programs
 libarpack2-dev                  % ARPACK (~981 KB): eigs function, solution of large-scale eigenvalue problems 
@@ -47,6 +49,7 @@ transfig                        % Virtual package pointing to fig2dev (~7394 KB)
 % lpr                           % BSD lpr/lpd line printer spooling system
 % texlive                       % TeX Live: A decent selection of the TeX Live packages
 % texlive-generic-recommended   % TeX Live: Generic recommended packages
+% texlive-latex-extra
 % ==== GUIs - not installing
 % libgl1-mesa-dev               % OpenGL (~216 MB)
 % libfltk1.3-dev                % FLTK:  cross-platform widget (graphical control element) library for graphical user interfaces (GUIs)
