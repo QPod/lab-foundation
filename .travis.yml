@@ -178,7 +178,7 @@ jobs:
       name: cuda-dev
       script:
         - build_image cuda-dev latest docker_dev/Dockerfile
-          --build-arg "BASE_IMG=full-cuda"
+          --build-arg "BASE_IMG=core-cuda"
           --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions"
           --build-arg "ARG_PROFILE_VSCODE=base"
         - alias_image cuda-dev latest full-cuda latest
