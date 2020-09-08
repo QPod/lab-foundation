@@ -50,11 +50,11 @@ after_script:
 jobs:
   include:
     - stage: atom
-    - name: atom
+      name: atom
       script: build_image atom latest docker_atom/Dockerfile
 
     - stage: base
-    - name: base
+      name: base
       script:
       - build_image base latest docker_base/Dockerfile
       - alias_image base latest py-mini latest
@@ -62,7 +62,7 @@ jobs:
 #    core: full - start the full job fist as it's time consuming
 #-------------------------------------------------------------------------------
     - stage: core  
-    - name: core
+      name: core
       script: build_image core    latest docker_core/Dockerfile        
             --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bio,chem,tf2,torch"
             --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
@@ -129,7 +129,7 @@ jobs:
 # GPU: cuda_10.0, cuda_10.1, cuda_10.2 (cuda), cuda_11.0
 #-------------------------------------------------------------------------------
     - stage: cuda-base
-    - name: cuda_10.0
+      name: cuda_10.0
       script: build_image cuda_10.0 latest docker_cuda/cuda10.0.Dockerfile
     - name: cuda_10.1
       script: build_image cuda_10.1 latest docker_cuda/cuda10.1.Dockerfile
@@ -141,7 +141,7 @@ jobs:
 #    Python with DeepLearning package: tf1 tf2 pytorch,
 #-------------------------------------------------------------------------------
     - stage: cuda-core
-    - name: py-cuda-10.0
+      name: py-cuda-10.0
       script:
         - build_image py-cuda-10.0 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=tf1,datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.0"
         - alias_image py-cuda-10.0 latest tf1 latest
@@ -157,7 +157,7 @@ jobs:
 #    Python with DeepLearning packages and others: core-cuda, full-cuda-10.1
 #-------------------------------------------------------------------------------
     - stage: cuda-core
-    - name: full-cuda    
+      name: full-cuda    
       script:
         - build_image full-cuda-10.1 latest docker_core/Dockerfile
           --build-arg "BASE_IMG=cuda_10.1"
@@ -173,12 +173,12 @@ jobs:
 #    dev: core-dev, full ; cuda-dev, full-cuda
 #-------------------------------------------------------------------------------
     - stage: dev
-    - name: core-dev
+      name: core-dev
       script:
         - build_image core-dev latest docker_dev/Dockerfile --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" --build-arg "ARG_PROFILE_VSCODE=base"
         - alias_image core-dev latest full latest
     - name: cuda-dev
-    - script:
+      script:
         - build_image cuda-dev latest docker_dev/Dockerfile
           --build-arg "BASE_IMG=core-cuda"
           --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions"
