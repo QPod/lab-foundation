@@ -2,6 +2,9 @@ language: minimal
 
 dist: bionic
 
+branches:
+  only: master, devops
+
 env:
   global:
     - REGISTRY_URL: "docker.io"  # docker.io or other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
@@ -39,157 +42,117 @@ after_script:
       echo "[${status}] Image pushed > ${IMG}";
     done
 
-stages: [atom, base, core, cuda-base, cuda-core, dev]
-
 jobs:
-#  allow_failures:
-#    - name: "cuda_11.0"
-
   include:
-    - name: atom
-      stage: atom
+    - stage: atom
+      name: atom
       script: build_image atom latest docker_atom/Dockerfile
 
-    - name: base
-      stage: base
+    - stage: base
+      name: base
       script:
         - build_image base latest docker_base/Dockerfile
         - alias_image base latest py-mini latest
 #-------------------------------------------------------------------------------
 #    core: full - start the full job fist as it's time consuming
 #-------------------------------------------------------------------------------
-    - name: core
-      stage: core
+    - stage: core  
+      name: core
       script: build_image core    latest docker_core/Dockerfile        
-              --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bio,chem,tf2,torch"
-              --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
-              --build-arg "ARG_PROFILE_NODEJS=base"
-              --build-arg "ARG_PROFILE_JAVA=base,maven"
-              --build-arg "ARG_PROFILE_GO=base"
-              --build-arg "ARG_PROFILE_JULIA=base"
-              --build-arg "ARG_PROFILE_OCTAVE=base"
-              --build-arg "ARG_PROFILE_LATEX=base,cjk"
+            --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bio,chem,tf2,torch"
+            --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
+            --build-arg "ARG_PROFILE_NODEJS=base"
+            --build-arg "ARG_PROFILE_JAVA=base,maven"
+            --build-arg "ARG_PROFILE_GO=base"
+            --build-arg "ARG_PROFILE_JULIA=base"
+            --build-arg "ARG_PROFILE_OCTAVE=base"
+            --build-arg "ARG_PROFILE_LATEX=base,cjk"
 #-------------------------------------------------------------------------------
 # Python: (mini - same as `base` as aliased above), datascience, bio, chem, nlp, cv, full
 #-------------------------------------------------------------------------------
-    - name: py-data
-      stage: core
+      name: py-data
       script: build_image py-data latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database"
-
-    - name: py-nlp
-      stage: core
+      name: py-nlp
       script: build_image py-nlp  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp"
-
-    - name: py-cv
-      stage: core
+      name: py-cv
       script: build_image py-cv   latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,cv"
-
-    - name: py-bio
-      stage: core
+      name: py-bio
       script: build_image py-bio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,bio"
-
-    - name: py-chem
-      stage: core
+      name: py-chem
       script: build_image py-bio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,chem"
-
-    - name: py-std
-      stage: core
+      name: py-std
       script: build_image py-std  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bio,chem"
-
-    - name: py-jdk
-      stage: core
+      name: py-jdk
       script: build_image py-jdk  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bio,chem" --build-arg "ARG_PROFILE_JAVA=base"
 #-------------------------------------------------------------------------------
 #    R: mini, std, latex, studio
 #-------------------------------------------------------------------------------
-    - name: r-mini
-      stage: core
+      name: r-mini
       script: build_image r-mini  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base"
-
-    - name: r-std
-      stage: core
+      name: r-std
       script: build_image r-std   latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base"
-
-    - name: r-latex
-      stage: core
+      name: r-latex
       script: build_image r-latex latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
-
-    - name: r-studio
-      stage: core
+      name: r-studio
       script: build_image r-studio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" --build-arg "ARG_PROFILE_JAVA=base" --build-arg "ARG_PROFILE_LATEX=base,cjk"
 #-------------------------------------------------------------------------------
 #    NodeJS: base
 #-------------------------------------------------------------------------------
-    - name: node
-      stage: core
+      name: node
       script: build_image node    latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base"
 #-------------------------------------------------------------------------------
 #    Java: base
 #-------------------------------------------------------------------------------
-    - name: jdk
-      stage: core
+      name: jdk
       script: build_image jdk     latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"
 #-------------------------------------------------------------------------------
 #    Julia: base
 #-------------------------------------------------------------------------------
-    - name: julia
-      stage: core
+      name: julia
       script: build_image julia   latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JULIA=base"
 #-------------------------------------------------------------------------------
 #    Go: base
 #-------------------------------------------------------------------------------
-    - name: go
-      stage: core
+      name: go
       script: build_image go      latest docker_core/Dockerfile --build-arg "ARG_PROFILE_GO=base"
 #-------------------------------------------------------------------------------
 #    Octave: base
 #-------------------------------------------------------------------------------
-    - name: octave
-      stage: core
+      name: octave
       script: build_image octave  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_OCTAVE=base"
 
 #===============================================================================
 # GPU: cuda_10.0, cuda_10.1, cuda_10.2 (cuda), cuda_11.0
 #-------------------------------------------------------------------------------
-    - name: cuda_10.0
-      stage: cuda-base
+    - stage: cuda-base
+      name: cuda_10.0      
       script: build_image cuda_10.0 latest docker_cuda/cuda10.0.Dockerfile
-
-    - name: cuda_10.1
-      stage: cuda-base
+      name: cuda_10.1
       script: build_image cuda_10.1 latest docker_cuda/cuda10.1.Dockerfile
-
-    - name: cuda_10.2
-      stage: cuda-base
+      name: cuda_10.2
       script: build_image cuda_10.2 latest docker_cuda/cuda10.2.Dockerfile
-
-    - name: cuda_11.0
-      stage: cuda-base
+      name: cuda_11.0
       script: build_image cuda_11.0 latest docker_cuda/cuda11.0.Dockerfile
 
-
-    - name: py-cuda-10.0
-      stage: cuda-core
+    - stage: cuda-core
+      name: py-cuda-10.0
       script:
         - build_image py-cuda-10.0 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=tf1,datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.0"
         - alias_image py-cuda-10.0 latest tf1 latest
-
-    - name: py-cuda-10.1
-      stage: cuda-core
+      name: py-cuda-10.1
       script:
         - build_image py-cuda-10.1 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=tf2,datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.1"
         - alias_image py-cuda-10.1 latest tf2 latest
-
-    - name: py-cuda-10.2
-      stage: cuda-core
+      name: py-cuda-10.2
       script:
         - build_image py-cuda-10.2 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=torch,datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.2"
         - alias_image py-cuda-10.2 latest torch latest
 #-------------------------------------------------------------------------------
 #    core: full
 #-------------------------------------------------------------------------------
-    - name: full-cuda
-      stage: cuda-core
+    - stage: cuda-core
+
+      name: full-cuda    
       script:
         - build_image full-cuda-10.1 latest docker_core/Dockerfile
           --build-arg "BASE_IMG=cuda_10.1"
@@ -201,18 +164,16 @@ jobs:
           --build-arg "ARG_PROFILE_JULIA=base"
           --build-arg "ARG_PROFILE_LATEX=base,cjk"
         - alias_image full-cuda-10.1 latest core-cuda latest
-
 #===============================================================================
 #    dev: core-dev & cuda-dev
 #-------------------------------------------------------------------------------
-    - name: core-dev
-      stage: dev
+    - stage: dev
+
+      name: core-dev
       script:
         - build_image core-dev latest docker_dev/Dockerfile --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" --build-arg "ARG_PROFILE_VSCODE=base"
         - alias_image core-dev latest full latest
-
-    - name: cuda-dev
-      stage: dev
+      name: cuda-dev
       script:
         - build_image cuda-dev latest docker_dev/Dockerfile
           --build-arg "BASE_IMG=full-cuda"
