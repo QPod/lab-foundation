@@ -3,7 +3,9 @@ language: minimal
 dist: bionic
 
 branches:
-  only: master, devops
+  only:
+    - master
+    - devops
 
 env:
   global:
