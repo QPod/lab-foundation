@@ -18,7 +18,7 @@ Please generously STAR★ our project or donate to us!  [![GitHub Starts](https:
 
 In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is an **out-of-box Data Science / AI environment and platform** at your fingertip which you would love 💕.
 
-AI/数据科学的瑞士军刀——QPod提供了一站式、开箱即用、可自由定制的，基于容器的、开源AI/数据科学分析工具。
+AI/数据科学的瑞士军刀——QPod提供了一站式、开箱即用、可自由定制的，基于容器的、开源AI/数据科学开发、分析工具。
 
 With Docker and `QPod`, you
 
