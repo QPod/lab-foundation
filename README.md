@@ -44,7 +44,7 @@ With Docker and `QPod`, you
 
 ### 0. Have docker installed on your laptop/server - Linux (e.g.: Ubuntu LTS) / Windows (>=10) / macOS
 
-- Install **Docker >= 19.03**: `docker-ce` ( community version & free: [Linux](https://hub.docker.com/search/?offering=community&type=edition&operating_system=linux) | [macOS](https://download.docker.com/mac/stable/Docker.dmg) | [Windows](https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe)   ) or [docker-ee](https://hub.docker.com/search/?offering=enterprise&type=edition) (enterprise version & paid) on your laptop/server. **Docker installed from default Ubuntu/CentOS repository probably won't work for GPU!**
+- Install **Docker >= 19.03**: `docker-ce` ( community version & free: [Linux](https://hub.docker.com/search/?offering=community&type=edition&operating_system=linux) | [macOS](https://download.docker.com/mac/stable/Docker.dmg) | [Windows](https://download.docker.com/win/stable/Docker%20Desktop%20Installer.exe)   ) or [docker-ee](https://hub.docker.com/search/?offering=enterprise&type=edition) (enterprise version & paid) on your laptop/server. **Docker installed from default Ubuntu/CentOS repository probably won't work for GPU!**
 - If you want to use *NVIDIA GPUs* with `QPod`, Linux server is **required**. After installing **Docker >= 19.03**, also install both the [`NVIDIA driver`](https://github.com/NVIDIA/nvidia-docker/wiki/Frequently-Asked-Questions#how-do-i-install-the-nvidia-driver) and the latest version of [`nvidia-container-toolkit`](https://github.com/NVIDIA/nvidia-docker#quickstart) to use the GPUs in containers.
 
 ### 1. Choose the features and choose a folder on your disk
