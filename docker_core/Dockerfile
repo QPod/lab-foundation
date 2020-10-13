@@ -64,9 +64,7 @@ RUN source /opt/utils/script-utils.sh \
  && ( [[ ${ARG_PROFILE_PYTHON} == *"torch"* ]] \
       && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER//./}" || echo "cpu" ) \
       && pip install --pre -U torch torchvision -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
-      || true ) \
- ## TODO: TEMP Fix - https://github.com/pytoolz/cytoolz/issues/144
- && rm -f $(python -c 'import sys; print("/opt/conda/lib/python3.%s/site-packages/cytoolz/__init__.py" % sys.version_info.minor)')
+      || true )
 
 RUN [[ ${ARG_PROFILE_GO}     == *"base"* ]] && source /opt/utils/script-setup.sh && setup_GO     || true
 
