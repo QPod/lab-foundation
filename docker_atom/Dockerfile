@@ -13,10 +13,10 @@ COPY work /opt/utils/
 ENV SHELL=/bin/bash \
     DEBIAN_FRONTEND=noninteractive \
     LC_ALL="" \
-    LC_CTYPE=C.UTF-8 \
-    LC_TYPE=en_US.UTF-8 \
-    LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8 \
+    LC_CTYPE="C.UTF-8" \
+    LC_TYPE="en_US.UTF-8" \
+    LANG="en_US.UTF-8" \
+    LANGUAGE="en_US.UTF-8" \
     HOME_DIR=/root
 
 SHELL ["/bin/bash", "-c"]

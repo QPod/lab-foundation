@@ -1,0 +1,70 @@
+name: Build QPod Docker Images
+
+on:
+  pull_request:
+    paths-ignore:
+      - "*.md"
+
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "*.md"
+
+env:
+  DOCKER_REGISTRY_USER: ${{ secrets.DOCKER_REGISTRY_USER }}
+  DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
+jobs:
+  build-base:
+    name: Docker - Atom/Base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart && docker info
+
+      - name: docker - atom/base
+        run: |
+          source ./tool.sh
+          build_image atom latest  docker_atom/Dockerfile && push_image
+          build_image base latest  docker_base/Dockerfile
+          alias_image base latest  py-mini latest
+          push_image
+
+  build-cuda:
+    name: Docker - CUDA
+    needs: build-base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
+
+      - name: docker - cuda
+        run: |
+          source ./tool.sh 
+          build_image cuda_10.0 latest docker_cuda/cuda10.0.Dockerfile && push_image
+          build_image cuda_10.1 latest docker_cuda/cuda10.0.Dockerfile && push_image
+          build_image cuda_10.2 latest docker_cuda/cuda10.0.Dockerfile && push_image
+          build_image cuda_11.0 latest docker_cuda/cuda10.0.Dockerfile && push_image
+
+  build-core:
+    name: Docker - Core
+    needs: build-base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
+
+      - name: docker - core
+        run: |
+          source ./tool.sh
+          build_image core latest  docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bio,chem,tf2,torch" \
+            --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_NODEJS=base" \
+            --build-arg "ARG_PROFILE_JAVA=base,maven" \
+            --build-arg "ARG_PROFILE_GO=base" \
+            --build-arg "ARG_PROFILE_JULIA=base" \
+            --build-arg "ARG_PROFILE_OCTAVE=base" \
+            --build-arg "ARG_PROFILE_LATEX=base,cjk"
+          push_image

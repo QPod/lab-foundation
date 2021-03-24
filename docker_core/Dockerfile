@@ -45,7 +45,7 @@ RUN source /opt/utils/script-setup.sh \
 
 # If on a x86_64 architecture and install data science pkgs, install MKL for acceleration; Installing conda packages if provided.
 RUN ( [[ `arch` == "x86_64" && ${ARG_PROFILE_PYTHON} == *"datascience"* ]] && ( echo "mkl" >> /opt/utils/install_list.conda ) || true ) \
- && source /opt/utils/script-utils.sh && ( install_conda /opt/utils/install_list.conda || true )
+ && source /opt/utils/script-utils.sh && ( install_conda /opt/utils/install_list_core.conda || true )
 
 # If installing Python packages
 RUN source /opt/utils/script-utils.sh \
