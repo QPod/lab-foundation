@@ -63,7 +63,7 @@ RUN source /opt/utils/script-utils.sh \
  # Handle pytorch installation 1.x only, cpu/gpu
  && ( [[ ${ARG_PROFILE_PYTHON} == *"torch"* ]] \
       && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER//./}" || echo "cpu" ) \
-      && pip install --pre -U torch torchvision -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
+      && pip install --pre -U torch -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
       || true )
 
 RUN [[ ${ARG_PROFILE_GO}     == *"base"* ]] && source /opt/utils/script-setup.sh && setup_GO     || true

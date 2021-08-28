@@ -30,20 +30,6 @@ jobs:
           alias_image base latest  py-mini latest
           push_image
 
-  build-cuda-legacy:
-    needs: build-base
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
-      - name: docker - cuda
-        run: |
-          source ./tool.sh 
-          build_image cuda_10.0 latest docker_cuda/cuda10.0.Dockerfile && push_image
-          build_image cuda_10.1 latest docker_cuda/cuda10.1.Dockerfile && push_image
-          build_image cuda_10.2 latest docker_cuda/cuda10.2.Dockerfile && push_image
-          build_image cuda_11.0 latest docker_cuda/cuda11.0.Dockerfile && push_image
-
   build-cuda-base:
     runs-on: ubuntu-latest
     steps:
@@ -52,8 +38,20 @@ jobs:
       - name: docker - cuda
         run: |
           source ./tool.sh
+
           build_image cuda_11.4 latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.4.1-cudnn8-runtime-ubuntu20.04"
-          build_image cuda_11.4 latest docker_base/Dockerfile --build-arg "BASE_IMG=cuda_11.4" && push_image
+          build_image cuda_11.4 latest docker_base/Dockerfile --build-arg "BASE_IMG=cuda_11.4"
+          build_image cuda_11.4 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=cuda_11.4" alias_image cuda_11.4 latest cuda latest && push_image
+
+          # For tensorflow >=2.5 and torch >= 1.9 support
+          build_image cuda_11.2 latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu20.04"
+          build_image cuda_11.2 latest docker_base/Dockerfile --build-arg "BASE_IMG=cuda_11.2"
+          build_image cuda_11.2 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=cuda_11.2" && push_image
+
+          # For legacy tensorflow 1.15 support
+          build_image cuda_10.0 latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04"
+          build_image cuda_10.0 latest docker_base/Dockerfile --build-arg "BASE_IMG=cuda_10.0"
+          build_image cuda_10.0 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=cuda_10.0" && push_image
 
   build-core:
     needs: build-base
@@ -147,23 +145,14 @@ jobs:
       - name: docker-cuda-core
         run: |
           source ./tool.sh
+
           build_image py-cuda-10.0 latest docker_core/Dockerfile \
             --build-arg "ARG_PROFILE_PYTHON=tf1,datascience,nlp,cv" \
             --build-arg "BASE_IMG=cuda_10.0"
           alias_image py-cuda-10.0 latest tf1 latest && push_image
 
-          build_image py-cuda-10.2 latest docker_core/Dockerfile \
-            --build-arg "ARG_PROFILE_PYTHON=tf2,datascience,nlp,cv" \
-            --build-arg "BASE_IMG=cuda_10.2"
-          alias_image py-cuda-10.2 latest tf2 latest && push_image
-
-          build_image py-cuda-10.2 latest docker_core/Dockerfile \
-            --build-arg "ARG_PROFILE_PYTHON=torch,datascience,nlp,cv" \
-            --build-arg "BASE_IMG=cuda_10.2"
-          alias_image py-cuda-10.2 latest torch latest && push_image
-
-          build_image full-cuda-10.2 latest docker_core/Dockerfile \
-            --build-arg "BASE_IMG=cuda_10.1" \
+          build_image full-cuda-11.2 latest docker_core/Dockerfile \
+            --build-arg "BASE_IMG=cuda_11.2" \
             --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bio,chem,tf2,torch" \
             --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
@@ -171,7 +160,7 @@ jobs:
             --build-arg "ARG_PROFILE_GO=base" \
             --build-arg "ARG_PROFILE_JULIA=base" \
             --build-arg "ARG_PROFILE_LATEX=base,cjk"
-          alias_image full-cuda-10.2 latest core-cuda latest && push_image
+          alias_image full-cuda-11.2 latest core-cuda latest && push_image
 
   build-dev-core:
     needs: build-core
@@ -188,7 +177,7 @@ jobs:
           alias_image core-dev latest full latest && push_image
 
   build-dev-cuda:
-    needs: build-cuda-legacy
+    needs: build-cuda-core
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
