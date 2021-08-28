@@ -52,9 +52,8 @@ jobs:
       - name: docker - cuda
         run: |
           source ./tool.sh
-          build_image cuda_11.4 latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.4.1-cudnn8-devel-ubuntu20.04"
-          build_image cuda_11.4 latest docker_base/Dockerfile --build-arg "BASE_IMG=cuda_11.4
-          push_image
+          build_image cuda_11.4 latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.4.1-cudnn8-runtime-ubuntu20.04"
+          build_image cuda_11.4 latest docker_base/Dockerfile --build-arg "BASE_IMG=cuda_11.4" && push_image
 
   build-core:
     needs: build-base
