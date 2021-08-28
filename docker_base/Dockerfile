@@ -6,8 +6,6 @@ FROM ${BASE_NAMESPACE:+$BASE_NAMESPACE/}${BASE_IMG}
 
 LABEL maintainer="haobibo@gmail.com"
 
-COPY work /opt/utils/
-
 RUN source      /opt/utils/script-utils.sh \
  && install_apt /opt/utils/install_list_base.apt
 

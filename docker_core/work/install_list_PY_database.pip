@@ -5,6 +5,3 @@
 datashape bottleneck blaze dask distributed      % Python BigData/parallel interface
 openpyxl dill cloudpickle                        % Data access: external systems; Object Serialization
 sqlalchemy pandasql pymysql psycopg2-binary      % Data access: OpenSource DB
-% cx_Oracle                                      % Data access: OracleDB
-% ibm_db ibm_db_sa                               % Data access: IBM DB2 and IBM Informix
-% sqlalchemy_pytds                               % Data access: Microsoft SQLServer
