@@ -17,7 +17,6 @@ env:
 
 jobs:
   build-base:
-    name: Docker - Atom/Base
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -32,30 +31,26 @@ jobs:
           push_image
 
   build-cuda:
-    name: Docker - CUDA
     needs: build-base
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
-
       - name: docker - cuda
         run: |
           source ./tool.sh 
           build_image cuda_10.0 latest docker_cuda/cuda10.0.Dockerfile && push_image
-          build_image cuda_10.1 latest docker_cuda/cuda10.0.Dockerfile && push_image
-          build_image cuda_10.2 latest docker_cuda/cuda10.0.Dockerfile && push_image
-          build_image cuda_11.0 latest docker_cuda/cuda10.0.Dockerfile && push_image
+          build_image cuda_10.1 latest docker_cuda/cuda10.1.Dockerfile && push_image
+          build_image cuda_10.2 latest docker_cuda/cuda10.2.Dockerfile && push_image
+          build_image cuda_11.0 latest docker_cuda/cuda11.0.Dockerfile && push_image
 
   build-core:
-    name: Docker - Core
     needs: build-base
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
-
-      - name: docker - core
+      - name: docker-core
         run: |
           source ./tool.sh
           build_image core latest  docker_core/Dockerfile \
@@ -68,3 +63,103 @@ jobs:
             --build-arg "ARG_PROFILE_OCTAVE=base" \
             --build-arg "ARG_PROFILE_LATEX=base,cjk"
           push_image
+
+  build-py:
+    needs: build-base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
+      - name: docker-py
+        run: |
+          source ./tool.sh
+          build_image py-data latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database"   && push_image
+          build_image py-nlp  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp"        && push_image
+          build_image py-cv   latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,cv"         && push_image
+          build_image py-bio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,bio"        && push_image
+          build_image py-bio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,chem"       && push_image
+          build_image py-std  latest docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bio,chem" \
+            && push_image
+          build_image py-jdk  latest docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bio,chem" \
+            --build-arg "ARG_PROFILE_JAVA=base" \
+            && push_image
+
+  build-r:
+    needs: build-base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
+      - name: docker-R
+        run: |
+          source ./tool.sh
+          build_image r-mini    latest docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_R=base" \
+            && push_image
+          build_image r-std     latest docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_R=base,datascience" \
+            --build-arg "ARG_PROFILE_JAVA=base" \
+            && push_image
+          build_image r-latex   latest docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_R=base,datascience" \
+            --build-arg "ARG_PROFILE_JAVA=base" \
+            --build-arg "ARG_PROFILE_LATEX=base,cjk" \
+            && push_image
+          build_image r-studio  latest docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_JAVA=base" \
+            --build-arg "ARG_PROFILE_LATEX=base,cjk" \
+            && push_image
+
+  build-other:
+    needs: build-base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
+      - name: docker-other
+        run: |
+          source ./tool.sh
+          build_image node      latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base" && push_image
+          build_image jdk       latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"   && push_image
+          build_image julia     latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JULIA=base"  && push_image
+          build_image go        latest docker_core/Dockerfile --build-arg "ARG_PROFILE_GO=base"     && push_image
+
+  build-cuda-dev:
+    needs: build-cuda
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
+      - name: docker-other
+        run: |
+          build_image py-cuda-10.0 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=tf1,datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.0"
+          alias_image py-cuda-10.0 latest tf1 latest && push_image
+
+          build_image py-cuda-10.1 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=tf2,datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.1"
+          alias_image py-cuda-10.1 latest tf2 latest && push_image
+
+          build_image py-cuda-10.2 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=torch,datascience,nlp,cv" --build-arg "BASE_IMG=cuda_10.2"
+          alias_image py-cuda-10.2 latest torch latest  && push_image
+
+          build_image full-cuda-10.1 latest docker_core/Dockerfile \
+            --build-arg "BASE_IMG=cuda_10.1"
+            --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,bio,chem,tf2,torch"
+            --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny"
+            --build-arg "ARG_PROFILE_NODEJS=base"
+            --build-arg "ARG_PROFILE_JAVA=base,maven"
+            --build-arg "ARG_PROFILE_GO=base"
+            --build-arg "ARG_PROFILE_JULIA=base"
+            --build-arg "ARG_PROFILE_LATEX=base,cjk"
+          alias_image full-cuda-10.1 latest core-cuda latest && push_image
+
+          build_image core-dev latest docker_dev/Dockerfile --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" --build-arg "ARG_PROFILE_VSCODE=base"
+          alias_image core-dev latest full latest && push_image
+    
+          build_image cuda-dev latest docker_dev/Dockerfile
+            --build-arg "BASE_IMG=core-cuda"
+            --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions"
+            --build-arg "ARG_PROFILE_VSCODE=base"
+          alias_image cuda-dev latest full-cuda latest  && push_image
