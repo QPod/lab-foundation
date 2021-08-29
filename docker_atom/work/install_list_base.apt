@@ -8,4 +8,3 @@ unzip p7zip-full        % zip/unzip
 rsync                   % file transfer
 openssh-client          % Provide ssh client and generate keys
 openssh-server          % Provide ssh server (sshd)
-python2.7               % required by some legacy packages like node-gyp

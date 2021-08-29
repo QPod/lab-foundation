@@ -11,7 +11,7 @@ setup_conda() {
     && conda update --all --quiet --yes
 
     # These conda pkgs shouldn't be removed (otherwise will cause RemoveError) since they are directly reqiuired by conda: pip setuptools pycosat pyopenssl requests ruamel_yaml
-    CONDA_PY_PKGS=`conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;"` \
+       CONDA_PY_PKGS=`conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;"` \
     && conda remove --force -yq $CONDA_PY_PKGS \
     && pip install -UIq pip setuptools $CONDA_PY_PKGS
 
@@ -20,17 +20,35 @@ setup_conda() {
 }
 
 
+setup_nvtop() {
+    # Install Utilities `nvtop`
+    sudo apt-get -qq update --fix-missing && sudo apt-get -qq install -y --no-install-recommends libncurses5-dev
+
+    DIRECTORY=`pwd`
+    
+       cd /tmp \
+    && git clone https://github.com/Syllo/nvtop.git \
+    && mkdir -pv nvtop/build && cd nvtop/build \
+    && LIB_PATH=`find / -name "libnvidia-ml*" 2>/dev/null` \
+    && cmake .. -DCMAKE_LIBRARY_PATH="`dirname $LIB_PATH`" .. \
+    && make && sudo make install \
+    && nvtop --version
+    
+    cd $DIRECTORY && rm -rf /tmp/nvtop
+
+    sudo apt-get -qq remove -y libncurses5-dev
+}
+
+
 setup_java_base() {
-   #   VERSION_OPENJDK=16 && VERSION_OPENJDK_EA=8 \
-   #   && URL_OPENJDK="https://download.java.net/java/early_access/jdk${VERSION_OPENJDK}/${VERSION_OPENJDK_EA}/GPL/openjdk-${VERSION_OPENJDK}-ea+${VERSION_OPENJDK_EA}_linux-x64_bin.tar.gz" \
-      URL_OPENJDK="https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_linux-x64_bin.tar.gz" \
+      URL_OPENJDK=`curl -sL https://jdk.java.net/archive/ | grep 'linux-x64_bin.tar' | sed -n 's/.*href="\([^"]*\).*/\1/p' | head -n 1` \
    && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
    && ln -s /opt/jdk/bin/* /usr/bin/ \
    && echo "@ Version of Java (java/javac):" && java -version && javac -version
 }
 
 setup_java_maven() {
-      MAVEN_VERSION="3.6.3" \
+      MAVEN_VERSION="3.8.2" \
    && install_zip "http://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip" \
    && mv /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
    && ln -s /opt/maven/bin/mvn* /usr/bin/ \
@@ -47,9 +65,9 @@ setup_node() {
     && mv /opt/node* /opt/node \
     && echo  "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
     && export PATH=/opt/node/bin:$PATH \
-    && npm install -g npm yarn \
+    && npm install -g npm \
     && ln -s /opt/node/bin/* /usr/bin/ \
-    && echo "@ Version of Node, npm, and yarn:" `node -v` `npm -v` `yarn -v`
+    && echo "@ Version of Node, npm, and yarn:" `node -v` `npm -v`
 }
 
 
@@ -65,8 +83,7 @@ setup_R_base() {
 
 
 setup_R_rstudio() {
-       RSTUDIO_VERSION=`curl -sL https://dailies.rstudio.com/rstudioserver/oss/ubuntu/x86_64/ | grep -Po "(?<=rstudio-server-)[0-9]\.[0-9]\.[0-9]+" | sort | tail -n 1` \
-    && wget -qO- "https://s3.amazonaws.com/rstudio-ide-build/server/bionic/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" -O /tmp/rstudio.deb \
+       $(curl -sL https://www.rstudio.com/products/rstudio/download-server/debian-ubuntu/  | grep '.deb' | grep 'bionic') -O /tmp/rstudio.deb \
     && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
     && ln -s /opt/rstudio-server         /usr/lib/ \
     && ln -s /opt/rstudio-server/bin/rs* /usr/bin/
@@ -79,7 +96,7 @@ setup_R_rstudio() {
     && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
     && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
     && echo "auth-validate-users=0"  >> /etc/rstudio/rserver.conf \
-    && printf "#!/bin/bash\nexport USER=root\nrserver --www-port=8888" > /usr/local/bin/start-rstudio.sh \
+    && printf "USER=root rserver --www-port=8888" > /usr/local/bin/start-rstudio.sh \
     && chmod u+x /usr/local/bin/start-rstudio.sh
 
     # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
@@ -95,7 +112,7 @@ setup_R_rshiny() {
     && dpkg -i /tmp/rshiny.deb \
     && sed  -i "s/run_as shiny;/run_as root;/g"  /etc/shiny-server/shiny-server.conf \
     && sed  -i "s/3838/8888/g"                   /etc/shiny-server/shiny-server.conf \
-    && printf "#!/bin/bash\nexport USER=root\nshiny-server" > /usr/local/bin/start-shiny-server.sh \
+    && printf "USER=root shiny-server" > /usr/local/bin/start-shiny-server.sh \
     && chmod u+x /usr/local/bin/start-shiny-server.sh
     
     # Remove shiny's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
@@ -112,7 +129,7 @@ setup_R_rshiny() {
 
 setup_R_datascience() {
    # firstly install rgl stub to work around, which has too many deps, but required by some libs
-   R -e "devtools::install_git(\"git://github.com/sorhawell/rgl.git\",quiet=T,clean=T)"
+      R -e "devtools::install_git(\"git://github.com/sorhawell/rgl.git\",quiet=T,clean=T)"
 
       install_apt  /opt/utils/install_list_R_datascience.apt \
    && install_R    /opt/utils/install_list_R_datascience.R
@@ -142,7 +159,7 @@ setup_julia() {
 
 setup_octave() {
     # TEMPFIX: javac version
-    # && OCTAVE_VERSION="5.2.0" \
+    # && OCTAVE_VERSION="6.3.0" \
     # && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
     # && cd /opt/octave-* \
     # && sed  -i "s/1.6/11/g" ./Makefile.in \

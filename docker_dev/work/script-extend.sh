@@ -1,8 +1,8 @@
 source /opt/utils/script-utils.sh
 
 setup_jupyter_base() {
-  # TEMP fix: nbconvert requires mistune<2,>0.8.1 for now
-     pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub "mistune<2,>0.8.1" \
+  # TEMP fix: nbconvert requires mistune>=0.8.1,<2 for now
+     pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub "mistune>=0.8.1,<2" \
   && mkdir -p /opt/conda/etc/jupyter/ \
   && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \
   && jupyter nbextension     enable --py widgetsnbextension \
@@ -19,7 +19,7 @@ setup_jupyter_kernels() {
   pip install -Uq bash_kernel && python -m bash_kernel.install --sys-prefix
 
     which npm \
-  && npm install -g --unsafe-perm --python=python2.7 ijavascript \
+  && npm install -g --unsafe-perm ijavascript \
   && /opt/node/bin/ijsinstall --install=global --spec-path=full \
   && mv /usr/local/share/jupyter/kernels/javascript /opt/conda/share/jupyter/kernels/
 

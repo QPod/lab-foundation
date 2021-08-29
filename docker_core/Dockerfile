@@ -45,7 +45,7 @@ RUN source /opt/utils/script-setup.sh \
 
 # If on a x86_64 architecture and install data science pkgs, install MKL for acceleration; Installing conda packages if provided.
 RUN ( [[ `arch` == "x86_64" && ${ARG_PROFILE_PYTHON} == *"datascience"* ]] && ( echo "mkl" >> /opt/utils/install_list.conda ) || true ) \
- && source /opt/utils/script-utils.sh && ( install_conda /opt/utils/install_list.conda || true )
+ && source /opt/utils/script-utils.sh && ( install_conda /opt/utils/install_list_core.conda || true )
 
 # If installing Python packages
 RUN source /opt/utils/script-utils.sh \
@@ -63,10 +63,8 @@ RUN source /opt/utils/script-utils.sh \
  # Handle pytorch installation 1.x only, cpu/gpu
  && ( [[ ${ARG_PROFILE_PYTHON} == *"torch"* ]] \
       && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER//./}" || echo "cpu" ) \
-      && pip install --pre -U torch torchvision -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
-      || true ) \
- ## TODO: TEMP Fix - https://github.com/pytoolz/cytoolz/issues/144
- && rm -f $(python -c 'import sys; print("/opt/conda/lib/python3.%s/site-packages/cytoolz/__init__.py" % sys.version_info.minor)')
+      && pip install --pre -U torch -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
+      || true )
 
 RUN [[ ${ARG_PROFILE_GO}     == *"base"* ]] && source /opt/utils/script-setup.sh && setup_GO     || true
 

@@ -1,7 +1,7 @@
 # QPod - Docker Image Stack
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![TravisCI Pipeline Status](https://img.shields.io/travis/com/QPod/docker-images.svg)](https://travis-ci.com/QPod/docker-images)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/QPod/docker-images/qpod-docker-images)](https://github.com/QPod/docker-images/actions/workflows/docker.yml)
 [![Join the Gitter Chat](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/QPod/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
 [![Docker Starts](https://img.shields.io/docker/stars/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
@@ -44,8 +44,8 @@ With Docker and `QPod`, you
 
 ### 0. Have docker installed on your laptop/server - Linux (e.g.: Ubuntu LTS) / Windows (>=10) / macOS
 
-- Install **Docker >= 19.03**: `docker-ce` ( community version & free: [Linux](https://hub.docker.com/search/?offering=community&type=edition&operating_system=linux) | [macOS](https://download.docker.com/mac/stable/Docker.dmg) | [Windows](https://download.docker.com/win/stable/Docker%20Desktop%20Installer.exe)   ) or [docker-ee](https://hub.docker.com/search/?offering=enterprise&type=edition) (enterprise version & paid) on your laptop/server. **Docker installed from default Ubuntu/CentOS repository probably won't work for GPU!**
-- If you want to use *NVIDIA GPUs* with `QPod`, Linux server is **required**. After installing **Docker >= 19.03**, also install both the [`NVIDIA driver`](https://github.com/NVIDIA/nvidia-docker/wiki/Frequently-Asked-Questions#how-do-i-install-the-nvidia-driver) and the latest version of [`nvidia-container-toolkit`](https://github.com/NVIDIA/nvidia-docker#quickstart) to use the GPUs in containers.
+- Install **Docker >= 19.03**: `docker-ce` ( community version & free: [Linux](https://hub.docker.com/search/?offering=community&type=edition&operating_system=linux) | [macOS](https://hub.docker.com/editions/community/docker-ce-desktop-mac) | [Windows](https://desktop.docker.com/win/stable/amd64/Docker%20Desktop%20Installer.exe)   ) on your laptop/server. **Docker installed from default Ubuntu/CentOS repository probably won't work for GPU!**
+- If you want to use *NVIDIA GPUs* with `QPod`, Linux server or latest Windows WSL2 is **required**. After installing **Docker >= 19.03**, also install both the [`NVIDIA driver`](https://github.com/NVIDIA/nvidia-docker/wiki/Frequently-Asked-Questions#how-do-i-install-the-nvidia-driver) and the latest version of [`nvidia-container-toolkit`](https://github.com/NVIDIA/nvidia-docker#quickstart) to use the GPUs in containers.
 
 ### 1. Choose the features and choose a folder on your disk
 
@@ -104,7 +104,7 @@ Typically, you can choose `full` / `full-cuda` if you have enough disk space and
 
 Change the value of `IMG` and `WORKDIR` to your choices in the script below, and run the script. Shutdown Jupyter or other service/program which are using port 8888 or 9999.
 
-#### For Linux/macOS, run this in bash/terminal
+#### For Linux/macOS/Windows WSL, run this in bash/terminal
 
 ```shell
 IMG="qpod/full:latest"

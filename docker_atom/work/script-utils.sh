@@ -3,13 +3,13 @@
 install_echo()    { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 printf '%s\n' ; }
 
 # function to install apt-get packages from a text file which lists package names (add comments with % char)
-install_apt()     { apt-get -y update --fix-missing > /dev/null && apt-get install -yq --no-install-recommends `cat $1 | cut -d '%' -f 1` ; }
+install_apt()     { apt-get -qq update -yq --fix-missing && apt-get -qq install -yq --no-install-recommends `cat $1 | cut -d '%' -f 1` ; }
 
 # function to install conda packages from a text file which lists package names (add comments with % char)
 install_conda()   { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 conda install -yq ; }
 
 # function to install python packages with pip from a text file which lists package names (add comments with % char)
-install_pip()     { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 pip install -U --pre --use-feature=2020-resolver ; }
+install_pip()     { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 pip -qq install -U --pre ; }
 
 # function to install R packages from a text file which lists package names (add comments with % char, use quiet=T to be less verbose)
 install_R()       { R -e "options(Ncpus=4);lapply(scan('$1','c',comment.char='%'),function(x){cat(x,system.time(install.packages(x,clean=T,quiet=T)),'\n')})"; }
