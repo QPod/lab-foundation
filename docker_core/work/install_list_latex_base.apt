@@ -3,5 +3,6 @@
 
 lmodern libx11-dev                              % required libraries
 inkscape pandoc pandoc-citeproc                 % required for tex file generation
-texlive-xetex   texlive-generic-recommended     % xetex, to generate PDF from tex
+texlive-xetex                                   % xetex, to generate PDF from tex
+texlive-latex-recommended texlive-plain-generic % texlive
 texlive-fonts-extra texlive-fonts-recommended   % latex fonts: basic

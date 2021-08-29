@@ -1,7 +1,7 @@
 # QPod - Docker Image Stack
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/QPod/docker-images/qpod-docker-images))](https://github.com/QPod/docker-images/actions/workflows/docker.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/QPod/docker-images/qpod-docker-images)](https://github.com/QPod/docker-images/actions/workflows/docker.yml)
 [![Join the Gitter Chat](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/QPod/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
 [![Docker Starts](https://img.shields.io/docker/stars/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
