@@ -17,6 +17,7 @@ env:
 
 jobs:
   qpod_base:
+    name: qpod/base
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -26,6 +27,7 @@ jobs:
           build_image base latest docker_base/Dockerfile && alias_image base latest  python latest && push_image
 
   qpod_cuda_11:
+    name: qpod/cuda_11.x
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -42,6 +44,7 @@ jobs:
           build_image cuda_11.2 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=cuda_11.2" && push_image
 
   qpod_cuda_10:
+    name: qpod/cuda_10.x
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -64,6 +67,7 @@ jobs:
           build_image cuda_10.2 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=cuda_10.2" && push_image
 
   qpod_core:
+    name: qpod/core
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -82,6 +86,7 @@ jobs:
           push_image
 
   qpod_py-data:
+    name: qpod/py-data
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -89,6 +94,7 @@ jobs:
       - run: source ./tool.sh && build_image py-data latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database" && push_image
 
   qpod_py-nlp:
+    name: qpod/py-nlp
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -96,6 +102,7 @@ jobs:
       - run: source ./tool.sh && build_image py-nlp  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,nlp" && push_image
 
   qpod_py-cv:
+    name: qpod/py-cv
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -103,6 +110,7 @@ jobs:
       - run: source ./tool.sh && build_image py-cv   latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,cv" && push_image
 
   qpod_py-bio:
+    name: qpod/py-bio
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -110,6 +118,7 @@ jobs:
       - run: source ./tool.sh && build_image py-bio  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,bio" && push_image
 
   qpod_py-chem:
+    name: qpod/py-chem
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -117,6 +126,7 @@ jobs:
       - run: source ./tool.sh && build_image py-chem latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,chem" && push_image
 
   qpod_py-std:
+    name: qpod/py-std
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -124,6 +134,7 @@ jobs:
       - run: source ./tool.sh && build_image py-std  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bio,chem" && push_image
 
   qpod_py-jdk:
+    name: qpod/py-jdk
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -131,20 +142,23 @@ jobs:
       - run: source ./tool.sh && build_image py-jdk  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,database,nlp,cv,bio,chem" --build-arg "ARG_PROFILE_JAVA=base" && push_image
 
   qpod_r-base:
+    name: qpod/r-base
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: source ./tool.sh build_image r-base latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base" && push_image
 
-  qpod_r:
+  qpod_r-std:
+    name: qpod/r-std
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: source ./tool.sh && build_image r latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" && push_image
+      - run: source ./tool.sh && build_image r-std latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" && push_image
 
   qpod_r-latex:
+    name: qpod/r-latex
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -158,6 +172,7 @@ jobs:
           push_image
 
   qpod_r-studio:
+    name: qpod/r-studio
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -171,6 +186,7 @@ jobs:
           push_image
 
   qpod_node:
+    name: qpod/node
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -178,6 +194,7 @@ jobs:
       - run: source ./tool.sh && build_image node latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base" && push_image
 
   qpod_jdk:
+    name: qpod/jdk
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -185,6 +202,7 @@ jobs:
       - run: source ./tool.sh && build_image jdk latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"   && push_image
 
   qpod_julia:
+    name: qpod/julia
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -192,6 +210,7 @@ jobs:
       - run: source ./tool.sh && build_image julia latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JULIA=base"  && push_image
 
   qpod_go:
+    name: qpod/go
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -199,6 +218,7 @@ jobs:
       - run: source ./tool.sh && build_image go latest docker_core/Dockerfile --build-arg "ARG_PROFILE_GO=base"     && push_image
 
   qpod_tf1:
+    name: qpod/tf1
     needs: qpod_cuda_10
     runs-on: ubuntu-latest
     steps:
@@ -212,6 +232,7 @@ jobs:
           alias_image py-cuda-10.0 latest tf1 latest && push_image
 
   qpod_core-cuda:
+    name: qpod/core-cuda
     needs: qpod_cuda_11
     runs-on: ubuntu-latest
     steps:
@@ -231,6 +252,7 @@ jobs:
           alias_image full-cuda-11.2 latest core-cuda latest && push_image
 
   qpod_core-dev:
+    name: qpod/core-dev
     needs: qpod_core
     runs-on: ubuntu-latest
     steps:
@@ -243,6 +265,7 @@ jobs:
           alias_image core-dev latest full latest && push_image
 
   qpod_cuda-dev:
+    name: qpod/cuda-dev
     needs: qpod_core-cuda
     runs-on: ubuntu-latest
     steps:
