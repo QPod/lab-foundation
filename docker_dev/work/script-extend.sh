@@ -18,33 +18,33 @@ setup_jupyter_kernels() {
   # Install Bash Kernel
   pip install -Uq bash_kernel && python -m bash_kernel.install --sys-prefix
 
-    which npm \
+     which npm \
   && npm install -g --unsafe-perm ijavascript \
   && /opt/node/bin/ijsinstall --install=global --spec-path=full \
   && mv /usr/local/share/jupyter/kernels/javascript /opt/conda/share/jupyter/kernels/
 
-    which R \
+     which R \
   && R -e "install.packages('IRkernel')" \
   && R -e "IRkernel::installspec(user=FALSE)" \
   && mv /usr/local/share/jupyter/kernels/ir /opt/conda/share/jupyter/kernels/
 
-    which java \
-  && pip install -Uq beakerx pandas py4j  \
-  && beakerx install \
-  && jupyter labextension install beakerx-jupyterlab
+     which java \
+  && pip install -Uq pandas py4j
+  #&& pip install beakerx && beakerx install \
+  #&& jupyter labextension install beakerx-jupyterlab
 
-    which julia \
+     which julia \
   && julia -e "using Pkg; Pkg.add(\"IJulia\"); Pkg.precompile();" \
   && mv ~/.local/share/jupyter/kernels/julia* /opt/conda/share/jupyter/kernels/
 
-    which go \
+     which go \
   && export GOPATH=/opt/go/path \
   && go get -u github.com/gopherdata/gophernotes \
   && mkdir -p /opt/conda/share/jupyter/kernels/gophernotes \
   && cp $GOPATH/src/github.com/gopherdata/gophernotes/kernel/* /opt/conda/share/jupyter/kernels/gophernotes \
   && ln -s $GOPATH/bin/gophernotes /usr/bin/
   
-    which octave \
+     which octave \
   && export PATH=/opt/octave/bin:$PATH \
   && pip install -Uq octave_kernel
 
@@ -53,18 +53,12 @@ setup_jupyter_kernels() {
 
 
 setup_jupyter_extensions() {
-    install_apt /opt/utils/install_list_JPY_extend.apt \
+     install_apt /opt/utils/install_list_JPY_extend.apt \
   && install_pip /opt/utils/install_list_JPY_extend.pip
 
-  jupyter nbextension install --sys-prefix --py ipyparallel
-  jupyter nbextension enable --sys-prefix --py ipyparallel
-  jupyter serverextension enable --sys-prefix --py ipyparallel
-  ipcluster nbextension enable
-
-  jupyter nbextensions_configurator enable --sys-prefix
-  jupyter contrib nbextension install --sys-prefix
-
-  jupyter serverextension enable  --sys-prefix --py jupyterlab_git
+  # jupyter nbextensions_configurator enable --sys-prefix
+  # jupyter contrib nbextension install --sys-prefix
+  # jupyter serverextension enable  --sys-prefix --py jupyterlab_git
  
   jupyter labextension install --no-build \
     @jupyterlab/toc @jupyterlab/shortcutui @jupyterlab/git @jupyterlab/latex \

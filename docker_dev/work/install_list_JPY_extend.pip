@@ -3,8 +3,8 @@
 
 ipyparallel ipynb                       % IPython extensions
 nbresuse                                % Notebook extension
-jupyter_nbextensions_configurator       % Jupyter Notebook extension configurator
-jupyter_contrib_nbextensions            % Jupyter Notebook third-party extensions
+# jupyter_nbextensions_configurator       % Jupyter Notebook extension configurator
+# jupyter_contrib_nbextensions            % Jupyter Notebook third-party extensions
 
 jupyterlab_server                       % Jupyter Lab Server
 jupyterlab-git                          % Jupyter Lab Git extension
