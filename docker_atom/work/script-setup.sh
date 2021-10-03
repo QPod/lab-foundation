@@ -41,7 +41,9 @@ setup_nvtop() {
 
 
 setup_java_base() {
-      URL_OPENJDK=`curl -sL https://jdk.java.net/archive/ | grep 'linux-x64_bin.tar' | sed -n 's/.*href="\([^"]*\).*/\1/p' | head -n 1` \
+      VERSION_JDK=11 \
+   && URL_OPENJDK=`curl -sL https://jdk.java.net/archive/ | grep 'linux-x64_bin.tar' | grep -v sha256 | sed -n 's/.*href="\([^"]*\).*/\1/p' | grep "jdk${VERSION_JDK}" | head -n 1`  \
+   && echo "Installing JDK from: ${URL_OPENJDK}" \
    && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
    && ln -s /opt/jdk/bin/* /usr/bin/ \
    && echo "@ Version of Java (java/javac):" && java -version && javac -version

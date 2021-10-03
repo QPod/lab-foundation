@@ -14,6 +14,8 @@ fi
 export NAMESPACE=$(echo "${REGISTRY_URL:-"docker.io"}/${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
 echo '---->' $GITHUB_REPOSITORY $NAMESPACE
 
+echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
+
 build_image() {
     echo $@ ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; VER=`date +%Y.%m%d`;
