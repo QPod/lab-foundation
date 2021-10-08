@@ -98,6 +98,13 @@ setup_R_rstudio() {
     && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
     && echo "auth-minimum-user-id=0" >> /etc/rstudio/rserver.conf \
     && echo "auth-validate-users=0"  >> /etc/rstudio/rserver.conf \
+    && echo "www-allow-origin=*"     >> /etc/rstudio/rserver.conf \
+    && echo "www-same-site=none"     >> /etc/rstudio/rserver.conf \
+    && echo "www-frame-origin=same"  >> /etc/rstudio/rserver.conf \
+    && echo "www-verify-user-agent=0">> /etc/rstudio/rserver.conf \
+    && echo "database-config-file=/etc/rstudio/db.conf"  >> /etc/rstudio/rserver.conf \
+    && echo "provider=sqlite"                            >> /etc/rstudio/db.conf \
+    && echo "directory=/etc/rstudio/"                    >> /etc/rstudio/db.conf \
     && printf "USER=root rserver --www-port=8888" > /usr/local/bin/start-rstudio.sh \
     && chmod u+x /usr/local/bin/start-rstudio.sh
 
