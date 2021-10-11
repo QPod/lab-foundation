@@ -2,13 +2,9 @@ source /opt/utils/script-utils.sh
 
 setup_jupyter_base() {
   # TEMP fix: nbconvert requires mistune>=0.8.1,<2 for now
-     pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub "mistune>=0.8.1,<2" \
-  && mkdir -p /opt/conda/etc/jupyter/ \
-  && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \
+     pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub "mistune>=0.8.1,<2" \  
   && jupyter nbextension     enable --py widgetsnbextension \
-  && echo "@ Version of Yarn:" `yarn -v` \
   && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
-  && mv /opt/utils/start-*.sh /usr/local/bin/ && chmod +x /usr/local/bin/start-*.sh \
   && echo "@ Version of Jupyter Notebook/JupyterLab:" \
       `jupyter notebook --version` `jupyter lab --version`
 }
