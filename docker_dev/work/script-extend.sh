@@ -2,8 +2,8 @@ source /opt/utils/script-utils.sh
 
 setup_jupyter_base() {
   # TEMP fix: nbconvert requires mistune>=0.8.1,<2 for now
-     pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub "mistune>=0.8.1,<2" \  
-  && jupyter nbextension     enable --py widgetsnbextension \
+     pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub "mistune>=0.8.1,<2" \
+  && jupyter nbextension  enable --py widgetsnbextension \
   && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
   && echo "@ Version of Jupyter Notebook/JupyterLab:" \
       `jupyter notebook --version` `jupyter lab --version`

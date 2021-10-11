@@ -17,10 +17,10 @@ ARG ARG_KEEP_NODEJS=true
 COPY work /opt/utils/
 
 # Setup Jupyter: Basic Configurations and Extensions...
-RUN source /opt/utils/script-extend.sh \
- && mkdir -pv /opt/conda/etc/jupyter/ \
+RUN mkdir -pv /opt/conda/etc/jupyter/ \
  && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \
  && mv /opt/utils/start-*.sh /usr/local/bin/ && chmod +x /usr/local/bin/start-*.sh \
+ && source /opt/utils/script-extend.sh \
  && for profile in $(echo $ARG_PROFILE_JUPYTER | tr "," "\n") ; do ( setup_jupyter_${profile} || true ) ; done
 
 # If not keeping NodeJS, remove NoedJS to reduce image size
