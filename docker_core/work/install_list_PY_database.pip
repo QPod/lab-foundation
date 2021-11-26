@@ -3,5 +3,5 @@
 % Lib Reference: https://docs.continuum.io/anaconda/packages/pkg-docs
 
 datashape bottleneck blaze dask distributed      % Python BigData/parallel interface
-openpyxl dill cloudpickle                        % Data access: external systems; Object Serialization
-sqlalchemy pandasql pymysql psycopg2-binary      % Data access: OpenSource DB
+pandasql openpyxl dill cloudpickle               % Data access: external systems; Object Serialization
+sqlalchemy pymysql psycopg2-binary redis         % Data access: OpenSource DB
