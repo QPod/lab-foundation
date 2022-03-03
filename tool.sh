@@ -1,20 +1,25 @@
 #!/bin/bash
+# set -exu
+
 export REGISTRY_URL="docker.io"   # docker.io or other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
 export BUILDKIT_PROGRESS="plain"  # Full logs for CI build.
 # DOCKER_REGISTRY_USER and DOCKER_REGISTRY_PASSWORD is required for docker image push, they should be set in CI secrets.
 
-CI_PROJECT_BRANCH=${GITHUB_HEAD_REF:-master}
+CI_PROJECT_NAME=${GITHUB_REPOSITORY:-"QPod/docker-images"}
+CI_PROJECT_BRANCH=${GITHUB_HEAD_REF:-"master"}
 
-if [ "${CI_PROJECT_BRANCH}" == "master" ]; then
-    export CI_PROJECT_NAMESPACE=$(echo "$(dirname ${GITHUB_REPOSITORY})") ;
+if [ "${CI_PROJECT_BRANCH}" = "master" ] ; then
+    export CI_PROJECT_NAMESPACE=$(echo "$(dirname ${CI_PROJECT_NAME})") ;
 else
-    export CI_PROJECT_NAMESPACE=$(echo "$(dirname ${GITHUB_REPOSITORY})")0${CI_PROJECT_BRANCH} ;
+    export CI_PROJECT_NAMESPACE=$(echo "$(dirname ${CI_PROJECT_NAME})")0${CI_PROJECT_BRANCH} ;
 fi
 
 export NAMESPACE=$(echo "${REGISTRY_URL:-"docker.io"}/${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
-echo '---->' $GITHUB_REPOSITORY $NAMESPACE
+echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
+echo "--------> Docker Repo=${NAMESPACE}"
 
-echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json && sudo service docker restart
+echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+sudo service docker restart
 
 build_image() {
     echo $@ ;

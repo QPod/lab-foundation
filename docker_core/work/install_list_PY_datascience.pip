@@ -7,5 +7,5 @@ sortedcontainers sortedcollections                      % Enhanced Data Structur
 lxml beautifulsoup4 pyquery numpydoc sphinx             % Parse/Build documents
 pandas pyarrow xlrd openpyxl beautifulsoup4             % Data preparation
 patsy statsmodels sympy pywavelets  numexpr pycrypto    % Statistics, Maths, and related Utilities
-scikit-learn Orange3 Orange3-Associate mlflow           % Statistical ML, Data Mining with Orange3
+scikit-learn scipy mlflow                               % Statistical ML, Data Mining
 bokeh seaborn altair vincent                            % Data visualization

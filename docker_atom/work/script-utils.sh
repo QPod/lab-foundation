@@ -1,3 +1,4 @@
+set -x
 
 # function to debug, resolve package names from a text file and display.
 install_echo()    { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 printf '%s\n' ; }
@@ -7,9 +8,10 @@ install_apt()     { apt-get -qq update -yq --fix-missing && apt-get -qq install 
 
 # function to install conda packages from a text file which lists package names (add comments with % char)
 install_conda()   { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 conda install -yq ; }
+install_mamba()   { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 mamba install -yq --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" ; }
 
 # function to install python packages with pip from a text file which lists package names (add comments with % char)
-install_pip()     { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 pip -qq install -U --pre ; }
+install_pip()     { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 pip install -U --pre ; }
 
 # function to install R packages from a text file which lists package names (add comments with % char, use quiet=T to be less verbose)
 install_R()       { R -e "options(Ncpus=4);lapply(scan('$1','c',comment.char='%'),function(x){cat(x,system.time(install.packages(x,clean=T,quiet=T)),'\n')})"; }
@@ -29,6 +31,9 @@ install_zip()     { curl -o /tmp/TMP.zip -sL $1 && unzip -q -d /opt/ /tmp/TMP.zi
 # function to download a .tar.gz file and unzip it to /opt/, add a second argument to extract only those file
 install_tar_gz()  { curl -o /tmp/TMP.tgz -sL $1 && tar -C /opt/ -xzf /tmp/TMP.tgz $2 && rm /tmp/TMP.tgz ; }
 
+# function to download a .tar.bz file and unzip it to /opt/, add a second argument to extract only those file
+install_tar_bz()  { curl -o /tmp/TMP.tbz -sL $1 && tar -C /opt/ -xjf /tmp/TMP.tbz $2 && rm /tmp/TMP.tbz ; }
+
 # function to download a .tar.xz file and unzip it to /opt/, add a second argument to extract only those file
 install_tar_xz()  { curl -o /tmp/TMP.txz -sL $1 && tar -C /opt/ -xJf /tmp/TMP.txz $2 && rm /tmp/TMP.txz ; }
 
@@ -38,7 +43,9 @@ install_mvn() { cat $1 | cut -d "%" -f 1 | xargs -r -n1 -I {} mvn dependency:cop
 # function to clean up
 install__clean(){
   which apt-get && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+  which mamba   && mamba clean -ya
   which conda   && conda clean -ya
+  ( rm -rf /opt/conda/pkgs/* || true )
   which npm     && npm cache clean --force
   rm -rf /opt/conda/share/jupyter/lab/staging
   ( rm -rf /root/.* /tmp/.* /tmp/* /var/log/* /var/cache/* || true )
@@ -53,6 +60,7 @@ install__clean(){
 list_installed_packages() {
   type pip    && echo "@ Version of Python and packages:" && python --version && pip list
   type conda  && echo "@ Version of Conda and packages:"  && conda info && conda list | grep -v "<pip>"
+  type mamba  && echo "@ Version of Mamba and packages:"  && mamba info && mamba list | grep -v "<pip>"
   type node   && echo "@ Version of NodeJS and packages:" && node --version && npm --version && npm list -g --depth 0
   type java   && echo "@ Version of Java (java/javac):"   && java -version && javac -version
   type R      && echo "@ Version of R and libraries:"     && R --version && R -e "R.Version()\$version.string;installed.packages()[,c(3,10)]"
@@ -60,4 +68,24 @@ list_installed_packages() {
   type go     && echo "@ Version of golang and packages:" && go version && go list ...
   type octave && echo "@ Version of Octave and packages:" && octave --version && octave --eval "pkg list"
   true
+}
+
+fix_permission() {
+  DIRECTORY=$1; GROUP_ID=$2; shift 2;
+  for d in "$DIRECTORY"; do
+      find "${d}" \
+          ! \( \
+              -group "${GROUP_ID}" \
+              -a -perm -g+rwX \
+          \) \
+          -exec chgrp "${GROUP_ID}" {} \; \
+          -exec chmod g+rwX {} \;
+      # setuid, setgid *on directories only*
+      find "${d}" \
+          \( \
+              -type d \
+              -a ! -perm -6000 \
+          \) \
+          -exec chmod +6000 {} \;
+  done
 }

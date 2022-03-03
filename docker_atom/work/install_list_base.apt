@@ -4,7 +4,8 @@
 htop vim git jq         % Process Management, Editor, Version Control
 build-essential cmake   % build essentials
 wget iputils-ping       % download, network (ping)
-unzip p7zip-full        % zip/unzip
+unzip bzip2 p7zip-full  % zip/unzip
 rsync                   % file transfer
 openssh-client          % Provide ssh client and generate keys
 openssh-server          % Provide ssh server (sshd)
+% tini                  % tini - which will be entry point later; not avaliable on ubuntu<=18
