@@ -234,9 +234,35 @@ jobs:
       - run: |
           source ./tool.sh
           build_image py-cuda-10.0 latest docker_core/Dockerfile \
-            --build-arg "ARG_PROFILE_PYTHON=tf1,datascience,nlp,cv" \
+            --build-arg "ARG_PROFILE_PYTHON=tf1" \
             --build-arg "BASE_IMG=cuda_10.0"
           alias_image py-cuda-10.0 latest tf1 latest && push_image
+
+  qpod_tf2:
+    name: qpod/tf2
+    needs: qpod_cuda_11_2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          source ./tool.sh
+          build_image py-cuda-11.2 latest docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_PYTHON=tf2" \
+            --build-arg "BASE_IMG=cuda_11.2"
+          alias_image py-cuda-11.2 latest tf2 latest && push_image
+
+  qpod_torch:
+    name: qpod/torch
+    needs: qpod_cuda_11_3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          source ./tool.sh
+          build_image py-cuda-11.3 latest docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_PYTHON=torch" \
+            --build-arg "BASE_IMG=cuda_11.3"
+          alias_image py-cuda-11.3 latest torch latest && push_image
 
   qpod_core-cuda:
     name: qpod/core-cuda

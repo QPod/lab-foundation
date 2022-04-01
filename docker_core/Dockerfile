@@ -54,15 +54,16 @@ RUN source /opt/utils/script-utils.sh \
       && ( which java       && echo "py4j  % Install py4j if Java exists" >> /opt/utils/install_list_PY_datascience.pip || true ) \
       || true ) \
  && for profile in $(echo $ARG_PROFILE_PYTHON | tr "," "\n") ; do ( install_pip "/opt/utils/install_list_PY_${profile}.pip" || true ) ; done \
- # Handle tensorflow installation 1.x/2.x, cpu/gpu
+ # Handle tensorflow installation 1.x/2.x, cpu/gpu: https://www.tensorflow.org/install/source#gpu
  && ( [[ ${ARG_PROFILE_PYTHON} == *"tf"* ]] \
       && TF=$( [ -x "$(command -v nvcc)" ] && echo "tensorflow-gpu" || echo "tensorflow") \
       && V=$([[ ${ARG_PROFILE_PYTHON} == *"tf1"* ]] && echo "1" || echo "2" ) \
       && pip install --pre -U "${TF}==${V}.*" \
       || true ) \
- # Handle pytorch installation 1.x only, cpu/gpu
+ # Handle pytorch installation 1.x only, cpu/gpu: https://pytorch.org/get-started/locally/
  && ( [[ ${ARG_PROFILE_PYTHON} == *"torch"* ]] \
-      && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER//./}" || echo "cpu" ) \
+      && CUDA_VER=$(echo "${CUDA_VERSION:0:4}" | sed 's/\.//' ) \
+      && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-113}" || echo "cpu" ) \
       && pip install --pre -U torch -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
       || true )
 

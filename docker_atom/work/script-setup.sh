@@ -33,7 +33,8 @@ setup_conda_postprocess() {
 }
 
 setup_conda_with_mamba() {
-  mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" conda pip -c "conda-forge/linux-64"
+  VERSION_PTYHON=$1; shift 1;
+  mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" -c "conda-forge" conda pip python="${VERSION_PTYHON:-3.9}"
   rm -rf /opt/conda/pkgs/*
   setup_conda_postprocess
 }
