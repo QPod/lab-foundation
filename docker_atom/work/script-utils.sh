@@ -43,14 +43,14 @@ install_mvn() { cat $1 | cut -d "%" -f 1 | xargs -r -n1 -I {} mvn dependency:cop
 # function to clean up
 install__clean(){
   which apt-get && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
-  which mamba   && mamba clean -ya
-  which conda   && conda clean -ya
-  ( rm -rf /opt/conda/pkgs/* || true )
+  which mamba   && mamba clean -ya && rm -rf ~/micromamba
+  which conda   && conda clean -ya && ( rm -rf /opt/conda/pkgs/* || true )
+  find /opt/conda/lib | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
   which npm     && npm cache clean --force
   rm -rf /opt/conda/share/jupyter/lab/staging
   ( rm -rf /root/.* /tmp/.* /tmp/* /var/log/* /var/cache/* || true )
   chmod ugo+rwXt /tmp
-  find /opt/conda/lib | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+  ls -alh /root /tmp
   echo "@ System environment variables:" && for e in $(echo $(printenv) | tr " " "\n") ; do echo $e ; done
   echo "@ Version of image: building finished at:" `date` `uname -a`
   true

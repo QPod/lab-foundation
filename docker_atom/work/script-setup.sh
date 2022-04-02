@@ -85,9 +85,9 @@ setup_java_base() {
 }
 
 setup_java_maven() {
-     MAVEN_VERSION="3.8.2" \
-  && install_zip "http://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip" \
-  && mv /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
+     VERSION_MAVEN=$1; shift 1; VERSION_MAVEN=${VERSION_MAVEN:-"3.8.5"} \
+  && install_zip "http://archive.apache.org/dist/maven/maven-3/${VERSION_MAVEN}/binaries/apache-maven-${VERSION_MAVEN}-bin.zip" \
+  && mv /opt/apache-maven-${VERSION_MAVEN} /opt/maven \
   && ln -sf /opt/maven/bin/mvn* /usr/bin/ \
   && echo "@ Version of Maven:" && mvn --version
 }

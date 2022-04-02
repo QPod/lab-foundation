@@ -89,7 +89,6 @@ jobs:
             --build-arg "ARG_PROFILE_JAVA=base,maven" \
             --build-arg "ARG_PROFILE_GO=base" \
             --build-arg "ARG_PROFILE_JULIA=base" \
-            --build-arg "ARG_PROFILE_OCTAVE=base" \
             --build-arg "ARG_PROFILE_LATEX=base,cjk"
           push_image
 
