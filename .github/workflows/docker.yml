@@ -282,8 +282,6 @@ jobs:
             --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JAVA=base,maven" \
-            --build-arg "ARG_PROFILE_GO=base" \
-            --build-arg "ARG_PROFILE_JULIA=base" \
             --build-arg "ARG_PROFILE_LATEX=base,cjk"
           alias_image full-cuda-11.3 latest core-cuda latest && push_image
 
