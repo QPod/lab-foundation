@@ -28,7 +28,7 @@ build_image() {
     docker tag "${NAMESPACE}/${IMG}:${TAG}" "${NAMESPACE}/${IMG}:${VER}" ;
 }
 
-build_image_2() {
+build_image_common() {
     echo $@ ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; VER=`date +%Y.%m%d`;
     docker build --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "$(dirname $FILE)" ;
