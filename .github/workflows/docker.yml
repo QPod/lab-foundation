@@ -36,19 +36,9 @@ jobs:
           source ./tool.sh
           build_image cuda_11.5 latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.5.2-cudnn8-devel-ubuntu20.04"
           build_image cuda_11.5 latest docker_base/Dockerfile --build-arg "BASE_IMG=cuda_11.5"
-          build_image cuda_11.5 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=cuda_11.5" && push_image
-
-  # For default torch >= 1.10 support
-  qpod_cuda_11_3:
-    name: qpod/cuda_11.3
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: |
-          source ./tool.sh
-          build_image cuda_11.3 latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04"
-          build_image cuda_11.3 latest docker_base/Dockerfile --build-arg "BASE_IMG=cuda_11.3"
-          build_image cuda_11.3 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=cuda_11.3" alias_image cuda_11.3 latest cuda latest && push_image
+          build_image cuda_11.5 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=cuda_11.5"
+          alias_image cuda_11.5 latest cuda latest
+          push_image
 
   # For legacy torch support
   qpod_cuda_10_2:
