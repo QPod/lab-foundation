@@ -59,8 +59,8 @@ remove_folder() {
 }
 
 free_diskspace() {
-    clean_folder /usr/share/dotnet
-    clean_folder /usr/local/lib/android
-    # clean_folder /var/lib/docker
+    remove_folder /usr/share/dotnet
+    remove_folder /usr/local/lib/android
+    # remove_folder /var/lib/docker
     df -h
 }
