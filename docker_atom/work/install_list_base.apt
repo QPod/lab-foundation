@@ -1,7 +1,7 @@
 % This file contains apt packages to be installed with apt-get install line by line.
 % Use percent char as line comment separator.
 
-htop vim git jq         % Process Management, Editor, Version Control
+htop vim git jq tree    % Process Management, Editor, Version Control
 build-essential cmake   % build essentials
 wget iputils-ping       % download, network (ping)
 unzip bzip2 p7zip-full  % zip/unzip

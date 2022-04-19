@@ -28,6 +28,13 @@ build_image() {
     docker tag "${NAMESPACE}/${IMG}:${TAG}" "${NAMESPACE}/${IMG}:${VER}" ;
 }
 
+build_image_common() {
+    echo $@ ;
+    IMG=$1; TAG=$2; FILE=$3; shift 3; VER=`date +%Y.%m%d`;
+    docker build --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "$(dirname $FILE)" ;
+    docker tag "${NAMESPACE}/${IMG}:${TAG}" "${NAMESPACE}/${IMG}:${VER}" ;
+}
+
 alias_image() {
     IMG_1=$1; TAG_1=$2; IMG_2=$3; TAG_2=$4; shift 4; VER=`date +%Y.%m%d`;
     docker tag "${NAMESPACE}/${IMG_1}:${TAG_1}" "${NAMESPACE}/${IMG_2}:${TAG_2}" ;
@@ -44,4 +51,16 @@ push_image() {
       status=$?;
       echo "[${status}] Image pushed > ${IMG}";
     done
+}
+
+remove_folder() {
+    sudo du -h -d1 $1 || true ;
+    sudo rm -rf $1 || true ;
+}
+
+free_diskspace() {
+    remove_folder /usr/share/dotnet
+    remove_folder /usr/local/lib/android
+    # remove_folder /var/lib/docker
+    df -h
 }
