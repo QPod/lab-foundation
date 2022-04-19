@@ -52,3 +52,15 @@ push_image() {
       echo "[${status}] Image pushed > ${IMG}";
     done
 }
+
+remove_folder() {
+    sudo du -h -d1 $1 || true ;
+    sudo rm -rf $1 || true ;
+}
+
+free_diskspace() {
+    clean_folder /usr/share/dotnet
+    clean_folder /usr/local/lib/android
+    # clean_folder /var/lib/docker
+    df -h
+}

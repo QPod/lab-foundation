@@ -258,7 +258,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          source ./tool.sh
+          source ./tool.sh && free_diskspace
           build_image_common full-cuda-11.5 latest docker_core/Dockerfile \
             --build-arg "BASE_IMG=cuda_11.5" \
             --build-arg "ARG_PROFILE_PYTHON=base,datascience,database,nlp,cv,chem,tf2,torch" \
@@ -288,7 +288,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          source ./tool.sh
+          source ./tool.sh && free_diskspace
           build_image_common cuda-dev latest docker_dev/Dockerfile \
             --build-arg "BASE_IMG=core-cuda" \
             --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" \
