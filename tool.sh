@@ -18,7 +18,7 @@ export NAMESPACE=$(echo "${REGISTRY_URL:-"docker.io"}/${CI_PROJECT_NAMESPACE}" |
 echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
 echo "--------> Docker Repo=${NAMESPACE}"
 
-jq '.experimental=true'  /etc/docker/daemon.json > /tmp/daemon.json && mv /tmp/daemon.json /etc/docker/
+jq '.experimental=true'  /etc/docker/daemon.json > /tmp/daemon.json && sudo mv /tmp/daemon.json /etc/docker/
 sudo service docker restart
 
 build_image() {
