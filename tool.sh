@@ -6,9 +6,9 @@ export BUILDKIT_PROGRESS="plain"  # Full logs for CI build.
 # DOCKER_REGISTRY_USER and DOCKER_REGISTRY_PASSWORD is required for docker image push, they should be set in CI secrets.
 
 CI_PROJECT_NAME=${GITHUB_REPOSITORY:-"QPod/docker-images"}
-CI_PROJECT_BRANCH=${GITHUB_HEAD_REF:-"master"}
+CI_PROJECT_BRANCH=${GITHUB_HEAD_REF:-"main"}
 
-if [ "${CI_PROJECT_BRANCH}" = "master" ] ; then
+if [ "${CI_PROJECT_BRANCH}" = "main" ] ; then
     export CI_PROJECT_NAMESPACE=$(echo "$(dirname ${CI_PROJECT_NAME})") ;
 else
     export CI_PROJECT_NAMESPACE=$(echo "$(dirname ${CI_PROJECT_NAME})")0${CI_PROJECT_BRANCH} ;
@@ -18,7 +18,7 @@ export NAMESPACE=$(echo "${REGISTRY_URL:-"docker.io"}/${CI_PROJECT_NAMESPACE}" |
 echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
 echo "--------> Docker Repo=${NAMESPACE}"
 
-echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
+jq '.experimental=true'  /etc/docker/daemon.json > /tmp/daemon.json && mv /tmp/daemon.json /etc/docker/
 sudo service docker restart
 
 build_image() {
@@ -26,6 +26,12 @@ build_image() {
     IMG=$1; TAG=$2; FILE=$3; shift 3; VER=`date +%Y.%m%d`;
     docker build --squash --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "$(dirname $FILE)" ;
     docker tag "${NAMESPACE}/${IMG}:${TAG}" "${NAMESPACE}/${IMG}:${VER}" ;
+}
+
+build_image_no_tag() {
+    echo $@ ;
+    IMG=$1; TAG=$2; FILE=$3; shift 3; 
+    docker build --squash --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "$(dirname $FILE)" ;
 }
 
 build_image_common() {
