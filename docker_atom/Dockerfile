@@ -2,7 +2,7 @@
 
 # default value: Latest LTS version of Ubuntu (https://hub.docker.com/_/ubuntu)
 
-ARG BASE_IMG="ubuntu:latest"
+ARG BASE_IMG="ubuntu:focal" # latest
 FROM ${BASE_IMG}
 
 LABEL maintainer="haobibo@gmail.com"
