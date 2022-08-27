@@ -46,6 +46,10 @@ nosetests.xml
 coverage.xml
 *,cover
 
+# IDE
+.vscode/
+.idea/
+
 # Sphinx documentation
 docs/_build/
 

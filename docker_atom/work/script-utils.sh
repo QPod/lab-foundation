@@ -51,8 +51,9 @@ install__clean(){
   ( rm -rf /root/.* /tmp/.* /tmp/* /var/log/* /var/cache/* || true )
   chmod ugo+rwXt /tmp
   ls -alh /root /tmp
-  echo "@ System environment variables:" && for e in $(echo $(printenv) | tr " " "\n") ; do echo $e ; done
-  echo "@ Version of image: building finished at:" `date` `uname -a`
+  echo "@ System release info:" && cat /etc/*release*
+  echo "@ System environment variables:" && printenv | sort
+  echo "@ Version of image: building finished at:" $(date)
   true
 }
 
