@@ -65,6 +65,15 @@ RUN source /opt/utils/script-utils.sh \
       && CUDA_VER=$(echo "${CUDA_VERSION:0:4}" | sed 's/\.//' ) \
       && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-113}" || echo "cpu" ) \
       && pip install --pre -U torch -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
+      || true ) \
+ # Handle paddle installation, cpu/gpu: https://www.paddlepaddle.org.cn/
+ && ( [[ ${ARG_PROFILE_PYTHON} == *"paddle"* ]] \
+      && PADDLE=$( [ -x "$(command -v nvcc)" ] && echo "paddlepaddle-gpu" || echo "paddlepaddle") \
+      && PADDLE_VER=$(pip index versions ${PADDLE} | grep '(' | cut -d "(" -f 2  | tr -d ')[:space:]') \
+      && CUDA_VER=$(echo "${CUDA_VERSION:0:4}" | sed 's/\.//' ) \
+      && V=$([[ ${CUDA_VER} == *"11"* ]] && echo ".post${CUDA_VER}" || echo "" ) \
+      && V=$(echo ${PADDLE}==${PADDLE_VER}${V}) && echo "paddle to install: ${V}" \
+      && pip install ${V} -f "https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html" \
       || true )
 
 RUN [[ ${ARG_PROFILE_GO}     == *"base"* ]] && source /opt/utils/script-setup.sh && setup_GO     || true
