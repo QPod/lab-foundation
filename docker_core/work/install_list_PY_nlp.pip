@@ -2,4 +2,5 @@
 % Use percent char as line comment separator.
 
 pyparsing astroid nltk  % Parsing, AST
-transformers datasets   % transformers
+aiohttp==3.*            % TEMP fix: req by datasets, 4.0 won't work
+transformers datasets   % huggingface transformers
