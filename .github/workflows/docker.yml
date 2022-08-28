@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths-ignore:
       - "*.md"
-    
+
   pull_request:
     branches: [ main ]
     paths-ignore:
@@ -216,8 +216,8 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           source ./tool.sh
-          build_image tf1-cu100 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_10.0" --build-arg "ARG_PROFILE_PYTHON=tf1"
-          alias_image tf1-cu100 latest tf1 latest
+          build_image tf1-cuda100 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_10.0" --build-arg "ARG_PROFILE_PYTHON=tf1"
+          alias_image tf1-cuda100 latest tf1 latest
           push_image
 
   qpod_tf2:
@@ -228,11 +228,11 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           source ./tool.sh
-          build_image tf2-cu112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2"  --build-arg "ARG_PROFILE_PYTHON=tf2"
-          alias_image tf2-cu112 latest torch latest
+          build_image tf2-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2"  --build-arg "ARG_PROFILE_PYTHON=tf2"
+          alias_image tf2-cuda112 latest torch latest
           push_image
 
-  qpod_torch_cu116:
+  qpod_torch_cuda116:
     name: qpod/torch-cuda116
     needs: qpod_cuda_11_6
     runs-on: ubuntu-latest
@@ -240,22 +240,22 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           source ./tool.sh
-          build_image torch-cu116 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.6" --build-arg "ARG_PROFILE_PYTHON=torch"
-          alias_image torch-cu116 latest torch latest
+          build_image torch-cuda116 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.6" --build-arg "ARG_PROFILE_PYTHON=torch"
+          alias_image torch-cuda116 latest torch latest
           push_image
 
-  qpod_torch_cu102:
-    name: qpod/torch-cu102
+  qpod_torch_cuda102:
+    name: qpod/torch-cuda102
     needs: qpod_cuda_10_2
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: |
           source ./tool.sh
-          build_image torch-cu102 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_10.2" --build-arg "ARG_PROFILE_PYTHON=torch"
+          build_image torch-cuda102 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_10.2" --build-arg "ARG_PROFILE_PYTHON=torch"
           push_image
 
-  qpod_paddle_cu116:
+  qpod_paddle_cuda116:
     name: qpod/paddle-cuda116
     needs: qpod_cuda_11_6
     runs-on: ubuntu-latest
@@ -263,8 +263,19 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           source ./tool.sh
-          build_image paddle-cu116 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.6" --build-arg "ARG_PROFILE_PYTHON=paddle"
-          alias_image paddle-cu116 latest paddle latest
+          build_image paddle-cuda116 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.6" --build-arg "ARG_PROFILE_PYTHON=paddle"
+          alias_image paddle-cuda116 latest paddle latest
+          push_image
+
+  qpod_paddle_cuda102:
+    name: qpod/paddle-cuda102
+    needs: qpod_cuda_10_2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          source ./tool.sh
+          build_image paddle-cuda102 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_10.2" --build-arg "ARG_PROFILE_PYTHON=paddle"
           push_image
 
 
