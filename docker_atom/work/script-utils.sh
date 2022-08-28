@@ -48,7 +48,7 @@ install__clean(){
   find /opt/conda/lib | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
   which npm     && npm cache clean --force
   rm -rf /opt/conda/share/jupyter/lab/staging
-  ( rm -rf /root/.* /tmp/.* /tmp/* /var/log/* /var/cache/* || true )
+  ( rm -rf /tmp/.* /tmp/* /var/log/* /var/cache/* /root/.cache /root/.* || true )
   chmod ugo+rwXt /tmp
   ls -alh /root /tmp
   echo "@ System release info:" && cat /etc/*release*
