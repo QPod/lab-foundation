@@ -24,17 +24,17 @@ setup_conda_postprocess() {
   && conda update --all --quiet --yes
 
   # These conda pkgs shouldn't be removed (otherwise will cause RemoveError) since they are directly reqiuired by conda: pip setuptools pycosat pyopenssl requests ruamel_yaml
-     CONDA_PY_PKGS=`conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;"` \
-  && conda remove --force -yq $CONDA_PY_PKGS \
-  && pip install -UIq pip setuptools $CONDA_PY_PKGS
+     CONDA_PY_PKGS=$(conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;") \
+  && conda remove --force -yq "${CONDA_PY_PKGS}" \
+  && pip install -UIq pip setuptools "${CONDA_PY_PKGS}"
 
   # Print Conda and Python packages information in the docker build log
   echo "@ Version of Conda & Python:" && conda info && conda list | grep -v "<pip>"
 }
 
 setup_conda_with_mamba() {
-  VERSION_PTYHON=$1; shift 1;
-  mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" -c "conda-forge" conda pip python="${VERSION_PTYHON:-3.10}"
+  VERSION_PYTHON=$1; shift 1;
+  mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON:-3.10}"
   rm -rf /opt/conda/pkgs/*
   setup_conda_postprocess
 }
@@ -59,17 +59,17 @@ setup_nvtop() {
   # Install Utilities `nvtop`
   sudo apt-get -qq update --fix-missing && sudo apt-get -qq install -y --no-install-recommends libncurses5-dev
 
-  DIRECTORY=`pwd`
+  DIRECTORY=$(pwd)
 
      cd /tmp \
   && git clone https://github.com/Syllo/nvtop.git \
   && mkdir -pv nvtop/build && cd nvtop/build \
-  && LIB_PATH=`find / -name "libnvidia-ml*" 2>/dev/null` \
-  && cmake .. -DCMAKE_LIBRARY_PATH="`dirname $LIB_PATH`" .. \
+  && LIB_PATH=$(find / -name "libnvidia-ml*" 2>/dev/null) \
+  && cmake .. -DCMAKE_LIBRARY_PATH="$(dirname ${LIB_PATH})" .. \
   && make && sudo make install \
   && nvtop --version
 
-  cd $DIRECTORY && rm -rf /tmp/nvtop
+  cd "${DIRECTORY}" && rm -rf /tmp/nvtop
 
   sudo apt-get -qq remove -y libncurses5-dev
 }
@@ -77,9 +77,9 @@ setup_nvtop() {
 
 setup_java_base() {
      VERSION_JDK=11 \
-  && URL_OPENJDK=`curl -sL https://jdk.java.net/archive/ | grep 'linux-x64_bin.tar' | grep -v sha256 | sed -n 's/.*href="\([^"]*\).*/\1/p' | grep "jdk${VERSION_JDK}" | head -n 1`  \
+  && URL_OPENJDK=$(curl -sL https://jdk.java.net/archive/ | grep 'linux-x64_bin.tar' | grep -v sha256 | sed -n 's/.*href="\([^"]*\).*/\1/p' | grep "jdk${VERSION_JDK}" | head -n 1)  \
   && echo "Installing JDK from: ${URL_OPENJDK}" \
-  && install_tar_gz ${URL_OPENJDK} && mv /opt/jdk-* /opt/jdk \
+  && install_tar_gz "${URL_OPENJDK}" && mv /opt/jdk-* /opt/jdk \
   && ln -sf /opt/jdk/bin/* /usr/bin/ \
   && echo "@ Version of Java (java/javac):" && java -version && javac -version
 }
@@ -104,8 +104,8 @@ setup_node() {
   && export PATH=/opt/node/bin:$PATH \
   && npm install -g npm yarn \
   && ln -sf /opt/node/bin/* /usr/bin/ \
-  && echo "@ Version of Node, npm, and yarn:" `node -v` `npm -v` \
-  && echo "@ Version of Yarn:" `yarn -v`
+  && echo "@ Version of Node, npm, and yarn: $(node -v) $(npm -v)" \
+  && echo "@ Version of Yarn: $(yarn -v)"
 }
 
 
@@ -116,7 +116,7 @@ setup_R_base() {
   && echo "options(repos=structure(c(CRAN=\"https://cloud.r-project.org\")))" >> /etc/R/Rprofile.site \
   && R -e "install.packages(c('devtools'),clean=T,quiet=T);" \
   && ( type java && type R && R CMD javareconf || true ) \
-  && echo "@ Version of R:" && R --version 
+  && echo "@ Version of R: $(R --version)"
 }
 
 
@@ -147,7 +147,7 @@ setup_R_rstudio() {
   # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
      ( which pandoc          && rm /opt/rstudio-server/bin/pandoc/pandoc          || true ) \
   && ( which pandoc-citeproc && rm /opt/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
-  && echo "@ Version of rstudio-server:" && rstudio-server version
+  && echo "@ Version of rstudio-server: $(rstudio-server version)"
 }
 
 
@@ -168,7 +168,7 @@ setup_R_rshiny() {
 
   # hack shiny-server to allow run in root user: https://github.com/rstudio/shiny-server/pull/391
      sed  -i "s/throw new Error/logger.warn/g"  /opt/shiny-server/lib/worker/app-worker.js \
-  && echo "@ Version of shiny-server:" && shiny-server --version
+  && echo "@ Version of shiny-server: $(shiny-server --version)"
 }
 
 
@@ -184,9 +184,9 @@ setup_R_datascience() {
 setup_GO() {
      GO_VERSION=$(curl -sL https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+') \
   && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
-  && install_tar_gz $GO_URL go \
+  && install_tar_gz "${GO_URL}" go \
   && ln -sf /opt/go/bin/go /usr/bin/ \
-  && echo "@ Version of golang:" && go version 
+  && echo "@ Version of golang: $(go version)"
 }
 
 
@@ -198,7 +198,7 @@ setup_julia() {
   && mkdir -p /opt/julia/pkg \
   && echo "import Libdl; push!(Libdl.DL_LOAD_PATH, \"/opt/conda/lib\")" >> /opt/julia/etc/julia/startup.jl \
   && echo "DEPOT_PATH[1]=\"/opt/julia/pkg\""                            >> /opt/julia/etc/julia/startup.jl \
-  && echo "@ Version of Julia" && julia --version
+  && echo "@ Version of Julia: $(julia --version)"
 }
 
 
@@ -215,15 +215,14 @@ setup_octave() {
 
      install_apt       /opt/utils/install_list_octave.apt \
   && install_octave    /opt/utils/install_list_octave.pkg \
-  && echo "@ Version of Octave and installed packages:" \
-  && /opt/octave/bin/octave --version
+  && echo "@ Version of Octave and installed packages: $(/opt/octave/bin/octave --version)"
 }
 
 
 setup_traefik() {
      TRAEFIK_VERSION=$(curl -sL https://github.com/traefik/traefik/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+') \
   && TRAEFIK_URL="https://github.com/traefik/traefik/releases/download/v${TRAEFIK_VERSION}/traefik_v${TRAEFIK_VERSION}_linux_$(dpkg --print-architecture).tar.gz" \
-  && install_tar_gz $TRAEFIK_URL traefik \
+  && install_tar_gz "${TRAEFIK_URL}" traefik \
   && ln -sf /opt/traefik /usr/bin/ \
-  && echo "@ Version of traefik:" && traefik version
+  && echo "@ Version of traefik: $(traefik version)"
 }

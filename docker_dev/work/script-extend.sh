@@ -5,8 +5,8 @@ setup_jupyter_base() {
      pip install -Uq jupyterhub jupyterlab notebook ipywidgets qpod_hub "mistune>=0.8.1,<2" \
   && jupyter nbextension  enable --py widgetsnbextension \
   && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
-  && echo "@ Version of Jupyter Notebook/JupyterLab:" \
-      `jupyter notebook --version` `jupyter lab --version`
+  && echo "@ Version of Jupyter Notebook/JupyterLab: $(jupyter notebook --version)" \
+  && echo "@ Version of Jupyter Notebook/JupyterLab: $(jupyter lab --version)"
 }
 
 
@@ -74,7 +74,7 @@ setup_vscode_base() {
   && install_tar_gz "https://github.com/cdr/code-server/releases/download/v${VERSION_CODER}/code-server-${VERSION_CODER}-linux-amd64.tar.gz" \
   && mv /opt/code-server* /opt/code-server \
   && ln -s /opt/code-server/bin/code-server /usr/bin/ \
-  && printf "#!/bin/bash\n/opt/code-server/bin/code-server --port=8888 --auth=none --disable-telemetry $HOME\n" > /usr/local/bin/start-code-server.sh \
+  && printf "#!/bin/bash\n/opt/code-server/bin/code-server --port=8888 --auth=none --disable-telemetry ${HOME}\n" > /usr/local/bin/start-code-server.sh \
   && chmod u+x /usr/local/bin/start-code-server.sh \
-  && echo "@ coder-server Version:" && code-server -v
+  && echo "@ coder-server Version: $(code-server -v)"
 }
