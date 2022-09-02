@@ -44,8 +44,13 @@ RUN source /opt/utils/script-utils.sh \
 RUN source /opt/utils/script-setup.sh \
  && for profile in $(echo $ARG_PROFILE_R | tr "," "\n") ; do ( setup_R_${profile} ) ; done
 
-# If on a x86_64 architecture and install data science pkgs, install MKL for acceleration; Installing conda packages if provided.
-RUN $(grep -q "x86_64" <<< `arch`) && $(grep -q "datascience" <<< "${ARG_PROFILE_PYTHON}") && ( echo "mkl" >> /opt/utils/install_list.conda ) || echo "Skip MLK install." \
+# If on a x86_64 architecture: 1) if mkl specified, install nomkl; 2) install conda packages as specified.
+RUN $(grep -q "x86_64" <<< `arch`) && ( \
+      ( $(grep -q "mkl" <<< "${ARG_PROFILE_PYTHON}") && \
+        ( echo "mkl"   >> /opt/utils/install_list_core.conda && echo "Install mkl.") || \
+        ( echo "nomkl" >> /opt/utils/install_list_core.conda && echo "Install nomkl.") \
+      ) \
+    ) \
  && source /opt/utils/script-utils.sh && install_conda /opt/utils/install_list_core.conda
 
 # If installing Python packages
