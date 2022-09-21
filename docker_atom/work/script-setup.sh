@@ -16,14 +16,23 @@ setup_mamba() {
 
 
 setup_conda_postprocess() {
+  ln -sf ${CONDA_PREFIX}/bin/python3 /usr/bin/python
+
   # If python exists, set pypi source
   if [ -f "$(which python)" ]; then
     cat >/etc/pip.conf <<EOF
 [global]
 progress_bar=off
 root-user-action=ignore
+# retries=5
+# timeout=10
+trusted-host=pypi.python.org pypi.org files.pythonhosted.org
+# index-url=https://pypi.python.org/simple
 EOF
   fi
+
+  echo 'export PATH=$PATH:${CONDA_PREFIX}/bin'		>> /etc/profile
+  ln -sf ${CONDA_PREFIX}/bin/conda /usr/bin/
 
      conda config --system --prepend channels conda-forge \
   && conda config --system --set auto_update_conda false  \
@@ -42,15 +51,17 @@ EOF
 }
 
 setup_conda_with_mamba() {
+  mkdir -pv ${CONDA_PREFIX}
   VERSION_PYTHON=$1; shift 1;
   mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON:-3.10}"
-  rm -rf /opt/conda/pkgs/*
+  rm -rf ${CONDA_PREFIX}/pkgs/*
   setup_conda_postprocess
 }
 
 setup_conda_download() {
+  mkdir -pv ${CONDA_PREFIX}
   wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O /tmp/conda.sh
-  bash /tmp/conda.sh -f -b -p /opt/conda
+  bash /tmp/conda.sh -f -b -p ${CONDA_PREFIX}/
   rm -rf /tmp/conda.sh
   setup_conda_postprocess
 }
@@ -85,7 +96,7 @@ setup_nvtop() {
 
 
 setup_java_base() {
-     VERSION_JDK=11 \
+     VERSION_JDK=$1; shift 1; VERSION_JDK=${VERSION_JDK:-"11"} \
   && URL_OPENJDK=$(curl -sL https://jdk.java.net/archive/ | grep 'linux-x64_bin.tar' | grep -v sha256 | sed -n 's/.*href="\([^"]*\).*/\1/p' | grep "jdk${VERSION_JDK}" | head -n 1)  \
   && echo "Installing JDK from: ${URL_OPENJDK}" \
   && install_tar_gz "${URL_OPENJDK}" && mv /opt/jdk-* /opt/jdk \

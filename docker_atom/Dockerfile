@@ -20,7 +20,7 @@ ENV SHELL=/bin/bash \
     LANGUAGE="en_US.UTF-8" \
     HOME_DIR=/root
 
-SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "--login", "-c"]
 
 # --> Install OS libraries and setup some configurations
 RUN cd /tmp \
