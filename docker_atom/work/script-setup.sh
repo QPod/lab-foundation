@@ -118,13 +118,13 @@ setup_java_base() {
   fi
 
      echo "Installing JDK version ${VER_JDK} from: ${URL_OPENJDK}" \
-  && install_tar_gz "${URL_OPENJDK}" && mv /opt/jdk-* /opt/jdk \
+  && install_tar_gz "${URL_OPENJDK}" && mv /opt/jdk* /opt/jdk \
   && ln -sf /opt/jdk/bin/* /usr/bin/ \
   && echo "@ Version of Java (java/javac):" && java -version && javac -version
 }
 
 setup_java_maven() {
-     VERSION_MAVEN=$1; shift 1; VERSION_MAVEN=${VERSION_MAVEN:-"3.8.5"} \
+     VERSION_MAVEN=$1; shift 1; VERSION_MAVEN=${VERSION_MAVEN:-"3.8.6"} \
   && install_zip "http://archive.apache.org/dist/maven/maven-3/${VERSION_MAVEN}/binaries/apache-maven-${VERSION_MAVEN}-bin.zip" \
   && mv /opt/apache-maven-${VERSION_MAVEN} /opt/maven \
   && ln -sf /opt/maven/bin/mvn* /usr/bin/ \
