@@ -1,8 +1,7 @@
 # Distributed under the terms of the Modified BSD License.
 
-# default value: Latest LTS version of Ubuntu (https://hub.docker.com/_/ubuntu)
-
-ARG BASE_IMG="ubuntu:focal" # latest
+# latest # default value: Latest LTS version of Ubuntu (https://hub.docker.com/_/ubuntu)
+ARG BASE_IMG="ubuntu:focal"
 FROM ${BASE_IMG}
 
 LABEL maintainer="haobibo@gmail.com"
@@ -20,7 +19,7 @@ ENV SHELL=/bin/bash \
     LANGUAGE="en_US.UTF-8" \
     HOME_DIR=/root
 
-SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "--login", "-c"]
 
 # --> Install OS libraries and setup some configurations
 RUN cd /tmp \

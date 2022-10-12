@@ -33,7 +33,9 @@ RUN $(grep -q "base" <<< "${ARG_PROFILE_NODEJS}") && ( \
     ) || echo "Skip NodeJS install"
 
 # If installing Java environment - notice that Java can be dependency for some other packages like rJava
+ARG VERSION_JDK
 RUN source /opt/utils/script-setup.sh \
+ && export VERSION_JDK=${VERSION_JDK:-11} \
  && for profile in $(echo $ARG_PROFILE_JAVA | tr "," "\n") ; do ( setup_java_${profile} ) ; done
 
 # If installing LaTex and LaTex CJK packages.
