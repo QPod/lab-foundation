@@ -6,8 +6,8 @@ FROM ${BASE_NAMESPACE:+$BASE_NAMESPACE/}${BASE_IMG}
 
 LABEL maintainer="haobibo@gmail.com"
 
-ENV CONDA_PREFIX=/opt/conda \
-    PATH=$PATH:${CONDA_PREFIX}/bin
+ENV CONDA_PREFIX=/opt/conda
+ENV PATH=$PATH:${CONDA_PREFIX}/bin
 
 RUN source /opt/utils/script-setup.sh \
  ## source /opt/utils/script-utils.sh # already included in the `script-setup.sh`

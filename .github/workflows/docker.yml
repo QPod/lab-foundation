@@ -75,7 +75,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: source ./tool.sh && build_image py-jdk  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,database,nlp,cv,chem" --build-arg "ARG_PROFILE_JAVA=base" && push_image
+      - run: |
+          source ./tool.sh
+          build_image py-jdk  latest docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,database,nlp,cv,chem" \
+            --build-arg "ARG_PROFILE_JAVA=base"
+          push_image
 
   qpod_r-base:
     name: qpod/r-base
@@ -135,7 +140,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: source ./tool.sh && build_image jdk latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"   && push_image
+      - run: |
+          source ./tool.sh
+          build_image jdk8  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=8"  && push_image
+          build_image jdk17 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=17" && push_image
+          build_image jdk11 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=11" alias_image jdk11 latest jdk latest && push_image
 
   qpod_julia:
     name: qpod/julia

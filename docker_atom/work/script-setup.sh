@@ -96,9 +96,14 @@ setup_nvtop() {
 
 
 setup_java_base() {
-     VERSION_JDK=$1; shift 1; VERSION_JDK=${VERSION_JDK:-"11"} \
-  && URL_OPENJDK=$(curl -sL https://jdk.java.net/archive/ | grep 'linux-x64_bin.tar' | grep -v sha256 | sed -n 's/.*href="\([^"]*\).*/\1/p' | grep "jdk${VERSION_JDK}" | head -n 1)  \
-  && echo "Installing JDK from: ${URL_OPENJDK}" \
+  local VER_JDK=${VERSION_JDK:-"11"}
+  ARCH="x64"
+  echo "Use env var VERSION_JDK to specify JDK marjor version, currently specified: ${VERSION_JDK}"
+  echo "If not specified, will install version 11 by default. Will install version ${VER_JDK}"
+
+     URL_OPENJDK="https://www.oracle.com/java/technologies/downloads/" \
+  && URL_OPENJDK=$(curl -sL ${URL_OPENJDK} | grep "tar.gz" | grep "http" | grep -v sha256 | grep ${ARCH} | grep -i $(uname) | sed "s/'/\"/g" | sed -n 's/.*="\([^"]*\).*/\1/p' | grep "jdk-${VER_JDK}" | head -n 1) \
+  && echo "Installing JDK version ${VER_JDK} from: ${URL_OPENJDK}" \
   && install_tar_gz "${URL_OPENJDK}" && mv /opt/jdk-* /opt/jdk \
   && ln -sf /opt/jdk/bin/* /usr/bin/ \
   && echo "@ Version of Java (java/javac):" && java -version && javac -version
