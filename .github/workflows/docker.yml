@@ -142,9 +142,9 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           source ./tool.sh
-          build_image jdk8  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=8"  && push_image
           build_image jdk17 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=17" && push_image
-          build_image jdk11 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=11" alias_image jdk11 latest jdk latest && push_image
+          build_image jdk11 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=11" && alias_image jdk11 latest jdk latest && push_image
+          build_image jdk8  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=8"  && push_image
 
   qpod_julia:
     name: qpod/julia

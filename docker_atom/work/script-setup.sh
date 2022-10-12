@@ -98,12 +98,26 @@ setup_nvtop() {
 setup_java_base() {
   local VER_JDK=${VERSION_JDK:-"11"}
   ARCH="x64"
-  echo "Use env var VERSION_JDK to specify JDK marjor version, currently specified: ${VERSION_JDK}"
-  echo "If not specified, will install version 11 by default. Will install version ${VER_JDK}"
+  echo "Use env var VERSION_JDK to specify JDK major version. If not specified, will install version 11 by default."
+  echo "Will install JDK version ${VER_JDK}"
 
-     URL_OPENJDK="https://www.oracle.com/java/technologies/downloads/" \
-  && URL_OPENJDK=$(curl -sL ${URL_OPENJDK} | grep "tar.gz" | grep "http" | grep -v sha256 | grep ${ARCH} | grep -i $(uname) | sed "s/'/\"/g" | sed -n 's/.*="\([^"]*\).*/\1/p' | grep "jdk-${VER_JDK}" | head -n 1) \
-  && echo "Installing JDK version ${VER_JDK} from: ${URL_OPENJDK}" \
+  JDK_PAGE_DOWNLOAD="https://www.oracle.com/java/technologies/downloads/" \
+  && JDK_URL_ORCA=$(curl -sL ${JDK_PAGE_DOWNLOAD} | grep "tar.gz" | grep "http" | grep -v sha256 | grep ${ARCH} | grep -i $(uname) | sed "s/'/\"/g" | sed -n 's/.*="\([^"]*\).*/\1/p' | grep "jdk-${VER_JDK}" | head -n 1)
+
+  JDK_PAGE_RELEASE="https://www.oracle.com/java/technologies/javase/${VER_JDK}u-relnotes.html" \
+  && JDK_VER_MINOR=$(curl -sL ${JDK_PAGE_RELEASE} | grep -P 'JDK \d..\d+' | grep -Po '[\d\.]{3,}' | head -n1) \
+  && JDK_URL_MSFT="https://aka.ms/download-jdk/microsoft-jdk-${JDK_VER_MINOR}-linux-${ARCH}.tar.gz"
+
+  if [ "$VER_JDK" -gt 11 ] ; then
+    URL_OPENJDK=${JDK_URL_ORCA}
+  elif [ "$VER_JDK" -gt 8 ] ; then
+    URL_OPENJDK=${JDK_URL_MSFT}
+  else
+    echo "ORCA download URL ref: ${JDK_URL_ORCA}"
+    URL_OPENJDK="https://javadl.oracle.com/webapps/download/GetFile/1.8.0_341-b10/424b9da4b48848379167015dcc250d8d/linux-i586/jdk-8u341-linux-${ARCH}.tar.gz"
+  fi
+
+     echo "Installing JDK version ${VER_JDK} from: ${URL_OPENJDK}" \
   && install_tar_gz "${URL_OPENJDK}" && mv /opt/jdk-* /opt/jdk \
   && ln -sf /opt/jdk/bin/* /usr/bin/ \
   && echo "@ Version of Java (java/javac):" && java -version && javac -version
