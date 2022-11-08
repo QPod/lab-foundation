@@ -300,6 +300,17 @@ jobs:
           alias_image py-nlp-cuda116 latest py-nlp latest
           push_image
 
+  qpod_py-nlp-cuda112:
+    name: qpod/py-nlp-cuda112
+    needs: qpod_base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          source ./tool.sh
+          build_image py-nlp-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,nlp"
+          push_image
+
   qpod_py-nlp-cuda102:
     name: qpod/py-nlp-cuda102
     needs: qpod_base
