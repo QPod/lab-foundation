@@ -16,9 +16,6 @@ setup_mamba() {
 
 
 setup_conda_postprocess() {
-  ln -sf "${CONDA_PREFIX}/bin/python3" /usr/bin/python
-  ln -sf "${CONDA_PREFIX}/bin/python3" /usr/bin/python3
-
   # If python exists, set pypi source
   if [ -f "$(which python)" ]; then
     cat >/etc/pip.conf <<EOF
@@ -45,7 +42,8 @@ EOF
   # These conda pkgs shouldn't be removed (otherwise will cause RemoveError) since they are directly required by conda: pip setuptools pycosat pyopenssl requests ruamel_yaml
      CONDA_PY_PKGS=$(conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;") \
   && conda remove --force -yq "${CONDA_PY_PKGS}" \
-  && pip install -UIq pip setuptools "${CONDA_PY_PKGS}"
+  && pip install -UIq pip setuptools "${CONDA_PY_PKGS}" \
+  && rm -rf "${CONDA_PREFIX}"/pkgs/*
 
   # Print Conda and Python packages information in the docker build log
   echo "@ Version of Conda & Python:" && conda info && conda list | grep -v "<pip>"
@@ -55,7 +53,6 @@ setup_conda_with_mamba() {
   mkdir -pv "${CONDA_PREFIX}"
   VERSION_PYTHON=$1; shift 1;
   mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON:-3.10}"
-  rm -rf "${CONDA_PREFIX}/pkgs/*"
   setup_conda_postprocess
 }
 
@@ -239,23 +236,6 @@ setup_julia() {
   && echo "import Libdl; push!(Libdl.DL_LOAD_PATH, \"/opt/conda/lib\")" >> /opt/julia/etc/julia/startup.jl \
   && echo "DEPOT_PATH[1]=\"/opt/julia/pkg\""                            >> /opt/julia/etc/julia/startup.jl \
   && echo "@ Version of Julia: $(julia --version)"
-}
-
-
-setup_octave() {
-  # TEMPFIX: javac version
-  # && OCTAVE_VERSION="6.3.0" \
-  # && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
-  # && cd /opt/octave-* \
-  # && sed  -i "s/1.6/11/g" ./Makefile.in \
-  # && sed  -i "s/1.6/11/g" ./scripts/java/module.mk \
-  # && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
-  # && make -j8 && make install -j8 \
-  # && cd /opt/utils && rm -rf /opt/octave-*
-
-     install_apt       /opt/utils/install_list_octave.apt \
-  && install_octave    /opt/utils/install_list_octave.pkg \
-  && echo "@ Version of Octave and installed packages: $(/opt/octave/bin/octave --version)"
 }
 
 

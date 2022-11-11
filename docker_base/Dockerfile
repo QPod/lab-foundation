@@ -10,17 +10,13 @@ ENV CONDA_PREFIX=/opt/conda
 ENV PATH=$PATH:${CONDA_PREFIX}/bin
 
 RUN source /opt/utils/script-setup.sh \
- ## source /opt/utils/script-utils.sh # already included in the `script-setup.sh`
  && install_apt /opt/utils/install_list_base.apt \
  && echo "Install tini:" && setup_tini \
- && echo "Install Mamba, Python, and Conda:" && setup_mamba && setup_conda_with_mamba \
+ && echo "Install Mamba:" && setup_mamba \
+ && echo "Install Python, and Conda:" && setup_conda_with_mamba \
+ && echo "Replace system Python3 with conda Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu" \
+ && echo "/usr/share/pyshared/" > $("${CONDA_PREFIX}"/bin/python3 -c 'import sys;print(sys.path[-1]+"/usr_share.pth")') \
+ && rm -rf $(/usr/bin/python3 -c 'import sys; print(" ".join(i for i in sys.path if "python" in i))') \
+ && ln -sf "${CONDA_PREFIX}"/bin/python3 /usr/bin/python \
+ && ln -sf "${CONDA_PREFIX}"/bin/python3 /usr/bin/python3 \
  && install__clean
-
-#&& echo "Replace system Python3 with Conda's Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu" \
-#&& ln -sf /opt/conda/lib/python3.10 /opt/conda/lib/python3 \
-#&& cp --verbose -rn /usr/lib/python3.*/* /opt/conda/lib/python3/ \
-#&& mv /usr/share/pyshared/lsb_release.py /usr/bin/ \
-#&& rm --verbose -rf $(/usr/bin/python3 -c 'import sys; print(" ".join(sys.path))') /usr/lib/python3* /usr/share/pyshared/ \
-#&& ln -sf /opt/conda/lib/python3 /usr/lib/ \
-#&& TO_REPLACE="/usr/bin/python3;/usr/bin/python3.10" \
-#&& for F in $(echo ${TO_REPLACE} | tr ";" "\n") ; do ( rm -f ${F} && ln -s /opt/conda/bin/python ${F} ) ; done
