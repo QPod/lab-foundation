@@ -10,5 +10,4 @@ LABEL maintainer="haobibo@gmail.com"
 # For tensorflow 2.x or torch, python>=3.9 is supported.
 RUN echo ${CUDA_VERSION} && nvcc --version \
  && source /opt/utils/script-setup.sh && setup_nvtop \
- && [[ ${CUDA_VERSION} == *"10.0"* ]] && mamba install -yq python=3.7 || true \
  && install__clean

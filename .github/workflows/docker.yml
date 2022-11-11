@@ -205,6 +205,7 @@ jobs:
           build_image cuda_10.2 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=cuda_10.2" && push_image
 
   # cuda_10.0 - for legacy tensorflow 1.15 support
+  # For cuda version 10.0, the image is solely serverd for legacy tensorflow 1.15, which requires python 3.7
   qpod_cuda_10_0:
     name: qpod/cuda_10.0
     runs-on: ubuntu-latest
@@ -213,7 +214,7 @@ jobs:
       - run: |
           source ./tool.sh        
           build_image cuda_10.0 latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04"
-          build_image cuda_10.0 latest docker_base/Dockerfile --build-arg "BASE_IMG=cuda_10.0"
+          build_image cuda_10.0 latest docker_base/Dockerfile --build-arg "BASE_IMG=cuda_10.0" --build-arg "PYTHON_VERSION=3.7"
           build_image cuda_10.0 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=cuda_10.0" && push_image
 
 

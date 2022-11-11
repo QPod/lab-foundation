@@ -51,8 +51,8 @@ EOF
 
 setup_conda_with_mamba() {
   mkdir -pv "${CONDA_PREFIX}"
-  VERSION_PYTHON=$1; shift 1;
-  mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON:-3.10}"
+  VERSION_PYTHON=${1:-"3.10"}; shift 1;
+  mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON}"
   setup_conda_postprocess
 }
 
