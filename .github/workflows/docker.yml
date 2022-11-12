@@ -188,7 +188,7 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           source ./tool.sh
-          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04" docker rmi nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04
+          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04" && docker rmi nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04
           build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp"
           build_image cuda_11.2 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
           push_image cuda
