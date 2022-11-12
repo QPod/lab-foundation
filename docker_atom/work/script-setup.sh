@@ -39,11 +39,14 @@ EOF
   && conda config --system --set channel_priority strict \
   && conda update --all --quiet --yes
 
+  # remove non-necessary folder/symlink "python3.1" exists
+  rm -rf "${CONDA_PREFIX}"/bin/python3.1
+
   # These conda pkgs shouldn't be removed (otherwise will cause RemoveError) since they are directly required by conda: pip setuptools pycosat pyopenssl requests ruamel_yaml
-     CONDA_PY_PKGS=$(conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;") \
-  && conda remove --force -yq "${CONDA_PY_PKGS}" \
-  && pip install -UIq pip setuptools "${CONDA_PY_PKGS}" \
-  && rm -rf "${CONDA_PREFIX}"/pkgs/*
+  #    CONDA_PY_PKGS=$(conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;") \
+  # && conda remove --force -yq "${CONDA_PY_PKGS}" \
+  # && pip install -UIq pip setuptools "${CONDA_PY_PKGS}" \
+  # && rm -rf "${CONDA_PREFIX}"/pkgs/*
 
   # Print Conda and Python packages information in the docker build log
   echo "@ Version of Conda & Python:" && conda info && conda list | grep -v "<pip>"
