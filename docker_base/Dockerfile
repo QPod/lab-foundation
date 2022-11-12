@@ -16,6 +16,8 @@ RUN source /opt/utils/script-setup.sh \
  && echo "Install Mamba:" && setup_mamba \
  && echo "Install Python ${PYTHON_VERSION} and conda:" && setup_conda_with_mamba ${PYTHON_VERSION} \
  && echo "Replace system Python3 with conda Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu" \
+ && PYTHON_VERSION_DEFAULT=$(py3versions -v -i) \
+ && sed -i "s/${PYTHON_VERSION_DEFAULT}/${PYTHON_VERSION}/g" /usr/share/python3/debian_defaults \
  && PYTHON_PTH_FILE=$("${CONDA_PREFIX}"/bin/python3 -c 'import sys;print(sys.path[-1]+"/usr_share.pth")') \
  && echo "/usr/share/pyshared/" >>  "${PYTHON_PTH_FILE}" \
  && echo "/usr/share/python3/"  >>  "${PYTHON_PTH_FILE}" \
@@ -23,6 +25,5 @@ RUN source /opt/utils/script-setup.sh \
  && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
  && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python \
  && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python3 \
- && sed -i "s/3.8/${PYTHON_VERSION}/g" /usr/share/python3/debian_defaults \
- && py3versions -i && lsb_release -a \
+ && lsb_release -a && py3versions -d \
  && install__clean
