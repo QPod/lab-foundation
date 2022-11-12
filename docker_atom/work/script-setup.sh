@@ -16,8 +16,6 @@ setup_mamba() {
 
 
 setup_conda_postprocess() {
-  ln -sf ${CONDA_PREFIX}/bin/python3 /usr/bin/python
-
   # If python exists, set pypi source
   if [ -f "$(which python)" ]; then
     cat >/etc/pip.conf <<EOF
@@ -31,8 +29,8 @@ trusted-host=pypi.python.org pypi.org files.pythonhosted.org
 EOF
   fi
 
-  echo 'export PATH=$PATH:${CONDA_PREFIX}/bin'		>> /etc/profile
-  ln -sf ${CONDA_PREFIX}/bin/conda /usr/bin/
+  echo "export PATH=$PATH:${CONDA_PREFIX}/bin"		>> /etc/profile
+  ln -sf "${CONDA_PREFIX}/bin/conda" /usr/bin/
 
      conda config --system --prepend channels conda-forge \
   && conda config --system --set auto_update_conda false  \
@@ -41,27 +39,30 @@ EOF
   && conda config --system --set channel_priority strict \
   && conda update --all --quiet --yes
 
+  # remove non-necessary folder/symlink "python3.1" exists
+  rm -rf "${CONDA_PREFIX}"/bin/python3.1
+
   # These conda pkgs shouldn't be removed (otherwise will cause RemoveError) since they are directly required by conda: pip setuptools pycosat pyopenssl requests ruamel_yaml
-     CONDA_PY_PKGS=$(conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;") \
-  && conda remove --force -yq "${CONDA_PY_PKGS}" \
-  && pip install -UIq pip setuptools "${CONDA_PY_PKGS}"
+  #    CONDA_PY_PKGS=$(conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;") \
+  # && conda remove --force -yq "${CONDA_PY_PKGS}" \
+  # && pip install -UIq pip setuptools "${CONDA_PY_PKGS}" \
+  # && rm -rf "${CONDA_PREFIX}"/pkgs/*
 
   # Print Conda and Python packages information in the docker build log
   echo "@ Version of Conda & Python:" && conda info && conda list | grep -v "<pip>"
 }
 
 setup_conda_with_mamba() {
-  mkdir -pv ${CONDA_PREFIX}
-  VERSION_PYTHON=$1; shift 1;
-  mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON:-3.10}"
-  rm -rf ${CONDA_PREFIX}/pkgs/*
+  mkdir -pv "${CONDA_PREFIX}"
+  VERSION_PYTHON=${1:-"3.10"}; shift 1;
+  mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON}"
   setup_conda_postprocess
 }
 
 setup_conda_download() {
-  mkdir -pv ${CONDA_PREFIX}
+  mkdir -pv "${CONDA_PREFIX}"
   wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O /tmp/conda.sh
-  bash /tmp/conda.sh -f -b -p ${CONDA_PREFIX}/
+  bash /tmp/conda.sh -f -b -p "${CONDA_PREFIX}/"
   rm -rf /tmp/conda.sh
   setup_conda_postprocess
 }
@@ -76,7 +77,7 @@ setup_tini() {
 
 
 setup_nvtop() {
-  # Install Utilities `nvtop`
+  # Install Utilities "nvtop"
   sudo apt-get -qq update --fix-missing && sudo apt-get -qq install -y --no-install-recommends libncurses5-dev
 
   DIRECTORY=$(pwd)
@@ -105,7 +106,7 @@ setup_java_base() {
   && JDK_URL_ORCA=$(curl -sL ${JDK_PAGE_DOWNLOAD} | grep "tar.gz" | grep "http" | grep -v sha256 | grep ${ARCH} | grep -i $(uname) | sed "s/'/\"/g" | sed -n 's/.*="\([^"]*\).*/\1/p' | grep "jdk-${VER_JDK}" | head -n 1)
 
   JDK_PAGE_RELEASE="https://www.oracle.com/java/technologies/javase/${VER_JDK}u-relnotes.html" \
-  && JDK_VER_MINOR=$(curl -sL ${JDK_PAGE_RELEASE} | grep -P 'JDK \d..\d+' | grep -Po '[\d\.]{3,}' | head -n1) \
+  && JDK_VER_MINOR=$(curl -sL "${JDK_PAGE_RELEASE}" | grep -P 'JDK \d..\d+' | grep -Po '[\d\.]{3,}' | head -n1) \
   && JDK_URL_MSFT="https://aka.ms/download-jdk/microsoft-jdk-${JDK_VER_MINOR}-linux-${ARCH}.tar.gz"
 
   if [ "$VER_JDK" -gt 11 ] ; then
@@ -114,7 +115,7 @@ setup_java_base() {
     URL_OPENJDK=${JDK_URL_MSFT}
   else
     echo "ORCA download URL ref: ${JDK_URL_ORCA}"
-    URL_OPENJDK="https://javadl.oracle.com/webapps/download/GetFile/1.8.0_341-b10/424b9da4b48848379167015dcc250d8d/linux-i586/jdk-8u341-linux-${ARCH}.tar.gz"
+    URL_OPENJDK="https://javadl.oracle.com/webapps/download/GetFile/1.8.0_351-b10/10e8cce67c7843478f41411b7003171c/linux-i586/jdk-8u351-linux-${ARCH}.tar.gz"
   fi
 
      echo "Installing JDK version ${VER_JDK} from: ${URL_OPENJDK}" \
@@ -126,7 +127,7 @@ setup_java_base() {
 setup_java_maven() {
      VERSION_MAVEN=$1; shift 1; VERSION_MAVEN=${VERSION_MAVEN:-"3.8.6"} \
   && install_zip "http://archive.apache.org/dist/maven/maven-3/${VERSION_MAVEN}/binaries/apache-maven-${VERSION_MAVEN}-bin.zip" \
-  && mv /opt/apache-maven-${VERSION_MAVEN} /opt/maven \
+  && mv "/opt/apache-maven-${VERSION_MAVEN}" /opt/maven \
   && ln -sf /opt/maven/bin/mvn* /usr/bin/ \
   && echo "@ Version of Maven:" && mvn --version
 }
@@ -136,7 +137,7 @@ setup_node() {
   # NODEJS_VERSION_MAJOR="v14" && grep "v${NODEJS_VERSION_MAJOR}."
      ARCH="x64" \
   && NODEJS_VERSION=$(curl -sL https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+') \
-  && NODEJS_VERSION_MAJOR=$(echo ${NODEJS_VERSION} | cut -d '.' -f1 ) \
+  && NODEJS_VERSION_MAJOR=$(echo "${NODEJS_VERSION}" | cut -d '.' -f1 ) \
   && install_tar_gz "https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-v${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
   && mv /opt/node* /opt/node \
   && echo  "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
@@ -238,23 +239,6 @@ setup_julia() {
   && echo "import Libdl; push!(Libdl.DL_LOAD_PATH, \"/opt/conda/lib\")" >> /opt/julia/etc/julia/startup.jl \
   && echo "DEPOT_PATH[1]=\"/opt/julia/pkg\""                            >> /opt/julia/etc/julia/startup.jl \
   && echo "@ Version of Julia: $(julia --version)"
-}
-
-
-setup_octave() {
-  # TEMPFIX: javac version
-  # && OCTAVE_VERSION="6.3.0" \
-  # && install_tar_xz "https://ftp.gnu.org/gnu/octave/octave-${OCTAVE_VERSION}.tar.xz" \
-  # && cd /opt/octave-* \
-  # && sed  -i "s/1.6/11/g" ./Makefile.in \
-  # && sed  -i "s/1.6/11/g" ./scripts/java/module.mk \
-  # && ./configure --prefix=/opt/octave --disable-docs --without-opengl \
-  # && make -j8 && make install -j8 \
-  # && cd /opt/utils && rm -rf /opt/octave-*
-
-     install_apt       /opt/utils/install_list_octave.apt \
-  && install_octave    /opt/utils/install_list_octave.pkg \
-  && echo "@ Version of Octave and installed packages: $(/opt/octave/bin/octave --version)"
 }
 
 
