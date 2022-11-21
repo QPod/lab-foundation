@@ -4,7 +4,7 @@ set -x
 install_echo()    { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 printf '%s\n' ; }
 
 # function to install apt-get packages from a text file which lists package names (add comments with % char)
-install_apt()     { apt-get -qq update -yq --fix-missing && apt-get -qq install -yq --no-install-recommends `cat $1 | cut -d '%' -f 1` ; }
+install_apt()     { apt-get -qq update -yq --fix-missing && apt-get -qq install -yq --no-install-recommends $(cat "$1" | cut -d '%' -f 1) ; }
 
 # function to install conda packages from a text file which lists package names (add comments with % char)
 install_conda()   { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 conda install -yq ; }
@@ -44,8 +44,8 @@ install_mvn() { cat $1 | cut -d "%" -f 1 | xargs -r -n1 -I {} mvn dependency:cop
 install__clean(){
   which apt-get && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
   which mamba   && mamba clean -ya && rm -rf ~/micromamba
-  which conda   && conda clean -ya && ( rm -rf /opt/conda/pkgs/* || true )
-  find /opt/conda/lib | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+  which conda   && conda clean -ya && ( rm -rf "${CONDA_PREFIX:-/opt/conda}"/pkgs/* || true )
+  find "${CONDA_PREFIX:-/opt/conda}"/lib | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
   which npm     && npm cache clean --force
   rm -rf /opt/conda/share/jupyter/lab/staging
   ( rm -rf /tmp/.* /tmp/* /var/log/* /var/cache/* /root/.cache /root/.* || true )
@@ -72,21 +72,21 @@ list_installed_packages() {
 }
 
 fix_permission() {
-  DIRECTORY=$1; GROUP_ID=$2; shift 2;
-  for d in "$DIRECTORY"; do
+  GROUP_ID=${1:-0}; shift 1;
+  for d in "$@"; do
       find "${d}" \
           ! \( \
               -group "${GROUP_ID}" \
               -a -perm -g+rwX \
           \) \
-          -exec chgrp "${GROUP_ID}" {} \; \
-          -exec chmod g+rwX {} \;
+          -exec chgrp "${GROUP_ID}" -- {} \+ \
+          -exec chmod g+rwX -- {} \+
       # setuid, setgid *on directories only*
       find "${d}" \
           \( \
               -type d \
               -a ! -perm -6000 \
           \) \
-          -exec chmod +6000 {} \;
+          -exec chmod +6000 -- {} \+;
   done
 }
