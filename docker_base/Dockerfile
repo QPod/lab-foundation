@@ -15,7 +15,7 @@ RUN source /opt/utils/script-setup.sh \
  && echo "Install tini:" && setup_tini \
  && echo "Install Mamba:" && setup_mamba \
  && echo "Install Python ${PYTHON_VERSION} and conda:" && setup_conda_with_mamba ${PYTHON_VERSION} \
- && fix-permissions 0 ${CONDA_PREFIX} \
+ && fix_permission 0 ${CONDA_PREFIX} \
  && echo "Replace system Python3 with conda Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu" \
  && PYTHON_VERSION_DEFAULT=$(py3versions -v -i) \
  && sed -i "s/${PYTHON_VERSION_DEFAULT}/${PYTHON_VERSION}/g" /usr/share/python3/debian_defaults \
