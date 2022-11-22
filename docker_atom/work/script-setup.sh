@@ -29,7 +29,7 @@ trusted-host=pypi.python.org pypi.org files.pythonhosted.org
 EOF
   fi
 
-  echo "export PATH=$PATH:${CONDA_PREFIX}/bin"		>> /etc/profile
+  echo 'export PATH=${PATH}:${CONDA_PREFIX:-"/opt/conda"}/bin'		>> /etc/profile
   ln -sf "${CONDA_PREFIX}/bin/conda" /usr/bin/
 
      conda config --system --prepend channels conda-forge \
@@ -53,9 +53,10 @@ EOF
 }
 
 setup_conda_with_mamba() {
-  mkdir -pv "${CONDA_PREFIX}"
+  local PREFIX="${CONDA_PREFIX:-/opt/conda}"
+  mkdir -pv "${PREFIX}"
   VERSION_PYTHON=${1:-"3.10"}; shift 1;
-  mamba install -y --root-prefix="${CONDA_PREFIX}" --prefix="${CONDA_PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON}"
+  mamba install -y --root-prefix="${PREFIX}" --prefix="${PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON}"
   setup_conda_postprocess
 }
 
