@@ -64,14 +64,14 @@ RUN source /opt/utils/script-utils.sh \
  && for profile in $(echo $ARG_PROFILE_PYTHON | tr "," "\n") ; do ( echo "Pip install for ${profile}" ; install_pip "/opt/utils/install_list_PY_${profile}.pip" ; ) ; done \
  #  Handle tensorflow installation 1.x/2.x, cpu/gpu: https://www.tensorflow.org/install/source#gpu
  && ( $(grep -q "tf" <<< "${ARG_PROFILE_PYTHON}") && ( \
-         TF=$( [ -x "$(command -v nvcc)" ] && echo "tensorflow-gpu" || echo "tensorflow") \
-      && V=$($(grep -q "tf1" <<< "${ARG_PROFILE_PYTHON}") && echo "1" || echo "2" ) \
+         V=$($(grep -q "tf1" <<< "${ARG_PROFILE_PYTHON}") && echo "1" || echo "2" ) \
+         TF=$( [ "$V" == "1" ] && echo "tensorflow-gpu" || echo "tensorflow") \
       && pip install --pre -U "${TF}==${V}.*" \
     ) || echo "Skip tf install" ) \
  #  Handle pytorch installation 1.x only, cpu/gpu: https://pytorch.org/get-started/locally/
  && ( $(grep -q "torch" <<< "${ARG_PROFILE_PYTHON}") && ( \
          CUDA_VER=$(echo "${CUDA_VERSION:0:4}" | sed 's/\.//' ) \
-      && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-113}" || echo "cpu" ) \
+      && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-116}" || echo "cpu" ) \
       && pip install --pre -U torch -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
     ) || echo "Skip pytorch install" ) \
  #  Handle paddle installation, cpu/gpu: https://www.paddlepaddle.org.cn/

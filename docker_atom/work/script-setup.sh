@@ -55,7 +55,7 @@ EOF
 setup_conda_with_mamba() {
   local PREFIX="${CONDA_PREFIX:-/opt/conda}"
   mkdir -pv "${PREFIX}"
-  VERSION_PYTHON=${1:-"3.10"}; shift 1;
+  VERSION_PYTHON=${1:-"3.11"}; shift 1;
   mamba install -y --root-prefix="${PREFIX}" --prefix="${PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON}"
   setup_conda_postprocess
 }
@@ -116,7 +116,7 @@ setup_java_base() {
     URL_OPENJDK=${JDK_URL_MSFT}
   else
     echo "ORCA download URL ref: ${JDK_URL_ORCA}"
-    URL_OPENJDK="https://javadl.oracle.com/webapps/download/GetFile/1.8.0_351-b10/10e8cce67c7843478f41411b7003171c/linux-i586/jdk-8u351-linux-${ARCH}.tar.gz"
+    URL_OPENJDK="https://javadl.oracle.com/webapps/download/GetFile/1.8.0_361-b09/0ae14417abb444ebb02b9815e2103550/linux-i586/jdk-8u361-linux-${ARCH}.tar.gz"
   fi
 
      echo "Installing JDK version ${VER_JDK} from: ${URL_OPENJDK}" \
@@ -155,7 +155,7 @@ setup_R_base() {
   && echo "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" > /etc/apt/sources.list.d/cran.list \
   && install_apt  /opt/utils/install_list_R_base.apt \
   && echo "options(repos=structure(c(CRAN=\"https://cloud.r-project.org\")))" >> /etc/R/Rprofile.site \
-  && R -e "install.packages(c('devtools'),clean=T,quiet=T);" \
+  && R -e "install.packages(c('devtools'),clean=T,quiet=F);" \
   && ( type java && type R && R CMD javareconf || true ) \
   && echo "@ Version of R: $(R --version)"
 }
