@@ -4,6 +4,8 @@
 r-base                  % CRAN R language base
 r-base-dev              % required when building and install some R libraries
 libcurl4-openssl-dev    % required when building R package curl
+libfontconfig1-dev      % required to build R package fontconfig
+libfreetype6-dev        % required to build R package freetype2
 libxml2-dev             % required to build R package xml2
 libssl-dev              % required to build R package openssl
 libgit2-dev             % required to build R package git2r
