@@ -244,7 +244,7 @@ jobs:
       - run: |
           source ./tool.sh
           build_image tf2-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2"  --build-arg "ARG_PROFILE_PYTHON=tf2"
-          alias_image tf2-cuda112 latest torch latest
+          alias_image tf2-cuda112 latest tf2 latest
           push_image
 
   qpod_torch_cuda117:
@@ -279,7 +279,7 @@ jobs:
       - run: |
           source ./tool.sh
           build_image paddle-cuda117 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.7" --build-arg "ARG_PROFILE_PYTHON=paddle,mkl"
-          alias_image paddle-cuda117 latest paddle latest
+          alias_image paddle-cuda117 latest paddle-cuda latest
           push_image
 
   qpod_paddle_cuda112:
