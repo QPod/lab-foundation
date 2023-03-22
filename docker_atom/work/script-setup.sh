@@ -78,22 +78,18 @@ setup_tini() {
 
 
 setup_nvtop() {
-  # Install Utilities "nvtop"
-  sudo apt-get -qq update --fix-missing && sudo apt-get -qq install -y --no-install-recommends libncurses5-dev
-
-  DIRECTORY=$(pwd)
-
-     cd /tmp \
+  # Install Utilities "nvtop" from source: libdrm-dev libsystemd-dev used by AMD/Intel GPU support, libudev-dev used by ubuntu18.04
+  LIB_PATH=$(find / -name "libnvidia-ml*" 2>/dev/null) \
+  && DIRECTORY=$(pwd) && cd /tmp \
+  && sudo apt-get -qq update --fix-missing \
+  && sudo apt-get -qq install -y --no-install-recommends libncurses5-dev libdrm-dev libsystemd-dev libudev-dev \
   && git clone https://github.com/Syllo/nvtop.git \
   && mkdir -pv nvtop/build && cd nvtop/build \
-  && LIB_PATH=$(find / -name "libnvidia-ml*" 2>/dev/null) \
-  && cmake .. -DCMAKE_LIBRARY_PATH="$(dirname ${LIB_PATH})" .. \
+  && cmake .. -DCMAKE_LIBRARY_PATH="$(dirname ${LIB_PATH})" -DNVIDIA_SUPPORT=ON -DAMDGPU_SUPPORT=ON -DINTEL_SUPPORT=ON \
   && make && sudo make install \
+  && cd "${DIRECTORY}" && rm -rf /tmp/nvtop \
+  && sudo apt-get -qq remove -y libncurses5-dev libdrm-dev libsystemd-dev libudev-dev \
   && nvtop --version
-
-  cd "${DIRECTORY}" && rm -rf /tmp/nvtop
-
-  sudo apt-get -qq remove -y libncurses5-dev
 }
 
 

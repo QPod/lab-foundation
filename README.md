@@ -1,7 +1,7 @@
 # QPod - Docker Image Stack
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/QPod/docker-images/qpod-docker-images)](https://github.com/QPod/docker-images/actions/workflows/docker.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/QPod/docker-images/docker.yml?branch=main)](https://github.com/QPod/docker-images/actions/workflows/docker.yml)
 [![Join the Gitter Chat](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/QPod/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
 [![Docker Starts](https://img.shields.io/docker/stars/qpod/qpod.svg)](https://hub.docker.com/r/qpod/qpod)
@@ -84,17 +84,18 @@ Typically, you can choose `full` / `full-cuda` if you have enough disk space and
 <details>
   <summary> 👉 Click here to see a list of Docker Images run on GPUs + CPUs</summary>
 
-|   Image Name (Feature Set)  |               DockerHub Link              |       Based On      |                                                                    Description                                                                    |
-|:---------------------------:|:-----------------------------------------:|:-------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------:|
-|      cuda_11.5, cuda        | https://hub.docker.com/r/qpod/cuda_11.5   | qpod/base           | Version 11.5 of NVIDIA cuda and cudnn libs, including runtime and devel.                                                                          |
-|         cuda_10.2           | https://hub.docker.com/r/qpod/cuda_10.2   | qpod/base           | Version 10.2 of NVIDIA cuda and cudnn libs, including runtime and devel.                                                                          |
-|         cuda_10.0           | https://hub.docker.com/r/qpod/cuda_10.0   | qpod/base           | Version 10.0 of NVIDIA cuda and cudnn libs, including runtime and devel. (Specifically retained for tensorflow 1.15)                              |
-|      tf1-cu100, tf1         | https://hub.docker.com/r/qpod/tf1         | qpod/cuda_10.0      | Tensorflow 1.1x environment with GPU (cuda 10.0).                                                                                                 |
-|      tf2-cu115, tf2         | https://hub.docker.com/r/qpod/tf2         | qpod/cuda_11.5      | Tensorflow 2.x environment with GPU (cuda 11.5).                                                                                                  |
-|     torch-cu115, torch      | https://hub.docker.com/r/qpod/torch       | qpod/torch          | Pytorch 1.x environment with GPU (cuda 11.5).                                                                                                     |
-| torch-cu101, torch-cu102    | https://hub.docker.com/r/qpod/torch-cu102 | qpod/torch-cu102    | Pytorch 1.x environment with GPU (cuda 10.2).                                                                                                     |
-| core-cuda, full-cuda-11.5   | https://hub.docker.com/r/qpod/core-cuda   | qpod/cuda_11.5      | Tensorflow 2.x + Pytorch 1.x environment with GPU (cuda 11.5).                                                                                    |
-|    cuda-dev, full-cuda      | https://hub.docker.com/r/qpod/cuda-dev    | qpod/full-cuda-10.1 | `core-cuda` + IDE tools: JupyterLab / Jupyter Notebook + VSCode Server.                                                                           |
+| Image Name (Feature Set)  |               DockerHub Link                |     Based On      |                                                     Description                                                      |
+|:-------------------------:|:-------------------------------------------:|:-----------------:|:--------------------------------------------------------------------------------------------------------------------:|
+|      cuda_11.7, cuda      |   https://hub.docker.com/r/qpod/cuda_11.7   |     qpod/base     |                       Version 11.7 of NVIDIA cuda and cudnn libs, including runtime and devel.                       |
+|         cuda_11.2         |   https://hub.docker.com/r/qpod/cuda_11.2   |     qpod/base     |                       Version 11.2 of NVIDIA cuda and cudnn libs, including runtime and devel.                       |
+|         cuda_10.2         |   https://hub.docker.com/r/qpod/cuda_10.2   |     qpod/base     |                       Version 10.2 of NVIDIA cuda and cudnn libs, including runtime and devel.                       |
+|         cuda_10.0         |   https://hub.docker.com/r/qpod/cuda_10.0   |     qpod/base     | Version 10.0 of NVIDIA cuda and cudnn libs, including runtime and devel. (Specifically retained for tensorflow 1.15) |
+|     tf1-cuda100, tf1      |      https://hub.docker.com/r/qpod/tf1      |  qpod/cuda_10.0   |                                  Tensorflow 1.1x environment with GPU (cuda 10.0).                                   |
+|     tf2-cuda112, tf2      |      https://hub.docker.com/r/qpod/tf2      |  qpod/cuda_11.2   |                                   Tensorflow 2.x environment with GPU (cuda 11.2).                                   |
+|   torch-cuda117, torch    |     https://hub.docker.com/r/qpod/torch     |    qpod/torch     |                                    Pytorch 1.x environment with GPU (cuda 11.7).                                     |
+|       torch-cuda112       | https://hub.docker.com/r/qpod/torch-cuda112 | qpod/torch-cuda12 |                                    Pytorch 1.x environment with GPU (cuda 10.2).                                     |
+| core-cuda, full-cuda-11.7 |   https://hub.docker.com/r/qpod/core-cuda   |  qpod/cuda_11.7   |                                   Tensorflow 2.x + Pytorch environment with cuda.                                    |
+|    cuda-dev, full-cuda    |   https://hub.docker.com/r/qpod/cuda-dev    |   qpod/coe-cuda   |                       `core-cuda` + IDE tools: JupyterLab / Jupyter Notebook + VSCode Server.                        |
 
 </details>
 
