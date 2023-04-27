@@ -4,7 +4,7 @@
 pyparsing astroid                  % Parsing, AST
 rapidfuzz flashtext                % string match
 aiohttp==3.*                       % TEMP fix: req by datasets, 4.0 won't work
+tokenizers % git+https://github.com/huggingface/tokenizers.git#egg=tokenizers\&subdirectory=bindings/python % the source requires rust compiler
 git+https://github.com/huggingface/transformers.git
-git+https://github.com/huggingface/tokenizers.git
 git+https://github.com/huggingface/datasets.git
 git+https://github.com/huggingface/evaluate.git
