@@ -2,6 +2,9 @@
 % Use percent char as line comment separator.
 
 pyparsing astroid                  % Parsing, AST
-aiohttp==3.*                       % TEMP fix: req by datasets, 4.0 won't work
-transformers tokenizers datasets   % huggingface transformers
 rapidfuzz flashtext                % string match
+aiohttp==3.*                       % TEMP fix: req by datasets, 4.0 won't work
+git+https://github.com/huggingface/transformers.git
+git+https://github.com/huggingface/tokenizers.git
+git+https://github.com/huggingface/datasets.git
+git+https://github.com/huggingface/evaluate.git
