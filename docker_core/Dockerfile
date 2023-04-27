@@ -20,6 +20,8 @@ ARG ARG_PROFILE_GO
 
 ARG ARG_PROFILE_JULIA
 
+ARG ARG_PROFILE_RUST
+
 ARG ARG_PROFILE_OCTAVE
 
 # base,cjk
@@ -89,6 +91,8 @@ RUN source /opt/utils/script-utils.sh \
 
 
 RUN $(grep -q "base" <<< "${ARG_PROFILE_GO}")     && ( source /opt/utils/script-setup.sh && setup_GO     ) || echo "Skip go install"
+
+RUN $(grep -q "base" <<< "${ARG_PROFILE_RUST}")   && ( source /opt/utils/script-setup.sh && setup_rust   ) || echo "Skip rust install"
 
 RUN $(grep -q "base" <<< "${ARG_PROFILE_JULIA}")  && ( source /opt/utils/script-setup.sh && setup_julia  ) || echo "Skip julia install"
 
