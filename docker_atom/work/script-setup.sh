@@ -121,8 +121,9 @@ setup_java_base() {
   && echo "@ Version of Java (java/javac):" && java -version && javac -version
 }
 
+
 setup_java_maven() {
-     VERSION_MAVEN=$1; shift 1; VERSION_MAVEN=${VERSION_MAVEN:-"3.8.6"} \
+     VERSION_MAVEN=$(curl -sL https://maven.apache.org/download.cgi | grep 'latest' | head -1 | grep -Po '\d[\d.]+') \
   && install_zip "http://archive.apache.org/dist/maven/maven-3/${VERSION_MAVEN}/binaries/apache-maven-${VERSION_MAVEN}-bin.zip" \
   && mv "/opt/apache-maven-${VERSION_MAVEN}" /opt/maven \
   && ln -sf /opt/maven/bin/mvn* /usr/bin/ \
@@ -220,7 +221,7 @@ setup_R_datascience() {
 
 setup_GO() {
      GO_VERSION=$(curl -sL https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+') \
-  && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
+  && GO_URL="https://dl.google.com/go/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" \
   && install_tar_gz "${GO_URL}" go \
   && ln -sf /opt/go/bin/go /usr/bin/ \
   && echo "@ Version of golang: $(go version)"
