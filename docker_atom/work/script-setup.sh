@@ -126,7 +126,7 @@ setup_java_maven() {
   && install_zip "http://archive.apache.org/dist/maven/maven-3/${VERSION_MAVEN}/binaries/apache-maven-${VERSION_MAVEN}-bin.zip" \
   && mv "/opt/apache-maven-${VERSION_MAVEN}" /opt/maven \
   && ln -sf /opt/maven/bin/mvn* /usr/bin/ \
-  && echo "@ Version of Maven:" && mvn --version
+  && echo "@ Version of Maven: $(mvn --version)"
 }
 
 
@@ -258,4 +258,22 @@ setup_rust() {
   && echo 'export PATH=$PATH:/opt/cargo/bin'	>> /etc/profile \
   && echo "@ Version of rustup: $(rustup --version)" \
   && echo "@ Version of rustc:  $(rustc --version)"
+}
+
+
+setup_bazel() {
+     BAZEL_VERSION=$(curl -sL https://github.com/bazelbuild/bazel/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+' ) \
+  && BAZEL_URL="https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" \
+  && curl -o /tmp/bazel.sh -sL "${BAZEL_URL}" && chmod +x /tmp/bazel.sh \
+  && /tmp/bazel.sh && rm /tmp/bazel.sh \
+  && echo "@ Version of bazel: $(bazel --version)"
+}
+
+
+setup_gradle() {
+     GRADLE_VERSION=$(curl -sL https://github.com/gradle/gradle/releases.atom | grep 'releases/tag' | grep -v 'M' | head -1 | grep -Po '\d[\d.]+' ) \
+  && install_zip "https://downloads.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+  && mv /opt/gradle* /opt/gradle \
+  && ln -sf /opt/gradle/bin/gradle /usr/bin \
+  && echo "@ Version of gradle: $(gradle --version)"
 }
