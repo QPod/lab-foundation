@@ -1,10 +1,6 @@
 #!/bin/bash
 set -xu
 
-export REGISTRY_URL="docker.io"   # docker.io or other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
-export BUILDKIT_PROGRESS="plain"  # Full logs for CI build.
-# DOCKER_REGISTRY_USER and DOCKER_REGISTRY_PASSWORD is required for docker image push, they should be set in CI secrets.
-
 CI_PROJECT_NAME=${GITHUB_REPOSITORY:-"QPod/docker-images"}
 CI_PROJECT_BRANCH=${GITHUB_HEAD_REF:-"main"}
 CI_PROJECT_SPACE=$(echo "${CI_PROJECT_BRANCH}" | cut -f1 -d'/')
@@ -18,23 +14,29 @@ else
 fi
 
 export NAMESPACE=$(echo "${REGISTRY_URL:-"docker.io"}/${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
-echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
-echo "--------> Docker Repo=${NAMESPACE}"
 
-jq '.experimental=true'  /etc/docker/daemon.json > /tmp/daemon.json && sudo mv /tmp/daemon.json /etc/docker/
-sudo service docker restart
+echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
+echo "--------> DOCKER_REGISTRY_NAMESPACE=${NAMESPACE}"
+
+if [ -f /etc/docker/daemon.json ]; then
+       jq '.experimental=true' /etc/docker/daemon.json > /tmp/daemon.json && sudo mv /tmp/daemon.json /etc/docker/ \
+    && ( sudo service docker restart || true )
+else
+    docker info
+fi
+
 
 build_image() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M); WORKDIR="$(dirname $FILE)";
-    docker build --squash --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "${WORKDIR}" ;
+    docker build --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "${WORKDIR}" ;
     docker tag "${NAMESPACE}/${IMG}:${TAG}" "${NAMESPACE}/${IMG}:${VER}" ;
 }
 
 build_image_no_tag() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; WORKDIR="$(dirname $FILE)";
-    docker build --squash --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "${WORKDIR}" ;
+    docker build --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "${WORKDIR}" ;
 }
 
 build_image_common() {

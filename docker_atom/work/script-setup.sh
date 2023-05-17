@@ -121,12 +121,13 @@ setup_java_base() {
   && echo "@ Version of Java (java/javac):" && java -version && javac -version
 }
 
+
 setup_java_maven() {
-     VERSION_MAVEN=$1; shift 1; VERSION_MAVEN=${VERSION_MAVEN:-"3.8.6"} \
+     VERSION_MAVEN=$(curl -sL https://maven.apache.org/download.cgi | grep 'latest' | head -1 | grep -Po '\d[\d.]+') \
   && install_zip "http://archive.apache.org/dist/maven/maven-3/${VERSION_MAVEN}/binaries/apache-maven-${VERSION_MAVEN}-bin.zip" \
   && mv "/opt/apache-maven-${VERSION_MAVEN}" /opt/maven \
   && ln -sf /opt/maven/bin/mvn* /usr/bin/ \
-  && echo "@ Version of Maven:" && mvn --version
+  && echo "@ Version of Maven: $(mvn --version)"
 }
 
 
@@ -220,7 +221,7 @@ setup_R_datascience() {
 
 setup_GO() {
      GO_VERSION=$(curl -sL https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+') \
-  && GO_URL="https://dl.google.com/go/go$GO_VERSION.linux-$(dpkg --print-architecture).tar.gz" \
+  && GO_URL="https://dl.google.com/go/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" \
   && install_tar_gz "${GO_URL}" go \
   && ln -sf /opt/go/bin/go /usr/bin/ \
   && echo "@ Version of golang: $(go version)"
@@ -258,4 +259,22 @@ setup_rust() {
   && echo 'export PATH=$PATH:/opt/cargo/bin'	>> /etc/profile \
   && echo "@ Version of rustup: $(rustup --version)" \
   && echo "@ Version of rustc:  $(rustc --version)"
+}
+
+
+setup_bazel() {
+     BAZEL_VERSION=$(curl -sL https://github.com/bazelbuild/bazel/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+' ) \
+  && BAZEL_URL="https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" \
+  && curl -o /tmp/bazel.sh -sL "${BAZEL_URL}" && chmod +x /tmp/bazel.sh \
+  && /tmp/bazel.sh && rm /tmp/bazel.sh \
+  && echo "@ Version of bazel: $(bazel --version)"
+}
+
+
+setup_gradle() {
+     GRADLE_VERSION=$(curl -sL https://github.com/gradle/gradle/releases.atom | grep 'releases/tag' | grep -v 'M' | head -1 | grep -Po '\d[\d.]+' ) \
+  && install_zip "https://downloads.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+  && mv /opt/gradle* /opt/gradle \
+  && ln -sf /opt/gradle/bin/gradle /usr/bin \
+  && echo "@ Version of gradle: $(gradle --version)"
 }
