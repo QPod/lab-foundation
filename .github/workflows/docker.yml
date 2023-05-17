@@ -15,8 +15,12 @@ on:
   workflow_dispatch:
 
 env:
+  # DOCKER_REGISTRY_USER and DOCKER_REGISTRY_PASSWORD is required for docker image push, they should be set in CI secrets.
   DOCKER_REGISTRY_USER: ${{ secrets.DOCKER_REGISTRY_USER }}
   DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+  REGISTRY_URL: "docker.io"   # docker.io or other registry URL, DOCKER_REGISTRY_USER/DOCKER_REGISTRY_PASSWORD to be set in CI env.
+  BUILDKIT_PROGRESS: "plain"  # Full logs for CI build.
+
 
 jobs:
   qpod_base:
