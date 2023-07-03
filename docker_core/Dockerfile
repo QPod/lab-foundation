@@ -73,8 +73,10 @@ RUN source /opt/utils/script-utils.sh \
  #  Handle pytorch installation 1.x only, cpu/gpu: https://pytorch.org/get-started/locally/
  && ( $(grep -q "torch" <<< "${ARG_PROFILE_PYTHON}") && ( \
          CUDA_VER=$(echo "${CUDA_VERSION:0:4}" | sed 's/\.//' ) \
-      && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-116}" || echo "cpu" ) \
-      && pip install --pre -U torch -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
+         # If CUDA version < 11.7, install pytorch 1.x, else install pytorch 2.x; if cuda doesn't exist, install pytorch 2.x
+      && export CUDA_VER_TORCH="117" && V=$([[ "${CUDA_VER:-999}" -lt "${CUDA_VER_TORCH}" ]] && echo "torch<2" || echo "torch") \
+      && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-117}" || echo "cpu" ) \
+      && pip install --pre -U ${V} -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
     ) || echo "Skip pytorch install" ) \
  #  Handle paddle installation, cpu/gpu: https://www.paddlepaddle.org.cn/
  #  URL_PADDLE=$(curl -sL "https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html" |tr "<>" "\n" | grep "${PADDLE_VER}" | grep href | cut -d '=' -f 2)

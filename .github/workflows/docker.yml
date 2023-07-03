@@ -207,46 +207,6 @@ jobs:
           build_image cuda_11.2 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
           push_image cuda
 
-  # For legacy torch/paddle support
-  qpod_cuda_10_2:
-    name: qpod/cuda_10.2
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: |
-          source ./tool.sh
-          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04" && docker rmi nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
-          build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp"
-          build_image cuda_10.2 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
-          push_image cuda
-
-  # cuda_10.0 - for legacy tensorflow 1.15 support
-  # The cuda version 10.0 image is solely serverd for legacy tensorflow 1.15, which requires python 3.7
-  qpod_cuda_10_0:
-    name: qpod/cuda_10.0
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: |
-          source ./tool.sh        
-          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04" && docker rmi nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
-          build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp" --build-arg "PYTHON_VERSION=3.7"
-          build_image cuda_10.0 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
-          push_image cuda
-
-
-  qpod_tf1:
-    name: qpod/tf1
-    needs: qpod_cuda_10_0
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: |
-          source ./tool.sh
-          build_image tf1-cuda100 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_10.0" --build-arg "ARG_PROFILE_PYTHON=tf1"
-          alias_image tf1-cuda100 latest tf1 latest
-          push_image
-
   qpod_tf2:
     name: qpod/tf2
     needs: qpod_cuda_11_2
