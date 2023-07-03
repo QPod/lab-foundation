@@ -65,6 +65,17 @@ push_image() {
     done
 }
 
+clear_images() {
+    KEYWORD=${1:-'days ago\|weeks ago\|months ago\|years ago'}; # if no keyword is provided, clear all images build days ago
+    IMGS_1=$(docker images | grep "${KEYWORD}" | awk '{print $1 ":" $2}') ;
+    IMGS_2=$(docker images | grep "${KEYWORD}" | awk '{print $3}') ;
+
+    for IMG in $(echo "$IMGS_1 $IMGS_2" | tr " " "\n") ; do
+      docker rmi "${IMG}" || true; status=$?; echo "[${status}] image removed > ${IMG}";
+    done
+    docker image prune --force && docker images ;
+}
+
 remove_folder() {
     sudo du -h -d1 "$1" || true ;
     sudo rm -rf "$1" || true ;
