@@ -79,16 +79,13 @@ RUN source /opt/utils/script-utils.sh \
       && pip install --pre -U ${V} -f "https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
     ) || echo "Skip pytorch install" ) \
  #  Handle paddle installation, cpu/gpu: https://www.paddlepaddle.org.cn/
- #  URL_PADDLE=$(curl -sL "https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html" |tr "<>" "\n" | grep "${PADDLE_VER}" | grep href | cut -d '=' -f 2)
  && ( $(grep -q "paddle" <<< "${ARG_PROFILE_PYTHON}") && ( \
-         PADDLE=$( [ -x "$(command -v nvcc)" ] && echo "paddlepaddle-gpu" || echo "paddlepaddle") \
-      && PADDLE_VER=$(pip index versions ${PADDLE} | grep '(' | cut -d "(" -f 2  | tr -d ')[:space:]') \
+         URL_PYPI_PADDLE="https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html" \
       && CUDA_VER=$(echo "${CUDA_VERSION:0:4}" | sed 's/\.//' ) \
-      && V=$($(grep -q "11" <<< "${CUDA_VER}") && echo ".post${CUDA_VER}" || echo "" ) \
-      && V=$(echo ${PADDLE}==${PADDLE_VER}${V}) && echo "to install paddle: ${V}" \
-      && pip install pip==21.3.1 && pip --version \
+      && PADDLE=$( [ -x "$(command -v nvcc)" ] && echo "paddlepaddle-gpu" || echo "paddlepaddle") \
+      && PADDLE_VER=$(pip index versions ${PADDLE} -f ${URL_PYPI_PADDLE} | grep 'Available' | cut -d ":" -f 2 | tr ', ' '\n' | grep ${CUDA_VER:-'.'} | head -n 1) \
+      && V=$(echo ${PADDLE}==${PADDLE_VER}) && echo "to install paddle: ${V}" \
       && pip install ${V} -f "https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html" \
-      && pip install -U pip \
     ) || echo "Skip paddle install" )
 
 
