@@ -160,7 +160,10 @@ setup_R_base() {
 
 
 setup_R_rstudio() {
-     $(curl -sL https://www.rstudio.com/products/rstudio/download-server/debian-ubuntu/  | grep '.deb' | grep 'bionic') -O /tmp/rstudio.deb \
+  #  https://posit.co/download/rstudio-server/
+     RSTUDIO_VERSION=$(curl -sL https://download2.rstudio.org/current.ver | cut -d'.' -f'1-3' | sed 's/+/-/g' ) \
+  && RSTUDIO_URL="https://download2.rstudio.org/server/jammy/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" \
+  && curl ${RSTUDIO_URL} -sL -O /tmp/rstudio.deb \
   && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
   && ln -sf /opt/rstudio-server         /usr/lib/ \
   && ln -sf /opt/rstudio-server/bin/rs* /usr/bin/
@@ -191,8 +194,10 @@ setup_R_rstudio() {
 
 
 setup_R_rshiny() {
+  #  https://posit.co/download/shiny-server/
      RSHINY_VERSION=$(curl -sL https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
-  && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
+  && RSHINY_URL="https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" \
+  && wget -qO- "${RSHINY_URL}" -O /tmp/rshiny.deb \
   && dpkg -i /tmp/rshiny.deb \
   && sed  -i "s/run_as shiny;/run_as root;/g"  /etc/shiny-server/shiny-server.conf \
   && sed  -i "s/3838/8888/g"                   /etc/shiny-server/shiny-server.conf \
