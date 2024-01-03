@@ -32,8 +32,8 @@ jobs:
           source ./tool.sh
           build_image atom latest docker_atom/Dockerfile && push_image
           build_image python-3.7  latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.7"  && push_image
-          build_image python-3.10 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.10" && alias_image python-3.10 latest base latest && push_image
-          build_image python-3.11 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.11" && push_image
+          build_image python-3.11 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.11" && alias_image python-3.11 latest base latest && push_image
+          build_image python-3.12 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.12" && push_image
 
   qpod_core:
     name: qpod/core
