@@ -1,7 +1,7 @@
 source /opt/utils/script-utils.sh
 
 setup_jupyter_base() {
-     pip install -Uq --pre jupyterhub jupyterlab notebook ipywidgets qpod_hub \
+     pip install -Uq --pre jupyterhub jupyterlab notebook ipywidgets \
   && jupyter nbextension  enable --py widgetsnbextension \
   && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
   && echo "@ Version of Jupyter Notebook/JupyterLab: $(jupyter notebook --version)" \
