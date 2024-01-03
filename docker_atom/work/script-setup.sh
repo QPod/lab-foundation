@@ -55,12 +55,13 @@ EOF
 setup_conda_with_mamba() {
   local PREFIX="${CONDA_PREFIX:-/opt/conda}"
   mkdir -pv "${PREFIX}"
-  VERSION_PYTHON=${1:-"3.10"}; shift 1;
+  VERSION_PYTHON=${1:-"3.11"}; shift 1;
   mamba install -y --root-prefix="${PREFIX}" --prefix="${PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON}"
   setup_conda_postprocess
 }
 
 setup_conda_download() {
+  # https://docs.conda.io/projects/miniconda/en/latest/index.html
   mkdir -pv "${CONDA_PREFIX}"
   wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O /tmp/conda.sh
   bash /tmp/conda.sh -f -b -p "${CONDA_PREFIX}/"
