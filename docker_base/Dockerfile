@@ -12,7 +12,7 @@ ENV PATH=$PATH:${CONDA_PREFIX}/bin
 
 RUN source /opt/utils/script-setup.sh \
  # update source for CMake
- && curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo apt-key add - \
+ && curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo sudo tee /etc/apt/trusted.gpg.d/kitware.asc \
  && echo "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/kitware.list \
  && install_apt /opt/utils/install_list_base.apt \
  && echo "Install tini:" && setup_tini \

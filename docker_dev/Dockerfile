@@ -18,7 +18,7 @@ COPY work /opt/utils/
 
 # Setup Jupyter: Basic Configurations and Extensions...
 RUN mkdir -pv /opt/conda/etc/jupyter/ \
- && mv /opt/utils/jupyter_notebook_config.json /opt/conda/etc/jupyter/ \
+ && mv /opt/utils/etc_jupyter/* /opt/conda/etc/jupyter/ && rm -rf /opt/utils/etc_jupyter \
  && mv /opt/utils/start-*.sh /usr/local/bin/ && chmod +x /usr/local/bin/start-*.sh \
  && source /opt/utils/script-extend.sh \
  && for profile in $(echo $ARG_PROFILE_JUPYTER | tr "," "\n") ; do ( setup_jupyter_${profile} || true ) ; done
@@ -31,7 +31,7 @@ RUN source /opt/utils/script-extend.sh \
  && for profile in $(echo $ARG_PROFILE_VSCODE | tr "," "\n") ; do ( setup_vscode_${profile} || true ) ; done
 
 # Clean up and display components version information...
-RUN source /opt/utils/script-utils.sh  && install__clean
+RUN source /opt/utils/script-utils.sh && install__clean && list_installed_packages
 
 WORKDIR $HOME_DIR
 EXPOSE 8888

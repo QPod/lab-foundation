@@ -141,15 +141,15 @@ setup_node() {
   && mv /opt/node* /opt/node \
   && echo  "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
   && export PATH=/opt/node/bin:$PATH \
+  && corepack enable \
   && npm install -g npm yarn \
-  && ln -sf /opt/node/bin/* /usr/bin/ \
   && echo "@ Version of Node, npm, and yarn: $(node -v) $(npm -v)" \
   && echo "@ Version of Yarn: $(yarn -v)"
 }
 
 
 setup_R_base() {
-     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
+     curl -sL https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
   && echo "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" > /etc/apt/sources.list.d/cran.list \
   && install_apt  /opt/utils/install_list_R_base.apt \
   && echo "options(repos=structure(c(CRAN=\"https://cloud.r-project.org\")))" >> /etc/R/Rprofile.site \
