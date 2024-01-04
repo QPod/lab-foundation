@@ -55,12 +55,13 @@ EOF
 setup_conda_with_mamba() {
   local PREFIX="${CONDA_PREFIX:-/opt/conda}"
   mkdir -pv "${PREFIX}"
-  VERSION_PYTHON=${1:-"3.10"}; shift 1;
+  VERSION_PYTHON=${1:-"3.11"}; shift 1;
   mamba install -y --root-prefix="${PREFIX}" --prefix="${PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON}"
   setup_conda_postprocess
 }
 
 setup_conda_download() {
+  # https://docs.conda.io/projects/miniconda/en/latest/index.html
   mkdir -pv "${CONDA_PREFIX}"
   wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O /tmp/conda.sh
   bash /tmp/conda.sh -f -b -p "${CONDA_PREFIX}/"
@@ -159,14 +160,17 @@ setup_R_base() {
 
 
 setup_R_rstudio() {
-     $(curl -sL https://www.rstudio.com/products/rstudio/download-server/debian-ubuntu/  | grep '.deb' | grep 'bionic') -O /tmp/rstudio.deb \
+  #  https://posit.co/download/rstudio-server/
+     RSTUDIO_VERSION=$(curl -sL https://download2.rstudio.org/current.ver | cut -d'.' -f'1-3' | sed 's/+/-/g' ) \
+  && RSTUDIO_URL="https://download2.rstudio.org/server/jammy/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" \
+  && curl -sL -o /tmp/rstudio.deb ${RSTUDIO_URL} \
   && dpkg -x /tmp/rstudio.deb /tmp && mv /tmp/usr/lib/rstudio-server/ /opt/ \
   && ln -sf /opt/rstudio-server         /usr/lib/ \
   && ln -sf /opt/rstudio-server/bin/rs* /usr/bin/
 
   # Allow RStudio server run as root user
   # Configuration to make RStudio server disable authentication and do not run as daemon
-     mkdir -p /etc/rstudio \
+     mkdir -pv /etc/rstudio \
   && echo "server-daemonize=0"     >> /etc/rstudio/rserver.conf \
   && echo "server-user=root"       >> /etc/rstudio/rserver.conf \
   && echo "auth-none=1"            >> /etc/rstudio/rserver.conf \
@@ -180,18 +184,16 @@ setup_R_rstudio() {
   && echo "provider=sqlite"                            >> /etc/rstudio/db.conf \
   && echo "directory=/etc/rstudio/"                    >> /etc/rstudio/db.conf \
   && printf "USER=root rserver --www-port=8888" > /usr/local/bin/start-rstudio.sh \
-  && chmod u+x /usr/local/bin/start-rstudio.sh
-
-  # Remove RStudio's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
-     ( which pandoc          && rm /opt/rstudio-server/bin/pandoc/pandoc          || true ) \
-  && ( which pandoc-citeproc && rm /opt/rstudio-server/bin/pandoc/pandoc-citeproc || true ) \
+  && chmod u+x /usr/local/bin/start-rstudio.sh \
   && echo "@ Version of rstudio-server: $(rstudio-server version)"
 }
 
 
 setup_R_rshiny() {
-     RSHINY_VERSION=$(curl -sL https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-14.04/x86_64/VERSION) \
-  && wget -qO- "https://download3.rstudio.org/ubuntu-14.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" -O /tmp/rshiny.deb \
+  #  https://posit.co/download/shiny-server/
+     RSHINY_VERSION=$(curl -sL https://s3.amazonaws.com/rstudio-shiny-server-os-build/ubuntu-18.04/x86_64/VERSION) \
+  && RSHINY_URL="https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-${RSHINY_VERSION}-amd64.deb" \
+  && curl -sL -o /tmp/rshiny.deb ${RSHINY_URL} \
   && dpkg -i /tmp/rshiny.deb \
   && sed  -i "s/run_as shiny;/run_as root;/g"  /etc/shiny-server/shiny-server.conf \
   && sed  -i "s/3838/8888/g"                   /etc/shiny-server/shiny-server.conf \
@@ -199,14 +201,15 @@ setup_R_rshiny() {
   && chmod u+x /usr/local/bin/start-shiny-server.sh
 
   # Remove shiny's pandoc and pandoc-proc to reduce size if they are already installed in the jpy-latex step.
-     ( which pandoc          && rm /opt/shiny-server/ext/pandoc/pandoc          || true ) \
-  && ( which pandoc-citeproc && rm /opt/shiny-server/ext/pandoc/pandoc-citeproc || true ) \
+     ( which pandoc          && rm -rf /opt/shiny-server/ext/pandoc/pandoc          || true ) \
+  && ( which pandoc-citeproc && rm -rf /opt/shiny-server/ext/pandoc/pandoc-citeproc || true ) \
   && rm -rf /opt/shiny-server/ext/node/bin/shiny-server \
   && ln -sf /opt/shiny-server/ext/node/bin/node /opt/shiny-server/ext/node/bin/shiny-server
 
   # hack shiny-server to allow run in root user: https://github.com/rstudio/shiny-server/pull/391
-     sed  -i "s/throw new Error/logger.warn/g"  /opt/shiny-server/lib/worker/app-worker.js \
-  && echo "@ Version of shiny-server: $(shiny-server --version)"
+  sed  -i "s/throw new Error/logger.warn/g"  /opt/shiny-server/lib/worker/app-worker.js
+
+  echo "@ Version of shiny-server: $(shiny-server --version)"
 }
 
 

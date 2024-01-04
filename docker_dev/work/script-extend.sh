@@ -1,9 +1,7 @@
 source /opt/utils/script-utils.sh
 
 setup_jupyter_base() {
-     pip install -Uq --pre jupyterhub jupyterlab notebook ipywidgets qpod_hub \
-  && jupyter nbextension  enable --py widgetsnbextension \
-  && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
+     pip install -Uq --pre jupyterhub jupyterlab notebook ipywidgets \
   && echo "@ Version of Jupyter Notebook/JupyterLab: $(jupyter notebook --version)" \
   && echo "@ Version of Jupyter Notebook/JupyterLab: $(jupyter lab --version)"
 }
@@ -55,10 +53,13 @@ setup_jupyter_extensions() {
   # jupyter contrib nbextension install --sys-prefix
   # jupyter serverextension enable  --sys-prefix --py jupyterlab_git
  
-  jupyter labextension install --no-build \
-    @jupyterlab/toc @jupyterlab/shortcutui @jupyterlab/git @jupyterlab/latex \
-    @jupyterlab/mathjax3-extension @jupyterlab/fasta-extension @jupyterlab/geojson-extension \
-    @jupyterlab/vega3-extension @jupyterlab/commenting-extension
+  # && jupyter nbextension  enable --py widgetsnbextension \
+  # && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
+
+  # jupyter labextension install --no-build \
+  #   @jupyterlab/toc @jupyterlab/shortcutui @jupyterlab/git @jupyterlab/latex \
+  #   @jupyterlab/mathjax3-extension @jupyterlab/fasta-extension @jupyterlab/geojson-extension \
+  #   @jupyterlab/vega3-extension @jupyterlab/commenting-extension
     # TEMP fix: (not compatible with JupyterLab 2.0)  @jupyterlab/metadata-extension @jupyterlab/dataregistry-extension
 
   jupyter lab build && echo "@ Jupyter Extension list:" \

@@ -1,11 +1,13 @@
 % This file contains python packages to be installed with pip line by line.
 % Use percent char as line comment separator.
 
-ipyparallel ipynb                       % IPython extensions
-nbresuse                                % Notebook extension
+ipyparallel                             % https://github.com/ipython/ipyparallel
+ipynb                                   % https://github.com/ipython/ipynb
+jupyter-resource-usage                  % https://github.com/jupyter-server/jupyter-resource-usage
+jupyter-collaboration                   % https://github.com/jupyterlab/jupyter-collaboration
+jupyterlab-git                          % https://github.com/jupyterlab/jupyterlab-git
+jupyterlab-latex                        % https://github.com/jupyterlab/jupyterlab-latex
+jupyterlab_server                       % https://github.com/jupyterlab/jupyterlab_server
 # jupyter_nbextensions_configurator       % Jupyter Notebook extension configurator
 # jupyter_contrib_nbextensions            % Jupyter Notebook third-party extensions
-
-jupyterlab_server                       % Jupyter Lab Server
-jupyterlab-git                          % Jupyter Lab Git extension
-jupyterlab_latex                        % Jupyter Lab Latex extension
+# qpod_hub                                % https://github.com/QPod/qpod-hub

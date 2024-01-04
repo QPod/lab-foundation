@@ -5,12 +5,15 @@ ARG BASE_IMG="atom"
 FROM ${BASE_NAMESPACE:+$BASE_NAMESPACE/}${BASE_IMG}
 LABEL maintainer="haobibo@gmail.com"
 
-ARG PYTHON_VERSION="3.10"
+ARG PYTHON_VERSION="3.11"
 
 ENV CONDA_PREFIX=/opt/conda
 ENV PATH=$PATH:${CONDA_PREFIX}/bin
 
 RUN source /opt/utils/script-setup.sh \
+ # update source for CMake
+ && curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo apt-key add - \
+ && echo "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/kitware.list \
  && install_apt /opt/utils/install_list_base.apt \
  && echo "Install tini:" && setup_tini \
  && echo "Install Mamba:" && setup_mamba \

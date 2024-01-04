@@ -27,20 +27,20 @@ jobs:
     name: qpod/base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image atom latest docker_atom/Dockerfile && push_image
           build_image python-3.7  latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.7"  && push_image
-          build_image python-3.10 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.10" && alias_image python-3.10 latest base latest && push_image
-          build_image python-3.11 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.11" && push_image
+          build_image python-3.11 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.11" && alias_image python-3.11 latest base latest && push_image
+          build_image python-3.12 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.12" && push_image
 
   qpod_core:
     name: qpod/core
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image core latest  docker_core/Dockerfile \
@@ -56,7 +56,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image py-data latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,database" && push_image
 
   qpod_py-chem:
@@ -64,7 +64,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image py-chem latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,chem" && push_image
 
   qpod_py-std:
@@ -72,7 +72,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image py-std  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,database,nlp,cv,chem" && push_image
 
   qpod_py-jdk:
@@ -80,7 +80,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image py-jdk  latest docker_core/Dockerfile \
@@ -93,7 +93,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image r-base latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base" && push_image
 
   qpod_r-std:
@@ -101,7 +101,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image r-std latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" && push_image
 
   qpod_r-latex:
@@ -109,7 +109,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image r-latex   latest docker_core/Dockerfile \
@@ -123,7 +123,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image r-studio  latest docker_core/Dockerfile \
@@ -137,7 +137,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image node latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base" && push_image
 
   qpod_jdk:
@@ -145,7 +145,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image jdk17 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=17"
@@ -159,7 +159,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image julia latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JULIA=base"  && push_image
 
   qpod_go:
@@ -167,7 +167,7 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image go latest docker_core/Dockerfile --build-arg "ARG_PROFILE_GO=base"     && push_image
 
   qpod_rust:
@@ -175,115 +175,116 @@ jobs:
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image rust latest docker_core/Dockerfile --build-arg "ARG_PROFILE_RUST=base"     && push_image
 
 
   # cuda docker image tags: https://hub.docker.com/r/nvidia/cuda/tags
   # latest cuda supported by torch: https://pytorch.org/get-started/locally/
-  # latest cuda supported by tensorflow: https://tensorflow.google.cn/install/source_windows?hl=en#gpu
-  qpod_cuda_11_7:
-    name: qpod/cuda_11.7
+  # latest cuda supported by tensorflow: https://tensorflow.google.cn/install/source?hl=en#gpu
+  # latest cuda supported by paddlepadle: https://www.paddlepaddle.org.cn/
+  qpod_cuda_118:
+    name: qpod/cuda_118
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.7.1-cudnn8-devel-ubuntu20.04" && docker rmi nvidia/cuda:11.7.1-cudnn8-devel-ubuntu20.04
+          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04" && clear_images nvidia/cuda
           build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp"
-          build_image cuda_11.7 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
-          alias_image cuda_11.7 latest cuda latest
+          build_image cuda_11.8 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
+          alias_image cuda_11.8 latest cuda latest
           push_image cuda
 
-  qpod_cuda_11_2:
-    name: qpod/cuda_11.2
+  qpod_cuda_112:
+    name: qpod/cuda-112
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04" && docker rmi nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04
+          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04" && clear_images nvidia/cuda
           build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp"
           build_image cuda_11.2 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
           push_image cuda
 
   qpod_tf2:
     name: qpod/tf2
-    needs: qpod_cuda_11_2
+    needs: qpod_cuda_112
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image tf2-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2"  --build-arg "ARG_PROFILE_PYTHON=tf2"
           alias_image tf2-cuda112 latest tf2 latest
           push_image
 
-  qpod_torch_cuda117:
-    name: qpod/torch-cuda117
-    needs: qpod_cuda_11_7
+  qpod_torch_cuda118:
+    name: qpod/torch-cuda118
+    needs: qpod_cuda_118
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image torch-cuda117 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.7" --build-arg "ARG_PROFILE_PYTHON=torch"
-          alias_image torch-cuda117 latest torch latest
+          build_image torch-cuda118 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.8" --build-arg "ARG_PROFILE_PYTHON=torch"
+          alias_image torch-cuda118 latest torch latest
           push_image
 
   qpod_torch_cuda112:
     name: qpod/torch-cuda112
-    needs: qpod_cuda_11_2
+    needs: qpod_cuda_112
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image torch-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2" --build-arg "ARG_PROFILE_PYTHON=torch"
           push_image
 
-  qpod_paddle_cuda117:
-    name: qpod/paddle-cuda117
-    needs: qpod_cuda_11_7
+  qpod_paddle_cuda118:
+    name: qpod/paddle-cuda118
+    needs: qpod_cuda_118
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image paddle-cuda117 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.7" --build-arg "ARG_PROFILE_PYTHON=paddle,mkl"
-          alias_image paddle-cuda117 latest paddle-cuda latest
+          build_image paddle-cuda118 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.8" --build-arg "ARG_PROFILE_PYTHON=paddle,mkl"
+          alias_image paddle-cuda118 latest paddle-cuda latest
           push_image
 
   qpod_paddle_cuda112:
     name: qpod/paddle-cuda112
-    needs: qpod_cuda_11_2
+    needs: qpod_cuda_112
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image paddle-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2" --build-arg "ARG_PROFILE_PYTHON=paddle,mkl"
           push_image
 
 
-  qpod_py-nlp-cuda117:
-    name: qpod/py-nlp-cuda117
-    needs: qpod_cuda_11_7
+  qpod_py-nlp-cuda118:
+    name: qpod/py-nlp-cuda118
+    needs: qpod_cuda_118
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image py-nlp-cuda117 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.7" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,nlp"
-          alias_image py-nlp-cuda117 latest py-nlp latest
+          build_image py-nlp-cuda118 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.8" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,nlp"
+          alias_image py-nlp-cuda118 latest py-nlp latest
           push_image
 
   qpod_py-nlp-cuda112:
     name: qpod/py-nlp-cuda112
-    needs: qpod_cuda_11_2
+    needs: qpod_cuda_112
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image py-nlp-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,nlp"
@@ -292,39 +293,39 @@ jobs:
 
   qpod_py-cv:
     name: qpod/py-cv
-    needs: qpod_cuda_11_7
+    needs: qpod_cuda_118
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh 
-          build_image py-cv   latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.7" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,cv"
+          build_image py-cv   latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.8" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,cv"
           push_image
 
 
   qpod_core-cuda:
     name: qpod/core-cuda
-    needs: qpod_cuda_11_7
+    needs: qpod_cuda_118
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh && free_diskspace
-          build_image full-cuda-11.7 latest docker_core/Dockerfile \
-            --build-arg "BASE_IMG=cuda_11.7" \
+          build_image full-cuda-11.8 latest docker_core/Dockerfile \
+            --build-arg "BASE_IMG=cuda_11.8" \
             --build-arg "ARG_PROFILE_PYTHON=base,datascience,mkl,database,nlp,cv,chem,tf2,torch" \
             --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JAVA=base,maven" \
             --build-arg "ARG_PROFILE_LATEX=base,cjk"
-          alias_image full-cuda-11.7 latest core-cuda latest && push_image
+          alias_image full-cuda-11.8 latest core-cuda latest && push_image
 
   qpod_core-dev:
     name: qpod/core-dev
     needs: qpod_core
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image core-dev latest docker_dev/Dockerfile \
@@ -337,7 +338,7 @@ jobs:
     needs: qpod_core-cuda
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           source ./tool.sh && free_diskspace
           build_image cuda-dev latest docker_dev/Dockerfile \
