@@ -328,12 +328,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh
+          source ./tool.sh && free_diskspace
           build_image base-dev latest docker_dev/Dockerfile \
             --build-arg "BASE_IMG=base" \
             --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" \
             --build-arg "ARG_PROFILE_VSCODE=base"
-          alias_image core-dev latest full latest && push_image
+          push_image
 
   qpod_core-dev:
     name: qpod/core-dev
@@ -342,7 +342,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh
+          source ./tool.sh && free_diskspace
           build_image core-dev latest docker_dev/Dockerfile \
             --build-arg "BASE_IMG=core" \
             --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" \
