@@ -19,10 +19,16 @@ ENV SHELL=/bin/bash \
     LANGUAGE="en_US.UTF-8" \
     HOME_DIR=/root
 
-SHELL ["/bin/bash", "--login", "-c"]
+# '-c' option make bash commands are read from string.
+#   If there are arguments after the string, they are assigned to the positional parameters, starting with $0.
+# '-o pipefail'  prevents errors in a pipeline from being masked.
+#   If any command in a pipeline fails, that return code will be used as the return code of the whole pipeline.
+# '--login': make bash first reads and executes commands from  the file /etc/profile, if that file exists.
+#   After that, it looks for ~/.bash_profile, ~/.bash_login, and ~/.profile, in that order, and reads and executes commands from the first one that exists and is readable.
+SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
 
 # --> Install OS libraries and setup some configurations
-RUN cd /tmp \
+RUN set -x && cd /tmp \
  && apt-get -qq update --fix-missing && apt-get -y -qq upgrade \
  && apt-get -qq install -y --no-install-recommends \
      apt-utils apt-transport-https ca-certificates gnupg2 dirmngr locales sudo lsb-release curl \

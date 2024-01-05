@@ -1,4 +1,4 @@
-set -x
+# shell util functions
 
 # function to debug, resolve package names from a text file and display.
 install_echo()    { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 printf '%s\n' ; }

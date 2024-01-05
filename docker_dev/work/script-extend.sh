@@ -1,7 +1,7 @@
 source /opt/utils/script-utils.sh
 
 setup_jupyter_base() {
-     pip install -Uq --pre jupyterhub jupyterlab notebook ipywidgets \
+     pip install -Uq --pre jupyterhub jupyterlab notebook nbclassic ipywidgets \
   && echo "@ Version of Jupyter Server: $(jupyter server --version)" \
   && echo "@ Version of Jupyter Lab: $(jupyter lab --version)" \
   && echo "@ Version of Jupyter Notebook: $(jupyter notebook --version)" \
