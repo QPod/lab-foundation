@@ -1,9 +1,11 @@
 source /opt/utils/script-utils.sh
 
 setup_jupyter_base() {
-     pip install -Uq --pre jupyterhub jupyterlab notebook ipywidgets \
-  && echo "@ Version of Jupyter Notebook/JupyterLab: $(jupyter notebook --version)" \
-  && echo "@ Version of Jupyter Notebook/JupyterLab: $(jupyter lab --version)"
+     pip install -Uq --pre jupyterhub jupyterlab notebook nbclassic ipywidgets \
+  && echo "@ Version of Jupyter Server: $(jupyter server --version)" \
+  && echo "@ Version of Jupyter Lab: $(jupyter lab --version)" \
+  && echo "@ Version of Jupyter Notebook: $(jupyter notebook --version)" \
+  && echo "@ Version of JupyterHub: $(jupyterhub --version)"
 }
 
 
@@ -49,23 +51,9 @@ setup_jupyter_extensions() {
      install_apt /opt/utils/install_list_JPY_extend.apt \
   && install_pip /opt/utils/install_list_JPY_extend.pip
 
-  # jupyter nbextensions_configurator enable --sys-prefix
-  # jupyter contrib nbextension install --sys-prefix
-  # jupyter serverextension enable  --sys-prefix --py jupyterlab_git
- 
-  # && jupyter nbextension  enable --py widgetsnbextension \
-  # && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
-
-  # jupyter labextension install --no-build \
-  #   @jupyterlab/toc @jupyterlab/shortcutui @jupyterlab/git @jupyterlab/latex \
-  #   @jupyterlab/mathjax3-extension @jupyterlab/fasta-extension @jupyterlab/geojson-extension \
-  #   @jupyterlab/vega3-extension @jupyterlab/commenting-extension
-    # TEMP fix: (not compatible with JupyterLab 2.0)  @jupyterlab/metadata-extension @jupyterlab/dataregistry-extension
-
-  jupyter lab build && echo "@ Jupyter Extension list:" \
-    && jupyter nbextension list \
-    && jupyter serverextension list \
-    && jupyter labextension list
+     echo "@ Jupyter Server Extension list: " && jupyter server extension list \
+  && echo "@ Jupyter Lab Extension list: " && jupyter labextension list \
+  && echo "@ Jupyter Notebook Extension list: " && jupyter notebook extension list
 }
 
 

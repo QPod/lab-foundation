@@ -3,11 +3,9 @@
 
 ipyparallel                             % https://github.com/ipython/ipyparallel
 ipynb                                   % https://github.com/ipython/ipynb
+
 jupyter-resource-usage                  % https://github.com/jupyter-server/jupyter-resource-usage
 jupyter-collaboration                   % https://github.com/jupyterlab/jupyter-collaboration
+jupyterlab_server[openapi]              % https://github.com/jupyterlab/jupyterlab_server
 jupyterlab-git                          % https://github.com/jupyterlab/jupyterlab-git
-jupyterlab-latex                        % https://github.com/jupyterlab/jupyterlab-latex
-jupyterlab_server                       % https://github.com/jupyterlab/jupyterlab_server
-# jupyter_nbextensions_configurator       % Jupyter Notebook extension configurator
-# jupyter_contrib_nbextensions            % Jupyter Notebook third-party extensions
-# qpod_hub                                % https://github.com/QPod/qpod-hub
+% jupyterlab-latex                      % bug on pypi version: https://github.com/jupyterlab/jupyterlab-latex

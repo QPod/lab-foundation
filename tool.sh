@@ -19,12 +19,11 @@ echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
 echo "--------> DOCKER_REGISTRY_NAMESPACE=${NAMESPACE}"
 
 if [ -f /etc/docker/daemon.json ]; then
-       jq '.experimental=true' /etc/docker/daemon.json > /tmp/daemon.json && sudo mv /tmp/daemon.json /etc/docker/ \
+       jq '.experimental=true | ."data-root"="/mnt/docker"' /etc/docker/daemon.json > /tmp/daemon.json && sudo mv /tmp/daemon.json /etc/docker/ \
     && ( sudo service docker restart || true )
-else
-    docker info
 fi
-
+cat /etc/docker/daemon.json
+docker info
 
 build_image() {
     echo "$@" ;
