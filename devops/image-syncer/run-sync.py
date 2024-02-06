@@ -18,9 +18,7 @@ def generate(image, tag=None):
         sys.exit(-2)
 
     for dest in destinations:
-        src = image
-        if tag is not None:
-            src = "%s:%s" % (image, tag)
+        src = "%s:%s" % (image, tag) if tag is not None else image
 
         yield {
             'auth': {
@@ -48,5 +46,11 @@ if __name__ == '__main__':
         with tempfile.NamedTemporaryFile(mode='wt', encoding='UTF-8', suffix='.json') as fp:
             json.dump(c, fp, ensure_ascii=False, indent=2, sort_keys=True)
             fp.flush()
-            ret = subprocess.run(['image-syncer', '--proc=6', '--retries=2', '--config=' + fp.name])
+            ret = 0
+            try:
+                subprocess.run(['image-syncer', '--proc=8', '--retries=2', '--config=' + fp.name], check=True)
+            except subprocess.CalledProcessError as e:
+                ret = e.returncode
+                print(e)
+    
     sys.exit(ret)
