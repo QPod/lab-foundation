@@ -141,8 +141,8 @@ setup_node() {
   && mv /opt/node* /opt/node \
   && echo  "PATH=/opt/node/bin:$PATH" >> /etc/bash.bashrc \
   && export PATH=/opt/node/bin:$PATH \
-  && corepack enable \
-  && npm install -g npm yarn \
+  && npm install -g npm \
+  && corepack enable && yarn set version stable && yarn install \
   && echo "@ Version of Node, npm, and yarn: $(node -v) $(npm -v)" \
   && echo "@ Version of Yarn: $(yarn -v)"
 }
