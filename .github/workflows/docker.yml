@@ -327,14 +327,14 @@ jobs:
 
   qpod_base-dev:
     name: qpod/base-dev
-    needs: qpod_py-data
+    needs: qpod_node
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh && free_diskspace
           build_image base-dev latest docker_dev/Dockerfile \
-            --build-arg "BASE_IMG=py-data" \
+            --build-arg "BASE_IMG=node" \
             --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" \
             --build-arg "ARG_PROFILE_VSCODE=base"
             alias_image base-dev latest developer latest && push_image dev
