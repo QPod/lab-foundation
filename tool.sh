@@ -18,6 +18,8 @@ export NAMESPACE=$(echo "${REGISTRY_URL:-"docker.io"}/${CI_PROJECT_NAMESPACE}" |
 echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
 echo "--------> DOCKER_REGISTRY_NAMESPACE=${NAMESPACE}"
 
+source devops/image-syncer/setup-sync.sh
+
 if [ -f /etc/docker/daemon.json ]; then
        jq '.experimental=true | ."data-root"="/mnt/docker"' /etc/docker/daemon.json > /tmp/daemon.json && sudo mv /tmp/daemon.json /etc/docker/ \
     && ( sudo service docker restart || true )
@@ -61,6 +63,9 @@ push_image() {
       docker push "${IMG}";
       status=$?;
       echo "[${status}] Image pushed > ${IMG}";
+
+      echo "Syncing image to mirror registry..."
+      python devops/image-syncer/run-sync.py ${IMG}
     done
 }
 
