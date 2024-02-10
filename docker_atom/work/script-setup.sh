@@ -154,8 +154,8 @@ setup_docker_compose() {
   && COMPOSE_VERSION=$(curl -sL https://github.com/docker/compose/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+') \
   && COMPOSE_URL="https://github.com/docker/compose/releases/download/v${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" \
   && echo "Downloading Compose from: ${COMPOSE_URL}" \
-  && curl -o /usr/bin/docker-compose -sL ${COMPOSE_URL} \
-  && chmod +x /usr/bin/docker-compose \
+  && sudo curl -o /usr/bin/docker-compose -sL ${COMPOSE_URL} \
+  && sudo chmod +x /usr/bin/docker-compose \
   && echo "@ Version of docker-compose: $(docker-compose --version)"
 }
 
