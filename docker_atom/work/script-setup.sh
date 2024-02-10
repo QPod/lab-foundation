@@ -149,6 +149,17 @@ setup_node() {
 }
 
 
+setup_docker_compose() {
+     ARCH="x86_64" \
+  && COMPOSE_VERSION=$(curl -sL https://github.com/docker/compose/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+') \
+  && COMPOSE_URL="https://github.com/docker/compose/releases/download/v${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" \
+  && echo "Downloading Compose from: ${COMPOSE_URL}" \
+  && curl -o /usr/bin/docker-compose -sL ${COMPOSE_URL} \
+  && chmod +x /usr/bin/docker-compose \
+  && echo "@ Version of docker-compose: $(docker-compose --version)"
+}
+
+
 setup_R_base() {
      curl -sL https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
   && echo "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" > /etc/apt/sources.list.d/cran.list \
