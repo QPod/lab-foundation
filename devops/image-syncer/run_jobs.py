@@ -22,9 +22,9 @@ def get_job_names_from_yaml(file_path):
 
 
 def main():
-    namespace = os.environ.get('IMG_NAMESPAE')
+    namespace = os.environ.get('IMG_NAMESPACE')
     if namespace is None:
-        print('Using default IMG_NAMESPAE=library !')
+        print('Using default IMG_NAMESPACE=library !')
         namespace = 'library'
 
     images = []

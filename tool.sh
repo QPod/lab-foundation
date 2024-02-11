@@ -13,11 +13,11 @@ else
     export CI_PROJECT_NAMESPACE="$(dirname ${CI_PROJECT_NAME})0${CI_PROJECT_SPACE}" ;
 fi
 
-export IMG_NAMESPAE=$(echo "${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
+export IMG_NAMESPACE=$(echo "${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
 export IMG_PREFIX=$(echo "${REGISTRY_URL:-"docker.io"}/${IMG_NAMESPACE}" | awk '{print tolower($0)}')
 
 echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
-echo "--------> DOCKER_IMG_NAMESPACE=${IMG_NAMESPAE}"
+echo "--------> DOCKER_IMG_NAMESPACE=${IMG_NAMESPACE}"
 echo "--------> DOCKER_IMG_PREFIX=${IMG_PREFIX}"
 
 
