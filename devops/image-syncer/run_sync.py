@@ -3,9 +3,11 @@ import sys
 import json
 import tempfile
 import subprocess
+import argparse
+import logging
 
 
-def generate(image: str, target_registries: list, tag: list=None):
+def generate(image: str, target_registries: list = None, tags: list=None, target_image:str = None):
     """Generate a config item which will be used by `image-syncer`."""
     crend_uname = os.environ.get('DOCKER_MIRROR_REGISTRY_USERNAME', None)
     crend_paswd = os.environ.get('DOCKER_MIRROR_REGISTRY_PASSWORD', None)
@@ -14,15 +16,19 @@ def generate(image: str, target_registries: list, tag: list=None):
         print('ENV variable requried: DOCKER_MIRROR_REGISTRY_USERNAME and DOCKER_MIRROR_REGISTRY_PASSWORD !')
         sys.exit(-2)
 
-    for dest in target_registries:
-        src = "%s:%s" % (image, tag) if tag is not None else image
+    if target_registries is None:
+        # , 'cn-shanghai', 'cn-shenzhen', 'cn-chengdu', 'cn-hongkong', 'us-west-1', eu-central-1
+        destinations = ['cn-beijing', 'cn-hangzhou']
+        target_registries = ['registry.%s.aliyuncs.com' % i for i in destinations]
 
+    for dest in target_registries:
+        src = "%s:%s" % (image, tags) if tags is not None else image
         yield {
             'auth': {
                 dest: {"username": crend_uname, "password": crend_paswd}
             },
             'images':{
-                src : "%s/%s" % (dest, image)
+                src : "%s/%s" % (dest, target_image or image)
             }
         }
 
@@ -41,23 +47,21 @@ def sync_image(cfg: dict):
     return ret
 
 
-if __name__ == '__main__':
-    args = sys.argv[1:]
-    img, segs = args[0], args[1:]
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('img', type=str, help='Source image, with or without tag')
+    parser.add_argument('--tags', type=list, default=None, help='Tags to sync, optional.')
+    parser.add_argument('--dest-image', type=str, help='Target image name, with our without tag')
+    parser.add_argument('--dest-registry', type=list, default=None, help='tTarget registry URL')
+    args = parser.parse_args()
 
-    if len(args) < 1 or len(segs) > 2:
-        print('Usage:')
-        print('\tDOCKER_MIRROR_REGISTRY_USERNAME="*" DOCKER_MIRROR_REGISTRY_PASSWORD="*" python run-sync.py repo/image:tag')
-        sys.exit(-1)
+    dest_registries = args.dest_registry
 
-    tag = None if len(segs) == 0 else ','.join(segs[1:])
-
-    # , 'cn-shanghai', 'cn-shenzhen', 'cn-chengdu', 'cn-hongkong', 'us-west-1', eu-central-1
-    destinations = ['cn-beijing', 'cn-hangzhou']
-    destinations = ['registry.%s.aliyuncs.com' % i for i in destinations]
-
-    configs = generate(image=img, tag=tag, target_registries=destinations)
+    configs = generate(image=args.img, tags=args.tags, target_registries=dest_registries, target_image=args.dest_image)
     for i, c in enumerate(configs):
         ret = sync_image(cfg=c)
 
     sys.exit(ret)
+
+if __name__ == '__main__':
+    main()
