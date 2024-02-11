@@ -1,5 +1,5 @@
 import os
-
+import json
 import yaml
 
 import run_sync
@@ -22,7 +22,10 @@ def get_job_names_from_yaml(file_path):
 
 
 def main():
-    namespace = os.environ.get('NAMESPACE', 'library')
+    namespace = os.environ.get('NAMESPACE')
+    if namespace is None:
+        print('Using default NAMESPACE=library !')
+        namespace = 'library'
 
     images = []
     job_names = get_job_names_from_yaml('.github/workflows/build-docker.yml')
@@ -30,9 +33,12 @@ def main():
         images.extend(name.split(','))
 
     for image in images:
-        print("Job names found:", image)
-        configs = run_sync.generate(image='/'.join([namespace, image]), tags=None)
+        img = '/'.join([namespace, image])
+        print("Job names found:", img)
+        configs = run_sync.generate(image=img, tags=None)
         for _, c in enumerate(configs):
+            s_config = json.dumps(c, ensure_ascii=False, sort_keys=True)
+            print('Config item:', json.dumps(c, ensure_ascii=False, sort_keys=True))
             ret = run_sync.sync_image(cfg=c)
             if ret != 0:
                 return ret
