@@ -54,14 +54,11 @@ def main():
     parser.add_argument('--dest-registry', type=str, action='extend', nargs='*', help='tTarget registry URL')
     args = parser.parse_args()
 
-    dest_registries = args.dest_registry
-
-    configs = generate(image=args.img, tags=args.tags, target_registries=dest_registries, target_image=args.dest_image)
+    configs = generate(image=args.img, tags=args.tags, target_registries=args.dest_registry, target_image=args.dest_image)
     for _, c in enumerate(configs):
         ret = sync_image(cfg=c)
-
-    sys.exit(ret)
+    return ret
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
