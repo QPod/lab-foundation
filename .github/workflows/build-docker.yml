@@ -375,6 +375,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          source devops/image-syncer/setup-sync.sh
+          setup_docker_syncer
           echo "Syncing image to mirror registry..."
           python devops/image-syncer/run_jobs.py
