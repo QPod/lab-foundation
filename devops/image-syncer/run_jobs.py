@@ -22,9 +22,9 @@ def get_job_names_from_yaml(file_path):
 
 
 def main():
-    namespace = os.environ.get('DOCKER_IMG_NAMESPACE')
+    namespace = os.environ.get('IMG_NAMESPAE')
     if namespace is None:
-        print('Using default DOCKER_IMG_NAMESPACE=library !')
+        print('Using default IMG_NAMESPAE=library !')
         namespace = 'library'
 
     images = []
