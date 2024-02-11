@@ -22,9 +22,9 @@ def get_job_names_from_yaml(file_path):
 
 
 def main():
-    namespace = os.environ.get('NAMESPACE')
+    namespace = os.environ.get('DOCKER_IMG_NAMESPACE')
     if namespace is None:
-        print('Using default NAMESPACE=library !')
+        print('Using default DOCKER_IMG_NAMESPACE=library !')
         namespace = 'library'
 
     images = []
@@ -34,7 +34,7 @@ def main():
 
     for image in images:
         img = '/'.join([namespace, image])
-        print("Job names found:", img)
+        print("Docker image sync job name found:", img)
         configs = run_sync.generate(image=img, tags=None)
         for _, c in enumerate(configs):
             s_config = json.dumps(c, ensure_ascii=False, sort_keys=True)

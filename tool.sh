@@ -13,10 +13,12 @@ else
     export CI_PROJECT_NAMESPACE="$(dirname ${CI_PROJECT_NAME})0${CI_PROJECT_SPACE}" ;
 fi
 
-export NAMESPACE=$(echo "${REGISTRY_URL:-"docker.io"}/${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
+export IMG_NAMESPAE=$(echo "${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
+export IMG_PREFIX=$(echo "${REGISTRY_URL:-"docker.io"}/${IMG_NAMESPACE}" | awk '{print tolower($0)}')
 
 echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
-echo "--------> DOCKER_REGISTRY_NAMESPACE=${NAMESPACE}"
+echo "--------> DOCKER_IMG_NAMESPACE=${IMG_NAMESPAE}"
+echo "--------> DOCKER_IMG_PREFIX=${IMG_PREFIX}"
 
 
 if [ -f /etc/docker/daemon.json ]; then
@@ -29,27 +31,27 @@ docker info
 build_image() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M); WORKDIR="$(dirname $FILE)";
-    docker build --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "${WORKDIR}" ;
-    docker tag "${NAMESPACE}/${IMG}:${TAG}" "${NAMESPACE}/${IMG}:${VER}" ;
+    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
+    docker tag "${IMG_PREFIX}/${IMG}:${TAG}" "${IMG_PREFIX}/${IMG}:${VER}" ;
 }
 
 build_image_no_tag() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; WORKDIR="$(dirname $FILE)";
-    docker build --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "${WORKDIR}" ;
+    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
 }
 
 build_image_common() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M); WORKDIR="$(dirname $FILE)";
-    docker build --compress --force-rm=true -t "${NAMESPACE}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${NAMESPACE}" "$@" "${WORKDIR}" ;
-    docker tag "${NAMESPACE}/${IMG}:${TAG}" "${NAMESPACE}/${IMG}:${VER}" ;
+    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
+    docker tag "${IMG_PREFIX}/${IMG}:${TAG}" "${IMG_PREFIX}/${IMG}:${VER}" ;
 }
 
 alias_image() {
     IMG_1=$1; TAG_1=$2; IMG_2=$3; TAG_2=$4; shift 4; VER=$(date +%Y.%m%d.%H%M);
-    docker tag "${NAMESPACE}/${IMG_1}:${TAG_1}" "${NAMESPACE}/${IMG_2}:${TAG_2}" ;
-    docker tag "${NAMESPACE}/${IMG_2}:${TAG_2}" "${NAMESPACE}/${IMG_2}:${VER}" ;
+    docker tag "${IMG_PREFIX}/${IMG_1}:${TAG_1}" "${IMG_PREFIX}/${IMG_2}:${TAG_2}" ;
+    docker tag "${IMG_PREFIX}/${IMG_2}:${TAG_2}" "${IMG_PREFIX}/${IMG_2}:${VER}" ;
 }
 
 push_image() {
