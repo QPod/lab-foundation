@@ -369,12 +369,13 @@ jobs:
 
 
   sync_images:
-    needs: ['qpod_base-dev', 'qpod_core-dev', 'qpod_cuda-dev']
+    needs: ['qpod_base-dev', 'qpod_core-dev']  # , 'qpod_cuda-dev'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           source devops/image-syncer/setup-sync.sh
+          echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USER" --password-stdin ;
           echo "Syncing image to mirror registry..."
           python devops/image-syncer/run_jobs.py

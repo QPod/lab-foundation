@@ -1,19 +1,18 @@
-import os
-import sys
-import json
-import tempfile
-import subprocess
 import argparse
-import logging
+import json
+import os
+import subprocess
+import sys
+import tempfile
 
 
-def generate(image: str, target_registries: list = None, tags: list=None, target_image:str = None):
+def generate(image: str, target_registries: list = None, tags: list = None, target_image: str = None):
     """Generate a config item which will be used by `image-syncer`."""
-    crend_uname = os.environ.get('DOCKER_MIRROR_REGISTRY_USERNAME', None)
-    crend_paswd = os.environ.get('DOCKER_MIRROR_REGISTRY_PASSWORD', None)
+    uname = os.environ.get('DOCKER_MIRROR_REGISTRY_USERNAME', None)
+    passwd = os.environ.get('DOCKER_MIRROR_REGISTRY_PASSWORD', None)
 
-    if crend_uname is None or crend_paswd is None:
-        print('ENV variable requried: DOCKER_MIRROR_REGISTRY_USERNAME and DOCKER_MIRROR_REGISTRY_PASSWORD !')
+    if uname is None or passwd is None:
+        print('ENV variable required: DOCKER_MIRROR_REGISTRY_USERNAME and DOCKER_MIRROR_REGISTRY_PASSWORD !')
         sys.exit(-2)
 
     if target_registries is None:
@@ -25,10 +24,10 @@ def generate(image: str, target_registries: list = None, tags: list=None, target
         src = "%s:%s" % (image, tags) if tags is not None else image
         yield {
             'auth': {
-                dest: {"username": crend_uname, "password": crend_paswd}
+                dest: {"username": uname, "password": passwd}
             },
-            'images':{
-                src : "%s/%s" % (dest, target_image or image)
+            'images': {
+                src: "%s/%s" % (dest, target_image or image)
             }
         }
 
@@ -40,7 +39,7 @@ def sync_image(cfg: dict):
         fp.flush()
         ret = 0
         try:
-            subprocess.run(['image-syncer', '--proc=8', '--retries=2', '--config=' + fp.name], check=True)
+            subprocess.run(['image-syncer', '--proc=16', '--retries=2', '--config=' + fp.name], check=True)
         except subprocess.CalledProcessError as e:
             ret = e.returncode
             print(e)
@@ -50,18 +49,19 @@ def sync_image(cfg: dict):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('img', type=str, help='Source image, with or without tag')
-    parser.add_argument('--tags', type=list, default=None, help='Tags to sync, optional.')
+    parser.add_argument('--tags', type=str, action='extend', nargs='*', help='Tags to sync, optional.')
     parser.add_argument('--dest-image', type=str, help='Target image name, with our without tag')
-    parser.add_argument('--dest-registry', type=list, default=None, help='tTarget registry URL')
+    parser.add_argument('--dest-registry', type=str, action='extend', nargs='*', help='tTarget registry URL')
     args = parser.parse_args()
 
     dest_registries = args.dest_registry
 
     configs = generate(image=args.img, tags=args.tags, target_registries=dest_registries, target_image=args.dest_image)
-    for i, c in enumerate(configs):
+    for _, c in enumerate(configs):
         ret = sync_image(cfg=c)
 
     sys.exit(ret)
+
 
 if __name__ == '__main__':
     main()

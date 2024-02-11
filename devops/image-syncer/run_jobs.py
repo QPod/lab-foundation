@@ -1,15 +1,18 @@
 import os
+
 import yaml
+
 import run_sync
 
 
 def get_job_names_from_yaml(file_path):
+    """Get all job names from GitHub Actions config file"""
     with open(file_path, 'r') as file:
         try:
             yaml_content = yaml.safe_load(file)
             # GitHub Actions YAML file structure has a 'jobs' key at its root
             jobs = yaml_content.get('jobs', {})
-            for k, v in jobs.items():
+            for _, v in jobs.items():
                 name = v.get('name')
                 if name is not None:
                     yield name
@@ -29,9 +32,12 @@ def main():
     for image in images:
         print("Job names found:", image)
         configs = run_sync.generate(image='/'.join([namespace, image]), tags=None)
-        for i, c in enumerate(configs):
+        for _, c in enumerate(configs):
             ret = run_sync.sync_image(cfg=c)
+            if ret != 0:
+                return ret
     return ret
+
 
 if __name__ == '__main__':
     main()
