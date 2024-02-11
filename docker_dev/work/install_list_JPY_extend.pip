@@ -3,9 +3,8 @@
 
 ipyparallel                             % https://github.com/ipython/ipyparallel
 ipynb                                   % https://github.com/ipython/ipynb
-
 jupyter-resource-usage                  % https://github.com/jupyter-server/jupyter-resource-usage
-jupyter-collaboration                   % https://github.com/jupyterlab/jupyter-collaboration
 jupyterlab_server[openapi]              % https://github.com/jupyterlab/jupyterlab_server
 jupyterlab-git                          % https://github.com/jupyterlab/jupyterlab-git
+% jupyter-collaboration                 % https://github.com/jupyterlab/jupyter-collaboration
 % jupyterlab-latex                      % bug on pypi version: https://github.com/jupyterlab/jupyterlab-latex
