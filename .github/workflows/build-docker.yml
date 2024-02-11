@@ -369,7 +369,7 @@ jobs:
 
 
   sync_images:
-    # needs: ['qpod_base-dev', 'qpod_core-dev']  # , 'qpod_cuda-dev'
+    needs: ['qpod_base-dev', 'qpod_core-dev']  # , 'qpod_cuda-dev'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
