@@ -133,9 +133,9 @@ setup_java_maven() {
 
 
 setup_node() {
-  # NODEJS_VERSION_MAJOR="v14" && grep "v${NODEJS_VERSION_MAJOR}."
      ARCH="x64" \
   && NODEJS_VERSION=$(curl -sL https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+') \
+  && NODEJS_VERSION_MAJOR=$(echo "${NODEJS_VERSION}" | cut -d '.' -f1 ) \
   && NODEJS_URL="https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-v${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
   && echo "Downloading NodeJS from: ${NODEJS_URL}" \
   && install_tar_gz ${NODEJS_URL} \
