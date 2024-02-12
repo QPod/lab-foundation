@@ -237,7 +237,7 @@ jobs:
           push_image
 
   qpod_torch_cuda112:
-    name: 'torch-cuda11'
+    name: 'torch-cuda112'
     needs: qpod_cuda_112
     runs-on: ubuntu-latest
     steps:
