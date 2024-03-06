@@ -337,4 +337,4 @@ jobs:
             --env-file /tmp/docker.env \
             -v $(pwd):/tmp \
             -w /tmp \
-            qpod/docker-kit python docker_docker_kit/work/image-syncer/run_jobs.py
+            qpod/docker-kit python /opt/utils/image-syncer/run_jobs.py

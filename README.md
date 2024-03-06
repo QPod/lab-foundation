@@ -2,10 +2,10 @@
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/QPod/lab-foundation/build-docker.yml?branch=main)](https://github.com/QPod/lab-foundation/actions/workflows/build-docker.yml)
-[![Recent Code Update](https://img.shields.io/github/last-commit/QPod/lab-foundation.svg)](https://github.com/QPod/docker-images/stargazers)
+[![Recent Code Update](https://img.shields.io/github/last-commit/QPod/lab-foundation.svg)](https://github.com/QPod/lab-foundation/stargazers)
 [![Visit Images on DockerHub](https://img.shields.io/badge/DockerHub-Images-green)](https://hub.docker.com/u/qpod)
 
-Please generously STAR★ our project or donate to us!  [![GitHub Starts](https://img.shields.io/github/stars/QPod/docker-images.svg?label=Stars&style=social)](https://github.com/QPod/docker-images/stargazers)
+Please generously STAR★ our project or donate to us!  [![GitHub Starts](https://img.shields.io/github/stars/QPod/lab-foundation.svg?label=Stars&style=social)](https://github.com/QPod/lab-foundation/stargazers)
 [![Donate-PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/haobibo)
 [![Donate-AliPay](https://img.shields.io/badge/Donate-Alipay-blue.svg)](https://raw.githubusercontent.com/wiki/haobibo/resources/img/Donate-AliPay.png)
 [![Donate-WeChat](https://img.shields.io/badge/Donate-WeChat-green.svg)](https://raw.githubusercontent.com/wiki/haobibo/resources/img/Donate-WeChat.png)
@@ -16,7 +16,7 @@ Discussion and contributions are welcome:
 
 ## Your Swiss Army Knife for AI & Data Science
 
-In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/docker-images) ) is an **out-of-box Data Science / AI environment and platform** at your fingertip which you would love 💕.
+In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/lab-foundation) ) is an **out-of-box Data Science / AI environment and platform** at your fingertip which you would love 💕.
 
 AI/数据科学的瑞士军刀——QPod提供了一站式、开箱即用、可自由定制的，基于容器的、开源AI/数据科学开发、分析工具。
 
