@@ -271,7 +271,7 @@ jobs:
           push_image
 
 
-  qpod_py-nlp-cuda118:
+  qpod_py-nlp:
     name: 'py-nlp,py-nlp-cuda118'
     needs: qpod_cuda_118
     runs-on: ubuntu-latest
@@ -326,7 +326,7 @@ jobs:
 
 
   sync_images:
-    needs: ["qpod_core-cuda", "qpod_py-cv", "qpod_py-nlp-cuda118"]
+    needs: ["qpod_core-cuda", "qpod_py-cv", "qpod_py-nlp"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
