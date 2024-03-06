@@ -325,56 +325,16 @@ jobs:
           alias_image full-cuda-11.8 latest core-cuda latest && push_image cuda
 
 
-  qpod_base-dev:
-    name: 'developer,base-dev'
-    needs: qpod_node
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          source ./tool.sh && free_diskspace
-          build_image base-dev latest docker_dev/Dockerfile \
-            --build-arg "BASE_IMG=node" \
-            --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" \
-            --build-arg "ARG_PROFILE_VSCODE=base"
-            alias_image base-dev latest developer latest && push_image dev
-
-  qpod_core-dev:
-    name: 'full,core-dev'
-    needs: qpod_core
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          source ./tool.sh && free_diskspace
-          build_image core-dev latest docker_dev/Dockerfile \
-            --build-arg "BASE_IMG=core" \
-            --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" \
-            --build-arg "ARG_PROFILE_VSCODE=base"
-          alias_image core-dev latest full latest && push_image
-
-  qpod_cuda-dev:
-    name: 'full-cuda,cuda-dev'
-    needs: qpod_core-cuda
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          source ./tool.sh && free_diskspace
-          build_image cuda-dev latest docker_dev/Dockerfile \
-            --build-arg "BASE_IMG=core-cuda" \
-            --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" \
-            --build-arg "ARG_PROFILE_VSCODE=base"
-          alias_image cuda-dev latest full-cuda latest && push_image
-
-
   sync_images:
-    needs: ['qpod_base-dev', 'qpod_core-dev']  # , 'qpod_cuda-dev'
+    needs: ["qpod_core-cuda", "qpod_py-cv", "qpod_py-nlp-cuda118"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          setup_docker_syncer
-          echo "Syncing image to mirror registry..."
-          python devops/image-syncer/run_jobs.py
+          printenv > /tmp/docker.env
+          docker run --rm \
+            --env-file /tmp/docker.env \
+            -v $(pwd):/tmp \
+            -w /tmp \
+            qpod/docker-kit python docker_docker_kit/work/image-syncer/run_jobs.py
