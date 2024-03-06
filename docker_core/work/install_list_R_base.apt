@@ -13,3 +13,5 @@ libfontconfig1-dev      % required to build R package fontconfig
 libfreetype6-dev        % required to build R package freetype2
 libgit2-dev             % required to build R package git2r
 libssh2-1-dev           % required to build R package git2r
+libharfbuzz-dev         % required to build R package harfbuzz
+libfribidi-dev          % required to build R package fribidi
