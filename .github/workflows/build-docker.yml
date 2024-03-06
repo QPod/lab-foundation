@@ -108,20 +108,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image r-std latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" && push_image
 
-  qpod_r-latex:
-    name: 'r-latex'
-    needs: qpod_base
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          source ./tool.sh
-          build_image r-latex   latest docker_core/Dockerfile \
-            --build-arg "ARG_PROFILE_R=base,datascience" \
-            --build-arg "ARG_PROFILE_JAVA=base" \
-            --build-arg "ARG_PROFILE_LATEX=base,cjk"
-          push_image
-
   qpod_r-studio:
     name: 'r-studio'
     needs: qpod_base
@@ -182,6 +168,24 @@ jobs:
       - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image rust latest docker_core/Dockerfile --build-arg "ARG_PROFILE_RUST=base"     && push_image
 
+
+  qpod_full-stack:
+    name: 'full-stack'
+    needs: qpod_base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          source ./tool.sh
+          build_image full-stack latest  docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_PYTHON=base,database" \
+            --build-arg "ARG_PROFILE_R=base,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_NODEJS=base" \
+            --build-arg "ARG_PROFILE_JAVA=base,maven" \
+            --build-arg "ARG_PROFILE_JULIA=base" \
+            --build-arg "ARG_PROFILE_GO=base" \
+            --build-arg "ARG_PROFILE_RUST=base"
+          push_image full-stack
 
   # cuda docker image tags: https://hub.docker.com/r/nvidia/cuda/tags
   # latest cuda supported by torch: https://pytorch.org/get-started/locally/
@@ -271,7 +275,7 @@ jobs:
           push_image
 
 
-  qpod_py-nlp-cuda118:
+  qpod_py-nlp:
     name: 'py-nlp,py-nlp-cuda118'
     needs: qpod_cuda_118
     runs-on: ubuntu-latest
@@ -324,57 +328,27 @@ jobs:
             --build-arg "ARG_PROFILE_LATEX=base,cjk"
           alias_image full-cuda-11.8 latest core-cuda latest && push_image cuda
 
-
-  qpod_base-dev:
-    name: 'developer,base-dev'
-    needs: qpod_node
+  ## DockerKit - including image-syncer and docker-compsoe
+  qpod_docker_kit:
+    name: 'docker-kit'
+    needs: ["qpod_base"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh && free_diskspace
-          build_image base-dev latest docker_dev/Dockerfile \
-            --build-arg "BASE_IMG=node" \
-            --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" \
-            --build-arg "ARG_PROFILE_VSCODE=base"
-            alias_image base-dev latest developer latest && push_image dev
+          source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile && push_image
 
-  qpod_core-dev:
-    name: 'full,core-dev'
-    needs: qpod_core
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          source ./tool.sh && free_diskspace
-          build_image core-dev latest docker_dev/Dockerfile \
-            --build-arg "BASE_IMG=core" \
-            --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" \
-            --build-arg "ARG_PROFILE_VSCODE=base"
-          alias_image core-dev latest full latest && push_image
-
-  qpod_cuda-dev:
-    name: 'full-cuda,cuda-dev'
-    needs: qpod_core-cuda
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          source ./tool.sh && free_diskspace
-          build_image cuda-dev latest docker_dev/Dockerfile \
-            --build-arg "BASE_IMG=core-cuda" \
-            --build-arg "ARG_PROFILE_JUPYTER=base,kernels,extensions" \
-            --build-arg "ARG_PROFILE_VSCODE=base"
-          alias_image cuda-dev latest full-cuda latest && push_image
-
-
+  ## Sync all images in this build (listed by "names") to mirror registry.
   sync_images:
-    needs: ['qpod_base-dev', 'qpod_core-dev']  # , 'qpod_cuda-dev'
+    needs: ["qpod_docker_kit", "qpod_core-cuda", "qpod_py-cv", "qpod_py-nlp"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          setup_docker_syncer
-          echo "Syncing image to mirror registry..."
-          python devops/image-syncer/run_jobs.py
+          printenv > /tmp/docker.env
+          docker run --rm \
+            --env-file /tmp/docker.env \
+            -v $(pwd):/tmp \
+            -w /tmp \
+            qpod/docker-kit python /opt/utils/image-syncer/run_jobs.py

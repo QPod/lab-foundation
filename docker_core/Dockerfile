@@ -45,7 +45,7 @@ RUN source /opt/utils/script-utils.sh \
  && for profile in $(echo $ARG_PROFILE_LATEX | tr "," "\n") ; do ( install_apt "/opt/utils/install_list_latex_${profile}.apt" ) ; done
 
 # If installing R environment - put this after Java ready to configure rJava
-RUN source /opt/utils/script-setup.sh \
+RUN source /opt/utils/script-setup-R.sh \
  && for profile in $(echo $ARG_PROFILE_R | tr "," "\n") ; do ( setup_R_${profile} ) ; done
 
 # If on a x86_64 architecture: 1) if mkl specified, install nomkl; 2) install conda packages as specified.
