@@ -35,8 +35,8 @@ RUN set -x && cd /tmp \
  && echo "ALL ALL=(ALL) NOPASSWD:ALL"    >> /etc/sudoers \
  && mv /root/.bashrc /etc/bash_profile \
  && echo '[ $BASH ] && [ -f /etc/bash_profile ] && . /etc/bash_profile'	>> /etc/bash.bashrc \
- && echo '[ $BASH ] && [ -f /etc/profile ]      && . /etc/profile'	    >> /etc/bash.bashrc \
  && echo '[ $BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc'		>> /etc/bash.bashrc \
+ && echo '[ $BASH ] && [ -f /etc/profile ]      && echo "exec /etc/profile"'	    >> /etc/profile \
  # Clean up and display components version information...
  && source /opt/utils/script-utils.sh && install__clean
 

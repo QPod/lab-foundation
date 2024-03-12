@@ -25,6 +25,8 @@ RUN set -x && source /opt/utils/script-setup.sh \
  && echo "/usr/share/pyshared/" >>  "${PYTHON_PTH_FILE}" \
  && echo "/usr/share/python3/"  >>  "${PYTHON_PTH_FILE}" \
  && rm -rf $(/usr/bin/python3 -c 'import sys; print(" ".join(i for i in sys.path if "python" in i))') /usr/bin/python3* \
+ && rm -rf "${CONDA_PREFIX}"/lib/python3.1 /usr/lib/python${PYTHON_VERSION} \
+ && ln -sf "${CONDA_PREFIX}"/lib/python${PYTHON_VERSION} /usr/lib/ \
  && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
  && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python \
  && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python3 \
