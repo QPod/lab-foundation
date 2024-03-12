@@ -28,16 +28,26 @@ env:
 
 jobs:
   qpod_base:
-    name: 'atom,base,python-3.7,python-3.11,python-3.12'
+    name: 'atom,base,python-3.11'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
           build_image atom latest docker_atom/Dockerfile && push_image
-          build_image python-3.7  latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.7"  && push_image
           build_image python-3.11 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.11" && alias_image python-3.11 latest base latest && push_image
+
+  qpod_python:
+    name: 'python-3.7,python-3.12'
+    needs: 'qpod_base'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          source ./tool.sh          
+          build_image python-3.7  latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.7"  && push_image
           build_image python-3.12 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.12" && push_image
+
 
   qpod_core:
     name: 'core'
