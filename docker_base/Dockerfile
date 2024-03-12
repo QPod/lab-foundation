@@ -8,9 +8,9 @@ LABEL maintainer="haobibo@gmail.com"
 ARG PYTHON_VERSION="3.11"
 
 ENV CONDA_PREFIX=/opt/conda
-ENV PATH=$PATH:${CONDA_PREFIX}/bin
 
 RUN set -x && source /opt/utils/script-setup.sh \
+ && export PATH=$PATH:${CONDA_PREFIX}/bin \
  # update source for CMake
  && curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo sudo tee /etc/apt/trusted.gpg.d/kitware.asc \
  && echo "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/kitware.list \

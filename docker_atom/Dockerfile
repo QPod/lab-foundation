@@ -33,10 +33,9 @@ RUN set -x && cd /tmp \
  && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
  && echo "en_US.UTF-8 UTF-8"             >  /etc/locale.gen && locale-gen \
  && echo "ALL ALL=(ALL) NOPASSWD:ALL"    >> /etc/sudoers \
- && mv /root/.bashrc /etc/bash_profile \
- && echo '[ $BASH ] && [ -f /etc/bash_profile ] && . /etc/bash_profile'	>> /etc/bash.bashrc \
+ && mv /root/.bashrc /etc/profile.d/bash.bashrc \
+ && echo '[ $BASH ] && [ -f /etc/profile ]      && . /etc/profile'	    >> /etc/bash.bashrc \
  && echo '[ $BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc'		>> /etc/bash.bashrc \
- && echo '[ $BASH ] && [ -f /etc/profile ]      && echo "exec /etc/profile"'	    >> /etc/profile \
  # Clean up and display components version information...
  && source /opt/utils/script-utils.sh && install__clean
 
