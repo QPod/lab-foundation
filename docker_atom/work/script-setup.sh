@@ -112,7 +112,7 @@ setup_java_base() {
   elif [ "$VER_JDK" -gt 8 ] ; then
     URL_OPENJDK=${JDK_URL_MSFT}
   else
-    echo "ORCA download URL ref: ${JDK_URL_ORCA}"
+    echo "ORCA JDK8 download URL ref: ${JDK_URL_ORCA}"
     URL_OPENJDK="https://javadl.oracle.com/webapps/download/GetFile/1.8.0_361-b09/0ae14417abb444ebb02b9815e2103550/linux-i586/jdk-8u361-linux-${ARCH}.tar.gz"
   fi
 
