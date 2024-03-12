@@ -34,11 +34,13 @@ RUN set -x && cd /tmp \
  && echo "en_US.UTF-8 UTF-8"             >  /etc/locale.gen && locale-gen \
  && echo "ALL ALL=(ALL) NOPASSWD:ALL"    >> /etc/sudoers \
  && mv /root/.bashrc /etc/profile.d/bash.bashrc \
+ && LINE_SET_FLAG='export ENTER_PROFILE=$(date +%Y.%m%d.%H%M)' \
+ && LINE_CHK_FLAG='[ $BASH ] && [ -f /etc/profile  ] && [ -z $ENTER_PROFILE ] && . /etc/profile' \
  # Add a check variable `ENTER_PROFILE` to see if /etc/profile is executed or not
- && echo 'export ENTER_PROFILE=$(date +%Y.%m%d.%H%M)' >> /etc/profile \
+ && echo -e "${LINE_SET_FLAG} \n$(cat /etc/profile)"                > /etc/profile \
  # if /etc/profile haven't been executed, execute it.
- && echo '[ $BASH ] && [ -f /etc/profile  ] && [ -z $ENTER_PROFILE ] && . /etc/profile'	>> /etc/bash.bashrc \
- && echo '[ $BASH ] && [ -f /root/.bashrc ] && . /root/.bashrc'                         >> /etc/bash.bashrc \
+ && echo -e "${LINE_CHK_FLAG} \n$(cat /etc/bash.bashrc)"            > /etc/bash.bashrc \
+ && echo '[ $BASH ] && [ -f /root/.bashrc ] && . /root/.bashrc'     >> /etc/bash.bashrc \
  # Clean up and display components version information...
  && source /opt/utils/script-utils.sh && install__clean
 
