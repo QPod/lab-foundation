@@ -186,6 +186,19 @@ setup_GO() {
 }
 
 
+setup_rust() {
+     export CARGO_HOME=/opt/cargo \
+  && export RUSTUP_HOME=/opt/rust \
+  && export PATH=$PATH:${CARGO_HOME}/bin \
+  && curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable \
+  && echo 'export CARGO_HOME="/opt/cargo"'		>> /etc/profile \
+  && echo 'export RUSTUP_HOME="/opt/rust"'		>> /etc/profile \
+  && echo 'export PATH=$PATH:/opt/cargo/bin'	>> /etc/profile \
+  && echo "@ Version of rustup: $(rustup --version)" \
+  && echo "@ Version of rustc:  $(rustc --version)"
+}
+
+
 setup_julia() {
      JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
   && install_tar_gz $JULIA_URL \
@@ -204,19 +217,6 @@ setup_traefik() {
   && install_tar_gz "${TRAEFIK_URL}" traefik \
   && ln -sf /opt/traefik /usr/bin/ \
   && echo "@ Version of traefik: $(traefik version)"
-}
-
-
-setup_rust() {
-     export CARGO_HOME=/opt/cargo \
-  && export RUSTUP_HOME=/opt/rust \
-  && export PATH=$PATH:${CARGO_HOME}/bin \
-  && curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable \
-  && echo 'export CARGO_HOME="/opt/cargo"'		>> /etc/profile \
-  && echo 'export RUSTUP_HOME="/opt/rust"'		>> /etc/profile \
-  && echo 'export PATH=$PATH:/opt/cargo/bin'	>> /etc/profile \
-  && echo "@ Version of rustup: $(rustup --version)" \
-  && echo "@ Version of rustc:  $(rustc --version)"
 }
 
 
