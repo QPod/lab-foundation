@@ -40,7 +40,7 @@ EOF
   && conda update --all --quiet --yes
 
   # remove non-necessary folder/symlink "python3.1" exists
-  rm -rf "${CONDA_PREFIX}"/bin/python3.1
+  rm -rf "${CONDA_PREFIX}"/bin/python3.1 "${CONDA_PREFIX}"/lib/python3.1
 
   # These conda pkgs shouldn't be removed (otherwise will cause RemoveError) since they are directly required by conda: pip setuptools pycosat pyopenssl requests ruamel_yaml
   #    CONDA_PY_PKGS=$(conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;") \
