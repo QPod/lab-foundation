@@ -29,7 +29,7 @@ trusted-host=pypi.python.org pypi.org files.pythonhosted.org
 EOF
   fi
 
-  echo 'export PATH=${PATH}:${CONDA_PREFIX:-"/opt/conda"}/bin'		>> /etc/profile
+  echo 'export PATH=${PATH}:${CONDA_PREFIX:-"/opt/conda"}/bin'		>> /etc/profile.d/path-conda.sh
   ln -sf "${CONDA_PREFIX}/bin/conda" /usr/bin/
 
      conda config --system --prepend channels conda-forge \
@@ -141,7 +141,7 @@ setup_node() {
   && install_tar_gz ${NODEJS_URL} \
   && mv /opt/node* /opt/node \
   && ln -sf /opt/node/bin/n* /usr/bin/ \
-  && echo 'export PATH=${PATH}:/opt/node/bin' >> /etc/profile \
+  && echo 'export PATH=${PATH}:/opt/node/bin' >> /etc/profile.d/path-node.sh \
   && npm install -g npm \
   && echo "@ Version of Node and npm: $(node -v) $(npm -v)" \
   && corepack enable && yarn set version stable \
@@ -178,11 +178,24 @@ setup_GO() {
   && GO_URL="https://dl.google.com/go/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" \
   && install_tar_gz "${GO_URL}" go \
   && ln -sf /opt/go/bin/go* /usr/bin/ \
-  && echo 'export GOROOT="/opt/go"'		      >> /etc/profile \
-  && echo 'export  GOBIN="$GOROOT/bin"'		  >> /etc/profile \
-  && echo 'export GOPATH="$GOROOT/path"'		>> /etc/profile \
-  && echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin'	  >> /etc/profile \
+  && echo 'export GOROOT="/opt/go"'		      >> /etc/profile.d/path-go.sh \
+  && echo 'export  GOBIN="$GOROOT/bin"'		  >> /etc/profile.d/path-go.sh \
+  && echo 'export GOPATH="$GOROOT/path"'		>> /etc/profile.d/path-go.sh \
+  && echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin'	  >> /etc/profile.d/path-go.sh \
   && echo "@ Version of golang: $(go version)"
+}
+
+
+setup_rust() {
+     export CARGO_HOME=/opt/cargo \
+  && export RUSTUP_HOME=/opt/rust \
+  && export PATH=$PATH:${CARGO_HOME}/bin \
+  && curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable \
+  && echo 'export CARGO_HOME="/opt/cargo"'		>> /etc/profile.d/path-rust.sh \
+  && echo 'export RUSTUP_HOME="/opt/rust"'		>> /etc/profile.d/path-rust.sh \
+  && echo 'export PATH=$PATH:/opt/cargo/bin'	>> /etc/profile.d/path-rust.sh \
+  && echo "@ Version of rustup: $(rustup --version)" \
+  && echo "@ Version of rustc:  $(rustc --version)"
 }
 
 
@@ -204,19 +217,6 @@ setup_traefik() {
   && install_tar_gz "${TRAEFIK_URL}" traefik \
   && ln -sf /opt/traefik /usr/bin/ \
   && echo "@ Version of traefik: $(traefik version)"
-}
-
-
-setup_rust() {
-     export CARGO_HOME=/opt/cargo \
-  && export RUSTUP_HOME=/opt/rust \
-  && export PATH=$PATH:${CARGO_HOME}/bin \
-  && curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable \
-  && echo 'export CARGO_HOME="/opt/cargo"'		>> /etc/profile \
-  && echo 'export RUSTUP_HOME="/opt/rust"'		>> /etc/profile \
-  && echo 'export PATH=$PATH:/opt/cargo/bin'	>> /etc/profile \
-  && echo "@ Version of rustup: $(rustup --version)" \
-  && echo "@ Version of rustc:  $(rustc --version)"
 }
 
 

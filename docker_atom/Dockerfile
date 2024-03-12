@@ -1,7 +1,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 # latest # default value: Latest LTS version of Ubuntu (https://hub.docker.com/_/ubuntu)
-ARG BASE_IMG="ubuntu:focal"
+ARG BASE_IMG="ubuntu:jammy"
 FROM ${BASE_IMG}
 
 LABEL maintainer="haobibo@gmail.com"
@@ -33,9 +33,14 @@ RUN set -x && cd /tmp \
  && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
  && echo "en_US.UTF-8 UTF-8"             >  /etc/locale.gen && locale-gen \
  && echo "ALL ALL=(ALL) NOPASSWD:ALL"    >> /etc/sudoers \
- && mv /root/.bashrc /etc/bash_profile \
- && echo '[ $BASH ] && [ -f /etc/bash_profile ] && . /etc/bash_profile'	>> /etc/bash.bashrc \
- && echo '[ $BASH ] && [ -f /root/.bashrc ]     && . /root/.bashrc'		>> /etc/bash.bashrc \
+ && mv /root/.bashrc /etc/profile.d/bash.bashrc \
+ && LINE_SET_FLAG='export ENTER_PROFILE=$(date +%Y.%m%d.%H%M)' \
+ && LINE_CHK_FLAG='[ $BASH ] && [ -f /etc/profile  ] && [ -z $ENTER_PROFILE ] && . /etc/profile' \
+ # Add a check variable `ENTER_PROFILE` to see if /etc/profile is executed or not
+ && echo -e "${LINE_SET_FLAG} \n$(cat /etc/profile)"                > /etc/profile \
+ # if /etc/profile haven't been executed, execute it.
+ && echo -e "${LINE_CHK_FLAG} \n$(cat /etc/bash.bashrc)"            > /etc/bash.bashrc \
+ && echo '[ $BASH ] && [ -f /root/.bashrc ] && . /root/.bashrc'     >> /etc/bash.bashrc \
  # Clean up and display components version information...
  && source /opt/utils/script-utils.sh && install__clean
 

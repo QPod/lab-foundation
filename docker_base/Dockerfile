@@ -8,9 +8,9 @@ LABEL maintainer="haobibo@gmail.com"
 ARG PYTHON_VERSION="3.11"
 
 ENV CONDA_PREFIX=/opt/conda
-ENV PATH=$PATH:${CONDA_PREFIX}/bin
 
 RUN set -x && source /opt/utils/script-setup.sh \
+ && export PATH=$PATH:${CONDA_PREFIX}/bin \
  # update source for CMake
  && curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo sudo tee /etc/apt/trusted.gpg.d/kitware.asc \
  && echo "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/kitware.list \
@@ -25,6 +25,8 @@ RUN set -x && source /opt/utils/script-setup.sh \
  && echo "/usr/share/pyshared/" >>  "${PYTHON_PTH_FILE}" \
  && echo "/usr/share/python3/"  >>  "${PYTHON_PTH_FILE}" \
  && rm -rf $(/usr/bin/python3 -c 'import sys; print(" ".join(i for i in sys.path if "python" in i))') /usr/bin/python3* \
+ && rm -rf "${CONDA_PREFIX}"/lib/python3.1 /usr/lib/python${PYTHON_VERSION} \
+ && ln -sf "${CONDA_PREFIX}"/lib/python${PYTHON_VERSION} /usr/lib/ \
  && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
  && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python \
  && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python3 \
