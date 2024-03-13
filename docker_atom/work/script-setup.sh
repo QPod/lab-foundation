@@ -40,7 +40,7 @@ EOF
   && conda update --all --quiet --yes
 
   # remove non-necessary folder/symlink "python3.1" exists
-  rm -rf "${CONDA_PREFIX}"/bin/python3.1
+  rm -rf "${CONDA_PREFIX}"/bin/python3.1 "${CONDA_PREFIX}"/lib/python3.1
 
   # These conda pkgs shouldn't be removed (otherwise will cause RemoveError) since they are directly required by conda: pip setuptools pycosat pyopenssl requests ruamel_yaml
   #    CONDA_PY_PKGS=$(conda list | grep "py3" | cut -d " " -f 1 | sed "/#/d;/conda/d;/pip/d;/setuptools/d;/pycosat/d;/pyopenssl/d;/requests/d;/ruamel_yaml/d;") \
@@ -112,7 +112,7 @@ setup_java_base() {
   elif [ "$VER_JDK" -gt 8 ] ; then
     URL_OPENJDK=${JDK_URL_MSFT}
   else
-    echo "ORCA download URL ref: ${JDK_URL_ORCA}"
+    echo "ORCA JDK8 download URL ref: ${JDK_URL_ORCA}"
     URL_OPENJDK="https://javadl.oracle.com/webapps/download/GetFile/1.8.0_361-b09/0ae14417abb444ebb02b9815e2103550/linux-i586/jdk-8u361-linux-${ARCH}.tar.gz"
   fi
 
