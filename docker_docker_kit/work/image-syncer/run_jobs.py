@@ -1,6 +1,7 @@
+import multiprocessing
 import os
-import json
 import sys
+
 import yaml
 
 import run_sync
@@ -23,27 +24,29 @@ def get_job_names_from_yaml(file_path):
 
 
 def main():
-    namespace = os.environ.get('IMG_NAMESPACE')
-    if namespace is None:
-        print('Using default IMG_NAMESPACE=library !')
-        namespace = 'library'
+    img_namespace = os.environ.get('IMG_NAMESPACE', 'library')
+    registry_url_src = os.environ.get("REGISTRY_URL", 'docker.io')
+    registry_url_dst = os.environ.get("DOCKER_MIRROR_REGISTRY", None)
 
     images = []
     job_names = get_job_names_from_yaml('.github/workflows/build-docker.yml')
     for name in job_names:
         images.extend(name.split(','))
 
+    list_tasks = []
     for image in images:
-        img = '/'.join([namespace, image])
+        img = '/'.join([img_namespace, image])
         print("Docker image sync job name found:", img)
-        configs = run_sync.generate(image=img, tags=None)
+        configs = run_sync.generate(
+            image=img, tags=None, source_registry=registry_url_src, target_registries=registry_url_dst
+        )
         for _, c in enumerate(configs):
-            s_config = json.dumps(c, ensure_ascii=False, sort_keys=True)
-            print('Config item:', json.dumps(c, ensure_ascii=False, sort_keys=True))
-            ret = run_sync.sync_image(cfg=c)
-            if ret != 0:
-                return ret
-    return ret
+            list_tasks.append(c)
+
+    with multiprocessing.Pool() as pool:
+        res = pool.map_async(run_sync.sync_image, list_tasks)
+        ret = sum(res.get())
+        return ret
 
 
 if __name__ == '__main__':
