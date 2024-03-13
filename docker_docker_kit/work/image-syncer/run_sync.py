@@ -6,12 +6,12 @@ import sys
 import tempfile
 
 
-def generate(image: str, target_registries: list = None, tags: list = None, target_image: str = None):
+def generate(image: str, source_registry: str = None, target_registries: list = None, tags: list = None):
     """Generate a config item which will be used by `image-syncer`."""
-    uname = os.environ.get('DOCKER_MIRROR_REGISTRY_USERNAME', None)
-    passwd = os.environ.get('DOCKER_MIRROR_REGISTRY_PASSWORD', None)
+    uname_mirror = os.environ.get('DOCKER_MIRROR_REGISTRY_USERNAME', None)
+    passwd_mirror = os.environ.get('DOCKER_MIRROR_REGISTRY_PASSWORD', None)
 
-    if uname is None or passwd is None:
+    if uname_mirror is None or passwd_mirror is None:
         print('ENV variable required: DOCKER_MIRROR_REGISTRY_USERNAME and DOCKER_MIRROR_REGISTRY_PASSWORD !')
         sys.exit(-2)
 
@@ -20,16 +20,27 @@ def generate(image: str, target_registries: list = None, tags: list = None, targ
         destinations = ['cn-beijing', 'cn-hangzhou']
         target_registries = ['registry.%s.aliyuncs.com' % i for i in destinations]
 
-    for dest in target_registries:
-        src = "%s:%s" % (image, tags) if tags is not None else image
-        yield {
+    for target_registry in target_registries:
+        img_src_tag = '%s:%s' % (image, tags) if tags is not None else image
+        img_src: str = "%s/%s" % (source_registry, img_src_tag)
+        img_dst: str = "%s/%s" % (target_registry, image)
+
+        c = {
             'auth': {
-                dest: {"username": uname, "password": passwd}
+                target_registry: {"username": uname_mirror, "password": passwd_mirror}
             },
-            'images': {
-                src: "%s/%s" % (dest, target_image or image)
-            }
+            'images': {img_src: img_dst}
         }
+        if source_registry is not None:
+            uname_source = os.environ.get('DOCKER_REGISTRY_USERNAME', None)
+            passwd_source = os.environ.get('DOCKER_REGISTRY_PASSWORD', None)
+            if uname_source is None or passwd_source is None:
+                print('ENV variable required: DOCKER_REGISTRY_USERNAME and DOCKER_REGISTRY_PASSWORD !')
+                sys.exit(-2)
+            c['auth'].update({source_registry: {
+                "username": uname_source, "password": passwd_source}
+            })
+        yield c
 
 
 def sync_image(cfg: dict):
@@ -50,13 +61,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('img', type=str, help='Source image, with or without tag')
     parser.add_argument('--tags', type=str, action='extend', nargs='*', help='Tags to sync, optional.')
-    parser.add_argument('--dest-image', type=str, help='Target image name, with our without tag')
-    parser.add_argument('--dest-registry', type=str, action='extend', nargs='*', help='tTarget registry URL')
+    parser.add_argument('--source-registry', type=str, default='docker.io', help='Target image name, with our without tag')
+    parser.add_argument('--target-registry', type=str, action='extend', nargs='*', help='Target registry URL')
     args = parser.parse_args()
 
-    configs = generate(image=args.img, tags=args.tags, target_registries=args.dest_registry, target_image=args.dest_image)
+    configs = generate(image=args.img, tags=args.tags, source_registry=args.target_registry, target_registries=args.dest_registry)
+    ret = 0
     for _, c in enumerate(configs):
-        ret = sync_image(cfg=c)
+        ret += sync_image(cfg=c)
     return ret
 
 
