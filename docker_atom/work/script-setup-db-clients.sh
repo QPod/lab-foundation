@@ -2,7 +2,7 @@ source /opt/utils/script-utils.sh
 
 
 setup_postgresql_client() {
-  local VER_PG=${VERSION_PG:-"14"}
+  local VER_PG=${PG_MAJOR:-"15"}
   # from: https://www.postgresql.org/download/linux/ubuntu/
   echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
   curl "https://www.postgresql.org/media/keys/ACCC4CF8.asc" | sudo sudo tee /etc/apt/trusted.gpg.d/postgresql.asc
