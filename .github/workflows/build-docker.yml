@@ -141,17 +141,17 @@ jobs:
       - run: source ./tool.sh && build_image node latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base" && push_image
 
   qpod_jdk:
-    name: 'jdk,jdk8,jdk11,jdk17'
+    name: 'jdk,jdk-8,jdk-11,jdk-17'
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image jdk17 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=17"
-          build_image jdk11 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=11"
-          build_image jdk8  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=8"
-          alias_image jdk11 latest jdk latest
+          build_image jdk-17 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=17"
+          build_image jdk-11 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=11"
+          build_image jdk-8  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=8"
+          alias_image jdk-11 latest jdk latest
           push_image jdk
 
   qpod_julia:
@@ -337,6 +337,20 @@ jobs:
             --build-arg "ARG_PROFILE_JAVA=base,maven" \
             --build-arg "ARG_PROFILE_LATEX=base,cjk"
           alias_image full-cuda-11.8 latest core-cuda latest && push_image cuda
+
+  ## Postgres
+  qpod_postgres:
+    name: 'postgres'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          source ./tool.sh
+          build_image postgres latest docker_atom/Dockerfile --build-arg "BASE_IMG=postgres"
+          build_image postgres latest docker_base/Dockerfile \
+          --build-arg "BASE_IMG=postgres"  
+          --build-arg "PYTHON_VERSION=3.11"
+          push_image postgres
 
   ## DockerKit - including image-syncer and docker-compsoe
   qpod_docker_kit:
