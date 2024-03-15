@@ -29,5 +29,6 @@ RUN set -x && source /opt/utils/script-setup.sh \
  && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
  && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python \
  && ln -sf /usr/bin/python${PYTHON_VERSION} /usr/bin/python3 \
- && py3versions -d && lsb_release -a \
+ && $($HAS_SYS_PY3) && ( py3versions -d ) || true \
+ && lsb_release -a \
  && install__clean && fix_permission 0 /opt
