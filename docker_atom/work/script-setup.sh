@@ -79,6 +79,10 @@ setup_tini() {
 
 
 setup_nvtop() {
+  # The compiliation requries CMake  CMake 3.18 or higher. default version in CUDA images is 3.16.3
+  curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo sudo tee /etc/apt/trusted.gpg.d/kitware.asc \
+  && echo "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/kitware.list
+
   # Install Utilities "nvtop" from source: libdrm-dev libsystemd-dev used by AMD/Intel GPU support, libudev-dev used by ubuntu18.04
   LIB_PATH=$(find / -name "libnvidia-ml*" 2>/dev/null) \
   && DIRECTORY=$(pwd) && cd /tmp \
