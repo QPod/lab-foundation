@@ -80,7 +80,7 @@ setup_tini() {
 
 setup_nvtop() {
   # The compiliation requries CMake 3.18 or higher. default version in CUDA 11.2 images is 3.16.3
-  curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo sudo tee /etc/apt/trusted.gpg.d/kitware.asc \
+  curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo tee /etc/apt/trusted.gpg.d/kitware.asc \
   && echo "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/kitware.list \
   && apt-get -qq update -yq --fix-missing && apt-get -qq install -yq --no-install-recommends cmake
 
