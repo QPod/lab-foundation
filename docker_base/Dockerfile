@@ -13,10 +13,10 @@ RUN set -x && source /opt/utils/script-setup.sh \
  && export PATH=$PATH:${CONDA_PREFIX}/bin \
  && install_apt /opt/utils/install_list_base.apt \
  && echo "Install tini:" && setup_tini \
- && export HAS_SYS_PY=$(which python && echo true || echo false) && echo "Detect OS sys path installed: $HAS_SYS_PY" \
+ && export HAS_SYS_PY3=$(which python3 && echo true || echo false) && echo "@ Detect OS Py3 installed: $HAS_SYS_PY3" \
  && echo "Install Mamba:" && setup_mamba \
  && echo "Install Python ${PYTHON_VERSION} and conda:" && setup_conda_with_mamba ${PYTHON_VERSION} \
- && $($HAS_SYS_PY) && ( \
+ && $($HAS_SYS_PY3) && ( \
        echo "Replace system Python3 with conda Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu" \
     && PYTHON_VERSION_DEFAULT=$(py3versions -v -i) \
     && sed -i "s/${PYTHON_VERSION_DEFAULT}/${PYTHON_VERSION}/g" /usr/share/python3/debian_defaults \
