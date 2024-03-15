@@ -346,9 +346,9 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image postgres latest docker_atom/Dockerfile --build-arg "BASE_IMG=postgres"
+          build_image postgres latest docker_atom/Dockerfile --build-arg "BASE_IMG=postgres:15"
           build_image postgres latest docker_base/Dockerfile \
-          --build-arg "BASE_IMG=postgres"  
+          --build-arg "BASE_IMG=postgres" \
           --build-arg "PYTHON_VERSION=3.11"
           push_image postgres
 
