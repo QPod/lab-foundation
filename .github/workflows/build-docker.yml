@@ -190,12 +190,12 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image full-stack latest  docker_core/Dockerfile \
+          build_image data-science-stack latest  docker_core/Dockerfile \
             --build-arg "ARG_PROFILE_PYTHON=base,database" \
             --build-arg "ARG_PROFILE_R=base,rstudio,rshiny" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JULIA=base"
-          push_image full-stack
+          push_image data-science-stack
 
   qpod_full-stack:
     name: 'full-stack'
