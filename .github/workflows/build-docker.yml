@@ -168,7 +168,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: source ./tool.sh && build_image go latest docker_core/Dockerfile --build-arg "ARG_PROFILE_GO=base"     && push_image
+      - run: source ./tool.sh && build_image go latest docker_core/Dockerfile --build-arg "ARG_PROFILE_GO=base"        && push_image
 
   qpod_rust:
     name: 'rust'
@@ -176,8 +176,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: source ./tool.sh && build_image rust latest docker_core/Dockerfile --build-arg "ARG_PROFILE_RUST=base"     && push_image
+      - run: source ./tool.sh && build_image rust latest docker_core/Dockerfile --build-arg "ARG_PROFILE_RUST=base"    && push_image
 
+  qpod_data-science-stack:
+    name: 'data-science-stack'
+    needs: qpod_base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          source ./tool.sh
+          build_image full-stack latest  docker_core/Dockerfile \
+            --build-arg "ARG_PROFILE_PYTHON=base,database" \
+            --build-arg "ARG_PROFILE_R=base,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_NODEJS=base" \
+            --build-arg "ARG_PROFILE_JULIA=base"
+          push_image full-stack
 
   qpod_full-stack:
     name: 'full-stack'
@@ -222,7 +236,7 @@ jobs:
       - run: |
           source ./tool.sh
           build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04" && clear_images nvidia/cuda
-          build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp"
+          build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp" --build-arg "PYTHON_VERSION=3.8"
           build_image cuda_11.2 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
           push_image cuda
 
