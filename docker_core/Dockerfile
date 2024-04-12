@@ -31,7 +31,7 @@ COPY work /opt/utils/
 
 # NodeJS is required to build JupyterLab Extensions later
 RUN $(grep -q "base" <<< "${ARG_PROFILE_NODEJS}") && ( \
-      source /opt/utils/script-setup.sh && setup_node \
+      source /opt/utils/script-setup.sh && setup_node && install__clean \
     ) || echo "Skip NodeJS install"
 
 # If installing Java environment - notice that Java can be dependency for some other packages like rJava
@@ -55,7 +55,7 @@ RUN $(grep -q "x86_64" <<< `arch`) && ( \
         ( echo "nomkl" >> /opt/utils/install_list_core.conda && echo "Install nomkl.") \
       ) \
     ) \
- && source /opt/utils/script-utils.sh && install_conda /opt/utils/install_list_core.conda
+ && source /opt/utils/script-utils.sh && install_conda /opt/utils/install_list_core.conda && install__clean
 
 # If installing Python packages
 RUN source /opt/utils/script-utils.sh \
@@ -86,7 +86,8 @@ RUN source /opt/utils/script-utils.sh \
       && PADDLE_VER=$(pip index versions ${PADDLE} -f ${URL_PYPI_PADDLE} | grep 'Available' | cut -d ":" -f 2 | tr ', ' '\n' | grep ${CUDA_VER:-'.'} | head -n 1) \
       && V=$(echo ${PADDLE}==${PADDLE_VER}) && echo "to install paddle: ${V}" \
       && pip install ${V} -f "https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html" \
-    ) || echo "Skip paddle install" )
+    ) || echo "Skip paddle install" ) \
+  && install__clean
 
 
 RUN $(grep -q "base" <<< "${ARG_PROFILE_GO}")     && ( source /opt/utils/script-setup.sh && setup_GO     ) || echo "Skip go install"
@@ -98,4 +99,4 @@ RUN $(grep -q "base" <<< "${ARG_PROFILE_JULIA}")  && ( source /opt/utils/script-
 RUN $(grep -q "base" <<< "${ARG_PROFILE_OCTAVE}") && ( source /opt/utils/script-setup.sh && setup_octave ) || echo "Skip octave install"
 
 # Clean up and display components version information...
-RUN source /opt/utils/script-utils.sh && install__clean && list_installed_packages
+RUN source /opt/utils/script-utils.sh && list_installed_packages && install__clean

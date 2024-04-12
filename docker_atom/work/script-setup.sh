@@ -149,7 +149,7 @@ setup_node() {
   && echo 'export PATH=${PATH}:/opt/node/bin' >> /etc/profile.d/path-node.sh \
   && npm install -g npm \
   && echo "@ Version of Node and npm: $(node -v) $(npm -v)" \
-  && corepack enable && yarn set version stable \
+  && cd /tmp && corepack enable && yarn set version stable \
   && echo "@ Version of Yarn: $(yarn -v)"
 }
 
