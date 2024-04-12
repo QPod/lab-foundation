@@ -163,7 +163,7 @@ jobs:
       - run: source ./tool.sh && build_image julia latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JULIA=base"  && push_image
 
   qpod_go:
-    name: 'go, go-stack'
+    name: 'go,go-stack'
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
