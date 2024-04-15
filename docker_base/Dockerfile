@@ -16,6 +16,8 @@ RUN set -x && source /opt/utils/script-setup.sh \
  && export HAS_SYS_PY3=$( [ -x "$(command -v python3)" ] && echo 'true' || echo 'false' ) && echo "@ Detect OS Py3 installed: $HAS_SYS_PY3" \
  && echo "Install Mamba:" && setup_mamba \
  && echo "Install Python ${PYTHON_VERSION} and conda:" && setup_conda_with_mamba ${PYTHON_VERSION} \
+ && echo "Backup the conda version of platform.py as it's different from the system version." \
+ && cp "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py.bak \
  && $($HAS_SYS_PY3) && ( \
        echo "Replace system Python3 with conda Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu" \
     && PYTHON_VERSION_DEFAULT=$(py3versions -v -i) \
@@ -27,8 +29,8 @@ RUN set -x && source /opt/utils/script-setup.sh \
  ) || true \
  && ln -sf "${CONDA_PREFIX}"/lib/python${PYTHON_VERSION} /usr/lib/ \
  && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
- && ln -sf "${CONDA_PREFIX}"/bin/python${PYTHON_VERSION} /usr/bin/python \
- && ln -sf "${CONDA_PREFIX}"/bin/python${PYTHON_VERSION} /usr/bin/python3 \
+ && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python  \
+ && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 \
  && ls -alh /usr/bin/python* \
  && $($HAS_SYS_PY3) && ( py3versions -d ) || true \
  && lsb_release -a \
