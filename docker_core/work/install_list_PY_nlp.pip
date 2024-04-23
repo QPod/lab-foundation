@@ -8,3 +8,5 @@ tokenizers % git+https://github.com/huggingface/tokenizers.git#egg=tokenizers\&s
 git+https://github.com/huggingface/transformers.git
 git+https://github.com/huggingface/datasets.git
 git+https://github.com/huggingface/evaluate.git
+git+https://github.com/huggingface/peft.git
+accelerate optimum
