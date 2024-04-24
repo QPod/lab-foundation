@@ -154,30 +154,6 @@ setup_node() {
 }
 
 
-setup_docker_compose() {
-     ARCH="x86_64" \
-  && COMPOSE_VERSION=$(curl -sL https://github.com/docker/compose/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+') \
-  && COMPOSE_URL="https://github.com/docker/compose/releases/download/v${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" \
-  && echo "Downloading Compose from: ${COMPOSE_URL}" \
-  && sudo curl -o /usr/bin/docker-compose -sL ${COMPOSE_URL} \
-  && sudo chmod +x /usr/bin/docker-compose \
-  && echo "@ Version of docker-compose: $(docker-compose --version)"
-}
-
-setup_docker_syncer() {
-     ARCH="amd64" \
-  && SYNCER_VERSION="$(curl -sL https://github.com/AliyunContainerService/image-syncer/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+')" \
-  && SYNCER_URL="https://github.com/AliyunContainerService/image-syncer/releases/download/v${SYNCER_VERSION}/image-syncer-v${SYNCER_VERSION}-linux-${ARCH}.tar.gz" \
-  && echo "Downloading image-syncer from: ${SYNCER_URL}" \
-  && curl -o /tmp/image_syncer.tgz -sL ${SYNCER_URL} \
-  && mkdir -pv /tmp/image_syncer && tar -zxvf /tmp/image_syncer.tgz -C /tmp/image_syncer \
-  && sudo chmod +x /tmp/image_syncer/image-syncer \
-  && sudo mv /tmp/image_syncer/image-syncer /usr/bin/ \
-  && rm -rf /tmp/image_syncer* \
-  && echo "@ image-syncer installed to: $(which image-syncer)"
-}
-
-
 setup_GO() {
      GO_VERSION=$(curl -sL https://github.com/golang/go/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+') \
   && GO_URL="https://dl.google.com/go/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" \
@@ -215,6 +191,31 @@ setup_julia() {
   && echo "@ Version of Julia: $(julia --version)"
 }
 
+
+setup_lua_base() {
+    VERSION_LUA=$(curl -sL https://www.lua.org/download.html | grep "cd lua" | head -1 | grep -Po '(\d[\d|.]+)') \
+ && URL_LUA="http://www.lua.org/ftp/lua-${VERSION_LUA}.tar.gz" \
+ && echo "Downloading LUA ${VERSION_LUA} from ${URL_LUA}" \
+ && install_tar_gz $URL_LUA \
+ && mv /opt/lua-* /tmp/lua && cd /tmp/lua \
+ && make linux test && make install INSTALL_TOP=${LUA_HOME:-"/opt/lua"} \
+ && ln -sf ${LUA_HOME:-"/opt/lua"}/bin/lua* /usr/bin/ \
+ && rm -rf /tmp/lua \
+ && echo "@ Version of LUA installed: $(lua -v)"
+}
+
+setup_lua_rocks() {
+ ## https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Unix
+    VERSION_LUA_ROCKS=$(curl -sL https://luarocks.github.io/luarocks/releases/ | grep "linux-x86_64" | head -1 | grep -Po '(\d[\d|.]+)' | head -1) \
+ && URL_LUA_ROCKS="http://luarocks.github.io/luarocks/releases/luarocks-${VERSION_LUA_ROCKS}.tar.gz" \
+ && echo "Downloading luarocks ${VERSION_LUA_ROCKS} from ${URL_LUA_ROCKS}" \
+ && install_tar_gz $URL_LUA_ROCKS \
+ && mv /opt/luarocks-* /tmp/luarocks && cd /tmp/luarocks \
+ && ./configure --prefix=${LUA_HOME:-"/opt/lua"} --with-lua-include=${LUA_HOME:-"/opt/lua"}/include && make install \
+ && ln -sf /opt/lua/bin/lua* /usr/bin/ \
+ && rm -rf /tmp/luarocks \
+ && echo "@ Version of luarocks: $(luarocks --version)"
+}
 
 setup_traefik() {
      TRAEFIK_VERSION=$(curl -sL https://github.com/traefik/traefik/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+') \
