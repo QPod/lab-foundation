@@ -9,7 +9,7 @@ ARG PYTHON_VERSION="3.11"
 
 ENV CONDA_PREFIX=/opt/conda
 
-RUN set -x && source /opt/utils/script-setup.sh \
+RUN set -x && source /opt/utils/script-setup.sh && source /opt/utils/script-setup-sys.sh \
  && export PATH=$PATH:${CONDA_PREFIX}/bin \
  && install_apt /opt/utils/install_list_base.apt \
  && echo "Install tini:" && setup_tini \
