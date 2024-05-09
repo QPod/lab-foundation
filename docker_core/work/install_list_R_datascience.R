@@ -9,6 +9,6 @@ tidyverse       % Includes the packages that you are likely to use in everyday d
 glmnet          % Efficient procedures for fitting the entire lasso or elastic-net regularization path for LR, logistic and multinomial regression models, Poisson regression and the Cox model. <GPL2>
 caret           % Misc functions for training and plotting classification and regression models. <GPL3>
 quantmod        % Specify, build, trade, and analyse quantitative financial trading strategies.	<GPL3>
-rbokeh          % A native R plotting library that provides a flexible declarative interface for creating interactive web-based graphics, backed by the Bokeh visualization library. <MIT>
 shiny           % A package makes it incredibly easy to build interactive web applications with R. <GPLv3>
-Biocomb         % Feature Selection and Classification with the Embedded Validation Procedures for Biomedical Data Analysis. <GPL3>
+% Biocomb       % archived: Feature Selection and Classification with the Embedded Validation Procedures for Biomedical Data Analysis. <GPL3>
+% rbokeh        % archived: A native R plotting library that provides a flexible declarative interface for creating interactive web-based graphics, backed by the Bokeh visualization library. <MIT>
