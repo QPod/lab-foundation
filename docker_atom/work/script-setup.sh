@@ -69,15 +69,6 @@ setup_conda_download() {
   setup_conda_postprocess
 }
 
-
-setup_tini() {
-     cd /tmp \
-  && TINI_VERSION=$(curl -sL https://github.com/krallin/tini/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+' ) \
-  && curl -o tini.zip -sL "https://github.com/krallin/tini/archive/v${TINI_VERSION}.zip" && unzip -q /tmp/tini.zip \
-  && cmake /tmp/tini-* && make install && mv /tmp/tini /usr/bin/tini && chmod +x /usr/bin/tini && rm -rf /tmp/tini-*
-}
-
-
 setup_nvtop() {
   # The compiliation requries CMake 3.18 or higher. default version in CUDA 11.2 images is 3.16.3
   curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo tee /etc/apt/trusted.gpg.d/kitware.asc \

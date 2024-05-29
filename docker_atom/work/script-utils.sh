@@ -47,8 +47,8 @@ install__clean(){
   which conda   && conda clean -ya && ( rm -rf "${CONDA_PREFIX:-/opt/conda}"/pkgs/* || true )
   find "${CONDA_PREFIX:-/opt/conda}"/lib | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
   which npm     && npm cache clean --force
-  rm -rf /opt/conda/share/jupyter/lab/staging
   ( rm -rf /tmp/.* /tmp/* /var/log/* /var/cache/* /root/.cache /root/.* || true )
+  ( rm -rf /usr/share/doc /usr/share/man || true )
   chmod ugo+rwXt /tmp
   ls -alh /root /tmp
   echo "@ System release info:" && cat /etc/*release*
