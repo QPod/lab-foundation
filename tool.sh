@@ -15,11 +15,12 @@ fi
 
 export IMG_NAMESPACE=$(echo "${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
 export IMG_PREFIX=$(echo "${REGISTRY_URL:-"docker.io"}/${IMG_NAMESPACE}" | awk '{print tolower($0)}')
+export TAG_SUFFIX="-$(git rev-parse --short HEAD)"
 
 echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
 echo "--------> DOCKER_IMG_NAMESPACE=${IMG_NAMESPACE}"
 echo "--------> DOCKER_IMG_PREFIX=${IMG_PREFIX}"
-
+echo "--------> DOCKER_TAG_SUFFIX=${TAG_SUFFIX}"
 
 if [ -f /etc/docker/daemon.json ]; then
        jq '.experimental=true | ."data-root"="/mnt/docker"' /etc/docker/daemon.json > /tmp/daemon.json && sudo mv /tmp/daemon.json /etc/docker/ \
@@ -30,7 +31,7 @@ docker info
 
 build_image() {
     echo "$@" ;
-    IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M); WORKDIR="$(dirname $FILE)";
+    IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M)${TAG_SUFFIX}; WORKDIR="$(dirname $FILE)";
     docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
     docker tag "${IMG_PREFIX}/${IMG}:${TAG}" "${IMG_PREFIX}/${IMG}:${VER}" ;
 }
@@ -43,13 +44,13 @@ build_image_no_tag() {
 
 build_image_common() {
     echo "$@" ;
-    IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M); WORKDIR="$(dirname $FILE)";
+    IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M)${TAG_SUFFIX}; WORKDIR="$(dirname $FILE)";
     docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
     docker tag "${IMG_PREFIX}/${IMG}:${TAG}" "${IMG_PREFIX}/${IMG}:${VER}" ;
 }
 
 alias_image() {
-    IMG_1=$1; TAG_1=$2; IMG_2=$3; TAG_2=$4; shift 4; VER=$(date +%Y.%m%d.%H%M);
+    IMG_1=$1; TAG_1=$2; IMG_2=$3; TAG_2=$4; shift 4; VER=$(date +%Y.%m%d.%H%M)${TAG_SUFFIX};
     docker tag "${IMG_PREFIX}/${IMG_1}:${TAG_1}" "${IMG_PREFIX}/${IMG_2}:${TAG_2}" ;
     docker tag "${IMG_PREFIX}/${IMG_2}:${TAG_2}" "${IMG_PREFIX}/${IMG_2}:${VER}" ;
 }

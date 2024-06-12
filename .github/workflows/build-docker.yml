@@ -15,13 +15,12 @@ on:
   workflow_dispatch:
 
 env:
-  REGISTRY_URL: "docker.io"   # docker.io or other registry URL, DOCKER_REGISTRY_USERNAME/DOCKER_REGISTRY_PASSWORD to be set in CI env.
   BUILDKIT_PROGRESS: "plain"  # Full logs for CI build.
-
+  REGISTRY_URL: "docker.io"  # docker.io or other target registry URL: where to push images to.
+  REGISTRY_SRC: "docker.io"  # For BASE_NAMESPACE of images: where to pull base images from.
   # DOCKER_REGISTRY_USERNAME and DOCKER_REGISTRY_PASSWORD is required for docker image push, they should be set in CI secrets.
   DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
   DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-  
   # used to sync image to mirror registry
   DOCKER_MIRROR_REGISTRY_USERNAME: ${{ secrets.DOCKER_MIRROR_REGISTRY_USERNAME }}
   DOCKER_MIRROR_REGISTRY_PASSWORD: ${{ secrets.DOCKER_MIRROR_REGISTRY_PASSWORD }}
@@ -379,7 +378,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile && push_image
+          source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile
+          printenv > /tmp/docker.env
+          docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp \
+            ${IMG_PREFIX}/docker-kit /opt/conda/bin/python /opt/utils/image-syncer/run_sync.py ${IMG_NAMESPACE}/base
+          push_image docker-kit
 
   ## Sync all images in this build (listed by "names") to mirror registry.
   sync_images:
@@ -390,8 +393,5 @@ jobs:
       - run: |
           source ./tool.sh
           printenv > /tmp/docker.env
-          docker run --rm \
-            --env-file /tmp/docker.env \
-            -v $(pwd):/tmp \
-            -w /tmp \
-            ${IMG_NAMESPACE:-qpod}/docker-kit python /opt/utils/image-syncer/run_jobs.py
+          docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp \
+            ${IMG_NAMESPACE:-qpod}/docker-kit /opt/conda/bin/python /opt/utils/image-syncer/run_jobs.py
