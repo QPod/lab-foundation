@@ -36,3 +36,9 @@ if [ -f "$(which npm)" ]; then
   npm config set registry https://registry.npmmirror.com
   npm config list
 fi
+
+if [ -f "$(which go)" ]; then
+  echo "Found golang, setting GOPROXY"
+  export GOPROXY=https://goproxy.cn
+  go env | grep 'PROXY'
+fi
