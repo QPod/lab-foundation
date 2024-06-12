@@ -378,7 +378,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile && push_image
+          source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile push_image docker-kit
+          printenv > /tmp/docker.env && docker run --rm \
+            --env-file /tmp/docker.env \
+            -v $(pwd):/tmp \
+            -w /tmp \
+            ${IMG_PREFIX}/docker-kit python /opt/utils/image-syncer/run_sync.py ${IMG_PREFIX}/docker-kit
 
   ## Sync all images in this build (listed by "names") to mirror registry.
   sync_images:

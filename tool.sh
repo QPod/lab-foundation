@@ -13,7 +13,6 @@ else
     export CI_PROJECT_NAMESPACE="$(dirname ${CI_PROJECT_NAME})0${CI_PROJECT_SPACE}" ;
 fi
 
-export SRC_NAMESPACE="${REGISTRY_SRC:-docker.io}"
 export IMG_NAMESPACE=$(echo "${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
 export IMG_PREFIX=$(echo "${REGISTRY_URL:-"docker.io"}/${IMG_NAMESPACE}" | awk '{print tolower($0)}')
 export TAG_SUFFIX="-$(git rev-parse --short HEAD)"
@@ -33,20 +32,20 @@ docker info
 build_image() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M)${TAG_SUFFIX}; WORKDIR="$(dirname $FILE)";
-    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${SRC_NAMESPACE}" "$@" "${WORKDIR}" ;
+    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
     docker tag "${IMG_PREFIX}/${IMG}:${TAG}" "${IMG_PREFIX}/${IMG}:${VER}" ;
 }
 
 build_image_no_tag() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; WORKDIR="$(dirname $FILE)";
-    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${SRC_NAMESPACE}" "$@" "${WORKDIR}" ;
+    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
 }
 
 build_image_common() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M)${TAG_SUFFIX}; WORKDIR="$(dirname $FILE)";
-    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${SRC_NAMESPACE}" "$@" "${WORKDIR}" ;
+    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
     docker tag "${IMG_PREFIX}/${IMG}:${TAG}" "${IMG_PREFIX}/${IMG}:${VER}" ;
 }
 
