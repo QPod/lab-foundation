@@ -378,7 +378,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile push_image docker-kit
+          source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile && push_image docker-kit
           printenv > /tmp/docker.env && docker run --rm \
             --env-file /tmp/docker.env \
             -v $(pwd):/tmp \
