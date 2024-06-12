@@ -2,6 +2,7 @@
 % Use percent char as line comment separator.
 % Lib Reference: https://docs.continuum.io/anaconda/packages/pkg-docs
 
-datashape bottleneck blaze dask distributed      % Python BigData/parallel interface
-pandasql openpyxl dill cloudpickle               % Data access: external systems; Object Serialization
-sqlalchemy pymysql psycopg2-binary redis         % Data access: OpenSource DB
+dask distributed                                    % Python BigData/parallel interface
+openpyxl dill cloudpickle                           % Object Serialization
+sqlalchemy duckdb pymysql psycopg[binary] redis     % Data access: OpenSource DB
+% bottleneck
