@@ -381,7 +381,7 @@ jobs:
           source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile
           printenv > /tmp/docker.env
           docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp \
-            ${IMG_PREFIX}/docker-kit /opt/conda/bin/python /opt/utils/image-syncer/run_sync.py ${DOCKER_IMG_NAMESPACE}/base
+            ${IMG_PREFIX}/docker-kit /opt/conda/bin/python /opt/utils/image-syncer/run_sync.py ${IMG_NAMESPACE}/base
           push_image docker-kit
 
   ## Sync all images in this build (listed by "names") to mirror registry.
