@@ -65,7 +65,7 @@ def main():
     parser.add_argument('--target-registry', type=str, action='extend', nargs='*', help='Target registry URL')
     args = parser.parse_args()
 
-    configs = generate(image=args.img, tags=args.tags, source_registry=args.target_registry, target_registries=args.dest_registry)
+    configs = generate(image=args.img, tags=args.tags, source_registry=args.source_registry, target_registries=args.target_registry)
     ret = 0
     for _, c in enumerate(configs):
         ret += sync_image(cfg=c)
