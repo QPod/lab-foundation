@@ -25,7 +25,7 @@ progress_bar=off
 root-user-action=ignore
 retries=5
 timeout=180
-trusted-host=pypi.python.org pypi.org files.pythonhosted.org mirrors.aliyun.com
+trusted-host=pypi.python.org pypi.org files.pythonhosted.org mirrors.cloud.aliyuncs.com
 index-url=http://mirrors.cloud.aliyuncs.com/pypi/simple/
 EOF
   pip config list
@@ -35,4 +35,10 @@ if [ -f "$(which npm)" ]; then
   echo "Found npm, setting npm mirror"
   npm config set registry https://registry.npmmirror.com
   npm config list
+fi
+
+if [ -f "$(which go)" ]; then
+  echo "Found golang, setting GOPROXY"
+  export GOPROXY=https://mirrors.cloud.aliyuncs.com/goproxy/
+  go env | grep 'PROXY'
 fi

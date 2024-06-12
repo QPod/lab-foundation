@@ -18,3 +18,8 @@ if [ -f "$(which npm)" ]; then
   echo "Found npm, using default npm mirror"
   npm config list
 fi
+
+if [ -f "$(which go)" ]; then
+  echo "Found golang, getting GO env:"
+  go env | sort
+fi
