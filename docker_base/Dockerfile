@@ -21,33 +21,19 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
  && if $(${HAS_SYS_PY3:-false}) ; then \
        py3versions -d \
     && PYTHON_VERSION_DEFAULT=$(py3versions -v -i) \
-    && echo "Found default system python3 version ${PYTHON_VERSION_DEFAULT}, skip conda python replacement..." ; \
+    && PYTHON_PTH_FILE=$("${CONDA_PREFIX}"/bin/python3 -c 'import sys;print(sys.path[-1]+"/usr_share.pth")') \
+    && echo "Found default system python3 version: ${PYTHON_VERSION_DEFAULT}" \
+    && echo "Replace system Python3 with conda Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu" \
+    && sed -i "s/${PYTHON_VERSION_DEFAULT}/${PYTHON_VERSION}/g" /usr/share/python3/debian_defaults \
+    && echo "/usr/share/pyshared/" >>  "${PYTHON_PTH_FILE}" \
+    && echo "/usr/share/python3/"  >>  "${PYTHON_PTH_FILE}" \
+    && rm -rf $(/usr/bin/python3 -c 'import sys; print(" ".join(i for i in sys.path if "python" in i))') /usr/bin/python3* /usr/lib/python${PYTHON_VERSION} \
+    && rm -rf /usr/lib/python${PYTHON_VERSION} && ln -sf "${CONDA_PREFIX}"/lib/python${PYTHON_VERSION} /usr/lib/ ; \
  else \
        ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
     && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python    \
     && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 ; \
  fi \
  && lsb_release -a \
- && which python && python --version \
+ && which python && python --version && ls -alh /usr/bin/python* \
  && install__clean && fix_permission 0 /opt
-
-
-#  && if $(${HAS_SYS_PY3:-false}) ; then \
-#        echo "Replace system Python3 with conda Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu" \
-#     && sed -i "s/${PYTHON_VERSION_DEFAULT}/${PYTHON_VERSION}/g" /usr/share/python3/debian_defaults \
-#     && PYTHON_PTH_FILE=$("${CONDA_PREFIX}"/bin/python3 -c 'import sys;print(sys.path[-1]+"/usr_share.pth")') \
-#     && echo "/usr/share/pyshared/" >>  "${PYTHON_PTH_FILE}" \
-#     && echo "/usr/share/python3/"  >>  "${PYTHON_PTH_FILE}" \
-#     && rm -rf $(/usr/bin/python3 -c 'import sys; print(" ".join(i for i in sys.path if "python" in i))') /usr/bin/python3* /usr/lib/python${PYTHON_VERSION} ; \
-#  fi \
-#  && ls -alh /usr/lib && rm -rf /usr/lib/python${PYTHON_VERSION} \
-#  && ln -sf "${CONDA_PREFIX}"/lib/python${PYTHON_VERSION} /usr/lib/ \
-#  
-#  
-#  
-#  # hack: fix for future install of python3.12-minimal
-#  && ln -sf /usr/lib/python${PYTHON_VERSION}/_sysconfigdata__linux_x86_64-linux-gnu.py /usr/lib/python${PYTHON_VERSION}/_sysconfigdata__x86_64-linux-gnu.py \
-#  && ls -alh /usr/bin/python* \
-#  && if $(${HAS_SYS_PY3:-false}) ; then \
-#       py3versions -d ; \
-#     fi \
