@@ -26,7 +26,7 @@ ENV SHELL=/bin/bash \
 SHELL ["/bin/bash", "--login", "-c"]
 
 # --> Install OS libraries and setup some configurations
-RUN set -x && cd /tmp \
+RUN set -eux && cd /tmp \
  && apt-get -qq update --fix-missing && apt-get -y -qq upgrade \
  && apt-get -qq install -y --no-install-recommends \
      apt-utils apt-transport-https ca-certificates gnupg2 dirmngr locales sudo lsb-release curl \
