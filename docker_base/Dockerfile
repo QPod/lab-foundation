@@ -19,6 +19,9 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
  && echo "Backup the conda version of platform.py as it's different from the system version." \
  && cp "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py.bak \
  # If needed, replace sys python with conda python here
+ && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
+ && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python  \
+ && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 \
  && lsb_release -a \
  && which python && python --version \
  && install__clean && fix_permission 0 /opt
@@ -35,9 +38,9 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
 #  fi \
 #  && ls -alh /usr/lib && rm -rf /usr/lib/python${PYTHON_VERSION} \
 #  && ln -sf "${CONDA_PREFIX}"/lib/python${PYTHON_VERSION} /usr/lib/ \
-#  && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
-#  && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python  \
-#  && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 \
+#  
+#  
+#  
 #  # hack: fix for future install of python3.12-minimal
 #  && ln -sf /usr/lib/python${PYTHON_VERSION}/_sysconfigdata__linux_x86_64-linux-gnu.py /usr/lib/python${PYTHON_VERSION}/_sysconfigdata__x86_64-linux-gnu.py \
 #  && ls -alh /usr/bin/python* \

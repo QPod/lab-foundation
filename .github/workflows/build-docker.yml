@@ -232,6 +232,18 @@ jobs:
           alias_image cuda_11.8 latest cuda latest
           push_image cuda
 
+  qpod_cuda_123:
+    name: 'cuda_12.3'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          source ./tool.sh
+          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:12.3.2-cudnn9-devel-ubuntu22.04" && clear_images nvidia/cuda
+          build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp"
+          build_image cuda_12.3 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
+          push_image cuda
+
   qpod_cuda_120:
     name: 'cuda_12.0'
     runs-on: ubuntu-latest
@@ -242,7 +254,6 @@ jobs:
           build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:12.0.1-cudnn8-devel-ubuntu22.04" && clear_images nvidia/cuda
           build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp"
           build_image cuda_12.0 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
-          alias_image cuda_12.0 latest cuda latest
           push_image cuda
 
   qpod_cuda_112:
@@ -258,15 +269,15 @@ jobs:
           push_image cuda
 
   qpod_tf2:
-    name: 'tf2,tf2-cuda112'
-    needs: qpod_cuda_112
+    name: 'tf2,tf2-cuda123'
+    needs: qpod_cuda_123
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image tf2-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2"  --build-arg "ARG_PROFILE_PYTHON=tf2"
-          alias_image tf2-cuda112 latest tf2 latest
+          build_image tf2-cuda123 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.3"  --build-arg "ARG_PROFILE_PYTHON=tf2"
+          alias_image tf2-cuda123 latest tf2 latest
           push_image
 
   qpod_torch_cuda118:
@@ -282,14 +293,14 @@ jobs:
           push_image
 
   qpod_torch_cuda112:
-    name: 'torch-cuda112'
-    needs: qpod_cuda_112
+    name: 'torch-cuda123'
+    needs: qpod_cuda_123
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image torch-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2" --build-arg "ARG_PROFILE_PYTHON=torch"
+          build_image torch-cuda123 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.3" --build-arg "ARG_PROFILE_PYTHON=torch"
           push_image
 
   qpod_paddle_cuda120:
