@@ -14,12 +14,12 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
  && echo "python${PYTHON_VERSION}-minimal" >> /opt/utils/install_list_base.apt \
  && install_apt /opt/utils/install_list_base.apt \
  && echo "Install tini:" && setup_tini \
- && export HAS_SYS_PY3=$( [ -x "$(command -v python3)" ] && echo 'true' || echo 'false' ) && echo "@ Detect OS Py3 installed: $HAS_SYS_PY3" \
+ && export HAS_SYS_PY3=$( [ -x "$(command -v python3)" ] && echo 'true' || echo 'false' ) && echo "@ Detect OS Py3 installed: ${HAS_SYS_PY3:-error}" \
  && echo "Install Mamba:" && setup_mamba \
  && echo "Install Python ${PYTHON_VERSION} and conda:" && setup_conda_with_mamba ${PYTHON_VERSION} \
  && echo "Backup the conda version of platform.py as it's different from the system version." \
  && cp "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py.bak \
- && $($HAS_SYS_PY3) && ( \
+ && $(${HAS_SYS_PY3:-false}) && ( \
        echo "Replace system Python3 with conda Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu" \
     && PYTHON_VERSION_DEFAULT=$(py3versions -v -i) \
     && sed -i "s/${PYTHON_VERSION_DEFAULT}/${PYTHON_VERSION}/g" /usr/share/python3/debian_defaults \
@@ -34,7 +34,7 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
  && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python  \
  && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 \
  && ls -alh /usr/bin/python* \
- && $($HAS_SYS_PY3) && ( py3versions -d ) || true \
+ && $($HAS_SYS_PY3:-false) && ( py3versions -d ) || true \
  && lsb_release -a \
  && which python && python --version \
  && install__clean && fix_permission 0 /opt
