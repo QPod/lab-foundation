@@ -91,7 +91,7 @@ RUN set -eux \
       && V=$(echo ${PADDLE}==${PADDLE_VER}) && echo "to install paddle: ${V}" \
       && echo "${V}" > /opt/utils/install_list_PY_paddle.pip ; \
     else \
-         echo "Skip paddle install" ;
+         echo "Skip paddle install" ; \
     fi \
  # -----------------------------
  && echo "PIP_FIND_LINKS=${PIP_FIND_LINKS:-default}" \
