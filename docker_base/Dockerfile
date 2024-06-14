@@ -11,6 +11,7 @@ ENV CONDA_PREFIX=/opt/conda
 
 RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-setup-sys.sh \
  && export PATH=$PATH:${CONDA_PREFIX}/bin \
+ && echo "python${PYTHON_VERSION}-minimal" >> /opt/utils/install_list_base.apt \
  && install_apt /opt/utils/install_list_base.apt \
  && echo "Install tini:" && setup_tini \
  && export HAS_SYS_PY3=$( [ -x "$(command -v python3)" ] && echo 'true' || echo 'false' ) && echo "@ Detect OS Py3 installed: $HAS_SYS_PY3" \

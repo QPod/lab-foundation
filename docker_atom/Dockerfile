@@ -30,7 +30,6 @@ RUN set -eux && cd /tmp \
  && apt-get -qq update --fix-missing && apt-get -y -qq upgrade \
  && apt-get -qq install -y --no-install-recommends \
      apt-utils apt-transport-https ca-certificates gnupg2 dirmngr locales sudo lsb-release curl \
-     python3.12-minimal \
  && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
  && echo "en_US.UTF-8 UTF-8"             >  /etc/locale.gen && locale-gen \
  && echo "ALL ALL=(ALL) NOPASSWD:ALL"    >> /etc/sudoers \
