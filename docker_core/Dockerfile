@@ -42,7 +42,7 @@ RUN set -eux \
  && export VERSION_JDK=${VERSION_JDK:-11} \
  && for profile in $(echo $ARG_PROFILE_JAVA | tr "," "\n") ; do ( setup_java_${profile} ) ; done \
  # -----------------------------
- echo "If installing LaTex and LaTex CJK packages." \
+ && echo "If installing LaTex and LaTex CJK packages." \
  && for profile in $(echo $ARG_PROFILE_LATEX | tr "," "\n") ; do ( install_apt "/opt/utils/install_list_latex_${profile}.apt" ) ; done \
  # -----------------------------
  && echo "If installing R environment - put this after Java ready to configure rJava" \

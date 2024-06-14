@@ -379,7 +379,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile
-          printenv > /tmp/docker.env
+          printenv | grep -v 'PATH' > /tmp/docker.env
+          docker run --rm ${IMG_PREFIX}/docker-kit printenv | sort
           docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp \
             ${IMG_PREFIX}/docker-kit python /opt/utils/image-syncer/run_sync.py ${IMG_NAMESPACE}/base
           push_image docker-kit
@@ -392,6 +393,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          printenv > /tmp/docker.env
+          printenv | grep -v 'PATH' > /tmp/docker.env
           docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp \
             ${IMG_NAMESPACE:-qpod}/docker-kit python /opt/utils/image-syncer/run_jobs.py

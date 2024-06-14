@@ -5,12 +5,12 @@ ARG BASE_IMG="base"
 FROM ${BASE_NAMESPACE:+$BASE_NAMESPACE/}${BASE_IMG}
 
 LABEL maintainer="haobibo@gmail.com"
-ENV XDG_RUNTIME_DIR="/tmp" \
-    PATH=$PATH:/opt/conda/bin
+ENV XDG_RUNTIME_DIR="/tmp"
 
 COPY work /opt/utils/
 
-RUN source /opt/utils/script-setup-docker.sh \
+RUN set -eux \
+ && source /opt/utils/script-setup-docker.sh \
  && setup_docker_compose && setup_docker_syncer \
  && pip install -U PyYaml \
  && ln -sf /usr/bin/image-syncer /opt/utils/image-syncer/ \
