@@ -50,7 +50,7 @@ RUN set -eux \
  && for profile in $(echo $ARG_PROFILE_R | tr "," "\n") ; do ( setup_R_${profile} ) ; done \
  # -----------------------------
  # If on a x86_64 architecture: 1) if mkl specified, install nomkl; 2) install conda packages as specified.
- if echo $(arch) | grep -q "x86_64" ; then \
+ && if echo $(arch) | grep -q "x86_64" ; then \
     echo "mkl"   >> /opt/utils/install_list_core.conda && echo "Install mkl." ; \
   else \
     echo "nomkl" >> /opt/utils/install_list_core.conda && echo "Install nomkl." ; \
