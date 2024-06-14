@@ -10,8 +10,9 @@ setup_mamba() {
   && ln -sf /opt/mamba/mamba /usr/bin/ \
   && touch /etc/conda/.condarc \
   && printf "channels:\n"       >> /etc/conda/.condarc \
-  && printf "  - conda-forge\n" >> /etc/conda/.condarc \
-  && echo "@ Version of mamba:" && mamba info
+  && printf "  - conda-forge\n" >> /etc/conda/.condarc
+  
+     echo "@ Version of mamba:" && mamba info
 }
 
 
@@ -62,21 +63,21 @@ setup_conda_with_mamba() {
 
 setup_conda_download() {
   # https://docs.conda.io/projects/miniconda/en/latest/index.html
-  mkdir -pv "${CONDA_PREFIX}"
-  wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O /tmp/conda.sh
-  bash /tmp/conda.sh -f -b -p "${CONDA_PREFIX}/"
-  rm -rf /tmp/conda.sh
-  setup_conda_postprocess
+     mkdir -pv "${CONDA_PREFIX}" \
+  && wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O /tmp/conda.sh \
+  && bash /tmp/conda.sh -f -b -p "${CONDA_PREFIX}/" \
+  && rm -rf /tmp/conda.sh \
+  && setup_conda_postprocess
 }
 
 setup_nvtop() {
   # The compiliation requries CMake 3.18 or higher. default version in CUDA 11.2 images is 3.16.3
-  curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo tee /etc/apt/trusted.gpg.d/kitware.asc \
+     curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo tee /etc/apt/trusted.gpg.d/kitware.asc \
   && echo "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/kitware.list \
   && apt-get -qq update -yq --fix-missing && apt-get -qq install -yq --no-install-recommends cmake
 
   # Install Utilities "nvtop" from source: libdrm-dev libsystemd-dev used by AMD/Intel GPU support, libudev-dev used by ubuntu18.04
-  LIB_PATH=$(find / -name "libnvidia-ml*" 2>/dev/null) \
+     LIB_PATH=$(find / -name "libnvidia-ml*" 2>/dev/null) \
   && DIRECTORY=$(pwd) && cd /tmp \
   && sudo apt-get -qq update --fix-missing \
   && sudo apt-get -qq install -y --no-install-recommends libncurses5-dev libdrm-dev libsystemd-dev libudev-dev \
@@ -85,8 +86,9 @@ setup_nvtop() {
   && cmake .. -DCMAKE_LIBRARY_PATH="$(dirname ${LIB_PATH})" -DNVIDIA_SUPPORT=ON -DAMDGPU_SUPPORT=ON -DINTEL_SUPPORT=ON \
   && make && sudo make install \
   && cd "${DIRECTORY}" && rm -rf /tmp/nvtop \
-  && sudo apt-get -qq remove -y libncurses5-dev libdrm-dev libsystemd-dev libudev-dev \
-  && nvtop --version
+  && sudo apt-get -qq remove -y libncurses5-dev libdrm-dev libsystemd-dev libudev-dev
+  
+     nvtop --version
 }
 
 
@@ -123,8 +125,9 @@ setup_java_maven() {
      VERSION_MAVEN=$(curl -sL https://maven.apache.org/download.cgi | grep 'latest' | head -1 | grep -Po '\d[\d.]+') \
   && install_zip "http://archive.apache.org/dist/maven/maven-3/${VERSION_MAVEN}/binaries/apache-maven-${VERSION_MAVEN}-bin.zip" \
   && mv "/opt/apache-maven-${VERSION_MAVEN}" /opt/maven \
-  && ln -sf /opt/maven/bin/mvn* /usr/bin/ \
-  && echo "@ Version of Maven: $(mvn --version)"
+  && ln -sf /opt/maven/bin/mvn* /usr/bin/
+
+     echo "@ Version of Maven: $(mvn --version)"
 }
 
 
@@ -139,8 +142,9 @@ setup_node() {
   && ln -sf /opt/node/bin/n* /usr/bin/ \
   && echo 'export PATH=${PATH}:/opt/node/bin' >> /etc/profile.d/path-node.sh \
   && npm install -g npm \
-  && echo "@ Version of Node and npm: $(node -v) $(npm -v)" \
-  && cd /tmp && corepack enable && yarn set version stable \
+  && cd /tmp && corepack enable && yarn set version stable
+  
+     echo "@ Version of Node and npm: $(node -v) $(npm -v)" \
   && echo "@ Version of Yarn: $(yarn -v)"
 }
 
@@ -153,8 +157,9 @@ setup_GO() {
   && echo 'export GOROOT="/opt/go"'		      >> /etc/profile.d/path-go.sh \
   && echo 'export  GOBIN="$GOROOT/bin"'		  >> /etc/profile.d/path-go.sh \
   && echo 'export GOPATH="$GOROOT/path"'		>> /etc/profile.d/path-go.sh \
-  && echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin'	  >> /etc/profile.d/path-go.sh \
-  && echo "@ Version of golang: $(go version)"
+  && echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin'	  >> /etc/profile.d/path-go.sh
+  
+     echo "@ Version of golang: $(go version)"
 }
 
 
@@ -165,8 +170,9 @@ setup_rust() {
   && curl -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain stable \
   && echo 'export CARGO_HOME="/opt/cargo"'		>> /etc/profile.d/path-rust.sh \
   && echo 'export RUSTUP_HOME="/opt/rust"'		>> /etc/profile.d/path-rust.sh \
-  && echo 'export PATH=$PATH:/opt/cargo/bin'	>> /etc/profile.d/path-rust.sh \
-  && echo "@ Version of rustup: $(rustup --version)" \
+  && echo 'export PATH=$PATH:/opt/cargo/bin'	>> /etc/profile.d/path-rust.sh
+  
+     echo "@ Version of rustup: $(rustup --version)" \
   && echo "@ Version of rustc:  $(rustc --version)"
 }
 
@@ -178,8 +184,9 @@ setup_julia() {
   && ln -fs /opt/julia/bin/julia /usr/bin/julia \
   && mkdir -p /opt/julia/pkg \
   && echo "import Libdl; push!(Libdl.DL_LOAD_PATH, \"/opt/conda/lib\")" >> /opt/julia/etc/julia/startup.jl \
-  && echo "DEPOT_PATH[1]=\"/opt/julia/pkg\""                            >> /opt/julia/etc/julia/startup.jl \
-  && echo "@ Version of Julia: $(julia --version)"
+  && echo "DEPOT_PATH[1]=\"/opt/julia/pkg\""                            >> /opt/julia/etc/julia/startup.jl
+  
+     echo "@ Version of Julia: $(julia --version)"
 }
 
 
@@ -191,8 +198,9 @@ setup_lua_base() {
  && mv /opt/lua-* /tmp/lua && cd /tmp/lua \
  && make linux test && make install INSTALL_TOP=${LUA_HOME:-"/opt/lua"} \
  && ln -sf ${LUA_HOME:-"/opt/lua"}/bin/lua* /usr/bin/ \
- && rm -rf /tmp/lua \
- && echo "@ Version of LUA installed: $(lua -v)"
+ && rm -rf /tmp/lua
+
+    echo "@ Version of LUA installed: $(lua -v)"
 }
 
 setup_lua_rocks() {
@@ -204,16 +212,18 @@ setup_lua_rocks() {
  && mv /opt/luarocks-* /tmp/luarocks && cd /tmp/luarocks \
  && ./configure --prefix=${LUA_HOME:-"/opt/lua"} --with-lua-include=${LUA_HOME:-"/opt/lua"}/include && make install \
  && ln -sf /opt/lua/bin/lua* /usr/bin/ \
- && rm -rf /tmp/luarocks \
- && echo "@ Version of luarocks: $(luarocks --version)"
+ && rm -rf /tmp/luarocks
+
+    echo "@ Version of luarocks: $(luarocks --version)"
 }
 
 setup_traefik() {
      TRAEFIK_VERSION=$(curl -sL https://github.com/traefik/traefik/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+') \
   && TRAEFIK_URL="https://github.com/traefik/traefik/releases/download/v${TRAEFIK_VERSION}/traefik_v${TRAEFIK_VERSION}_linux_$(dpkg --print-architecture).tar.gz" \
   && install_tar_gz "${TRAEFIK_URL}" traefik \
-  && ln -sf /opt/traefik /usr/bin/ \
-  && echo "@ Version of traefik: $(traefik version)"
+  && ln -sf /opt/traefik /usr/bin/
+  
+    echo "@ Version of traefik: $(traefik version)"
 }
 
 
@@ -221,8 +231,9 @@ setup_bazel() {
      BAZEL_VERSION=$(curl -sL https://github.com/bazelbuild/bazel/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+' ) \
   && BAZEL_URL="https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" \
   && curl -o /tmp/bazel.sh -sL "${BAZEL_URL}" && chmod +x /tmp/bazel.sh \
-  && /tmp/bazel.sh && rm /tmp/bazel.sh \
-  && echo "@ Version of bazel: $(bazel --version)"
+  && /tmp/bazel.sh && rm /tmp/bazel.sh
+  
+    echo "@ Version of bazel: $(bazel --version)"
 }
 
 
@@ -230,6 +241,7 @@ setup_gradle() {
      GRADLE_VERSION=$(curl -sL https://github.com/gradle/gradle/releases.atom | grep 'releases/tag' | grep -v 'M' | head -1 | grep -Po '\d[\d.]+' ) \
   && install_zip "https://downloads.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
   && mv /opt/gradle* /opt/gradle \
-  && ln -sf /opt/gradle/bin/gradle /usr/bin \
-  && echo "@ Version of gradle: $(gradle --version)"
+  && ln -sf /opt/gradle/bin/gradle /usr/bin
+  
+     echo "@ Version of gradle: $(gradle --version)"
 }
