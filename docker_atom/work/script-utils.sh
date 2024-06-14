@@ -29,16 +29,16 @@ install_octave()  { cat $1 | cut -d "%" -f 1 | sed '/^$/d' | xargs -r -n1 -I {} 
 install_zip()     { curl -o /tmp/TMP.zip -sL $1 && unzip -q -d /opt/ /tmp/TMP.zip && rm /tmp/TMP.zip ; }
 
 # function to download a .tar.gz file and unzip it to /opt/, add a second argument to extract only those file
-install_tar_gz()  { curl -o /tmp/TMP.tgz -sL $1 && tar -C /opt/ -xzf /tmp/TMP.tgz $2 && rm /tmp/TMP.tgz ; }
+install_tar_gz()  { curl -o /tmp/TMP.tgz -sL $1 && tar -C /opt/ -xzf /tmp/TMP.tgz ${2:-} && rm /tmp/TMP.tgz ; }
 
 # function to download a .tar.bz file and unzip it to /opt/, add a second argument to extract only those file
-install_tar_bz()  { curl -o /tmp/TMP.tbz -sL $1 && tar -C /opt/ -xjf /tmp/TMP.tbz $2 && rm /tmp/TMP.tbz ; }
+install_tar_bz()  { curl -o /tmp/TMP.tbz -sL $1 && tar -C /opt/ -xjf /tmp/TMP.tbz ${2:-} && rm /tmp/TMP.tbz ; }
 
 # function to download a .tar.xz file and unzip it to /opt/, add a second argument to extract only those file
-install_tar_xz()  { curl -o /tmp/TMP.txz -sL $1 && tar -C /opt/ -xJf /tmp/TMP.txz $2 && rm /tmp/TMP.txz ; }
+install_tar_xz()  { curl -o /tmp/TMP.txz -sL $1 && tar -C /opt/ -xJf /tmp/TMP.txz ${2:-} && rm /tmp/TMP.txz ; }
 
 # function to install java packages from a text file which lists JAR file maven full names (add comments with % char)
-install_mvn() { cat $1 | cut -d "%" -f 1 | xargs -r -n1 -I {} mvn dependency:copy -DlocalRepositoryDirectory="/tmp/m2repo" -Djavax.net.ssl.trustStorePassword=changeit -Dartifact="{}" -DoutputDirectory="$2" ; }
+install_mvn() { cat $1 | cut -d "%" -f 1 | xargs -r -n1 -I {} mvn dependency:copy -DlocalRepositoryDirectory="/tmp/m2repo" -Djavax.net.ssl.trustStorePassword=changeit -Dartifact="{}" -DoutputDirectory="${2:-}" ; }
 
 # function to clean up
 install__clean(){

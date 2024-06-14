@@ -232,6 +232,30 @@ jobs:
           alias_image cuda_11.8 latest cuda latest
           push_image cuda
 
+  qpod_cuda_123:
+    name: 'cuda_12.3'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          source ./tool.sh
+          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:12.3.2-cudnn9-devel-ubuntu22.04" && clear_images nvidia/cuda
+          build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp"
+          build_image cuda_12.3 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
+          push_image cuda
+
+  qpod_cuda_120:
+    name: 'cuda_12.0'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          source ./tool.sh
+          build_image tmp latest docker_atom/Dockerfile --build-arg "BASE_IMG=nvidia/cuda:12.0.1-cudnn8-devel-ubuntu22.04" && clear_images nvidia/cuda
+          build_image tmp latest docker_base/Dockerfile --build-arg "BASE_IMG=tmp"
+          build_image cuda_12.0 latest docker_cuda/Dockerfile --build-arg "BASE_IMG=tmp"
+          push_image cuda
+
   qpod_cuda_112:
     name: 'cuda_11.2'
     runs-on: ubuntu-latest
@@ -245,15 +269,15 @@ jobs:
           push_image cuda
 
   qpod_tf2:
-    name: 'tf2,tf2-cuda112'
-    needs: qpod_cuda_112
+    name: 'tf2,tf2-cuda123'
+    needs: qpod_cuda_123
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image tf2-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2"  --build-arg "ARG_PROFILE_PYTHON=tf2"
-          alias_image tf2-cuda112 latest tf2 latest
+          build_image tf2-cuda123 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.3"  --build-arg "ARG_PROFILE_PYTHON=tf2"
+          alias_image tf2-cuda123 latest tf2 latest
           push_image
 
   qpod_torch_cuda118:
@@ -269,26 +293,26 @@ jobs:
           push_image
 
   qpod_torch_cuda112:
-    name: 'torch-cuda112'
-    needs: qpod_cuda_112
+    name: 'torch-cuda123'
+    needs: qpod_cuda_123
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image torch-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2" --build-arg "ARG_PROFILE_PYTHON=torch"
+          build_image torch-cuda123 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.3" --build-arg "ARG_PROFILE_PYTHON=torch"
           push_image
 
-  qpod_paddle_cuda118:
-    name: 'paddle-cuda,paddle-cuda118'
-    needs: qpod_cuda_118
+  qpod_paddle_cuda120:
+    name: 'paddle-cuda,paddle-cuda120'
+    needs: qpod_cuda_120
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image paddle-cuda118 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.8" --build-arg "ARG_PROFILE_PYTHON=paddle,mkl"
-          alias_image paddle-cuda118 latest paddle-cuda latest
+          build_image paddle-cuda120 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.0" --build-arg "ARG_PROFILE_PYTHON=paddle,mkl"
+          alias_image paddle-cuda120 latest paddle-cuda latest
           push_image
 
   qpod_paddle_cuda112:
@@ -379,9 +403,10 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile
-          printenv > /tmp/docker.env
+          printenv | grep -v 'PATH' > /tmp/docker.env
+          docker run --rm ${IMG_PREFIX}/docker-kit printenv | sort
           docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp \
-            ${IMG_PREFIX}/docker-kit /opt/conda/bin/python /opt/utils/image-syncer/run_sync.py ${IMG_NAMESPACE}/base
+            ${IMG_PREFIX}/docker-kit python /opt/utils/image-syncer/run_sync.py ${IMG_NAMESPACE}/base
           push_image docker-kit
 
   ## Sync all images in this build (listed by "names") to mirror registry.
@@ -392,6 +417,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          printenv > /tmp/docker.env
+          printenv | grep -v 'PATH' > /tmp/docker.env
           docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp \
-            ${IMG_NAMESPACE:-qpod}/docker-kit /opt/conda/bin/python /opt/utils/image-syncer/run_jobs.py
+            ${IMG_NAMESPACE:-qpod}/docker-kit python /opt/utils/image-syncer/run_jobs.py
