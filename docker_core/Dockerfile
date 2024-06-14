@@ -26,7 +26,7 @@ ARG VERSION_JDK
 
 COPY work /opt/utils/
 
-RUN set -eux && source /opt/utils/script-setup.sh\
+RUN set -eux && source /opt/utils/script-setup.sh \
  # -----------------------------
  # NodeJS is required to build JupyterLab Extensions later
  && if echo "${ARG_PROFILE_NODEJS}" | grep -q "base" ; then \
@@ -40,7 +40,6 @@ RUN set -eux && source /opt/utils/script-setup.sh\
  && for profile in $(echo $ARG_PROFILE_JAVA | tr "," "\n") ; do ( setup_java_${profile} ) ; done \
  # -----------------------------
  # If installing LaTex and LaTex CJK packages.
- && source /opt/utils/script-utils.sh \
  && for profile in $(echo $ARG_PROFILE_LATEX | tr "," "\n") ; do ( install_apt "/opt/utils/install_list_latex_${profile}.apt" ) ; done \
  # -----------------------------
  # If installing R environment - put this after Java ready to configure rJava
@@ -53,10 +52,9 @@ RUN set -eux && source /opt/utils/script-setup.sh\
   else \
     echo "nomkl" >> /opt/utils/install_list_core.conda && echo "Install nomkl." ; \
   fi \
-  && source /opt/utils/script-utils.sh && install_conda /opt/utils/install_list_core.conda \
+  && install_conda /opt/utils/install_list_core.conda \
  # -----------------------------
  # If installing Python packages
- && source /opt/utils/script-utils.sh \
  && ( $(grep -q "datascience" <<< "${ARG_PROFILE_PYTHON}") && ( \
          ( which R     && echo "rpy2  % Install rpy2 if R exists"    >> /opt/utils/install_list_PY_datascience.pip || echo "Skip rpy2 install" ) \
       && ( which java  && echo "py4j  % Install py4j if Java exists" >> /opt/utils/install_list_PY_datascience.pip || echo "Skip py4j install" ) \
@@ -111,4 +109,4 @@ RUN set -eux && source /opt/utils/script-setup.sh\
     fi \
  # -----------------------------
  # Clean up and display components version information...
- && source /opt/utils/script-utils.sh && list_installed_packages && install__clean
+ && list_installed_packages && install__clean
