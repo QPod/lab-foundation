@@ -24,9 +24,12 @@ ARG ARG_PROFILE_LATEX
 ARG ARG_PROFILE_JAVA
 ARG VERSION_JDK
 
+SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
+
 COPY work /opt/utils/
 
-RUN set -eux && source /opt/utils/script-setup.sh \
+RUN set -eux \
+ && source /opt/utils/script-setup.sh \
  # -----------------------------
  # NodeJS is required to build JupyterLab Extensions later
  && if echo "${ARG_PROFILE_NODEJS}" | grep -q "base" ; then \

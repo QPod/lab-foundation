@@ -22,4 +22,4 @@ RUN source /opt/utils/script-setup-docker.sh \
 #   If any command in a pipeline fails, that return code will be used as the return code of the whole pipeline.
 # '--login': make bash first reads and executes commands from  the file /etc/profile, if that file exists.
 #   After that, it looks for ~/.bash_profile, ~/.bash_login, and ~/.profile, in that order, and reads and executes commands from the first one that exists and is readable.
-SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
+CMD ["/bin/bash", "--login", "-o", "pipefail", "-c"]
