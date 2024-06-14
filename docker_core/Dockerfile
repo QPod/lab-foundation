@@ -89,25 +89,25 @@ RUN set -eux && source /opt/utils/script-setup.sh\
  && if echo "${ARG_PROFILE_GO}" | grep -q "base" ; then \
        echo "Installing GO: ${ARG_PROFILE_GO}" && setup_GO ;
     else \
-       echo "Skip installing GO" ;
+       echo "Skip installing GO" ; \
     fi \
  # -----------------------------
  && if echo "${ARG_PROFILE_RUST}" | grep -q "base" ; then \
        echo "Installing rust: ${ARG_PROFILE_RUST}" && setup_rust ;
     else \
-       echo "Skip installing rust" ;
+       echo "Skip installing rust" ; \
     fi \
  # -----------------------------
  && if echo "${ARG_PROFILE_JULIA}" | grep -q "base" ; then \
        echo "Installing julia: ${ARG_PROFILE_JULIA}" && setup_julia ;
     else \
-       echo "Skip installing julia" ;
+       echo "Skip installing julia" ; \
     fi \
  # -----------------------------
  && if echo "${ARG_PROFILE_OCTAVE}" | grep -q "base" ; then \
-       echo "Installing Octave: ${ARG_PROFILE_OCTAVE}" && setup_octave ;
+       echo "Installing Octave: ${ARG_PROFILE_OCTAVE}" && setup_octave ; \
     else \
-       echo "Skip installing octave" ;
+       echo "Skip installing octave" ; \
     fi \
  # -----------------------------
  # Clean up and display components version information...
