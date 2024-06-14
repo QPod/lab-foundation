@@ -30,10 +30,11 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
     && rm -rf $(/usr/bin/python3 -c 'import sys; print(" ".join(i for i in sys.path if "python" in i))') /usr/bin/python3* /usr/lib/python${PYTHON_VERSION} \
     && rm -rf /usr/lib/python${PYTHON_VERSION} && ln -sf "${CONDA_PREFIX}"/lib/python${PYTHON_VERSION} /usr/lib/ ; \
  else \
-       ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
-    && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python    \
-    && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 ; \
+     echo "No default python found in OS." ; \
  fi \
+ && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
+ && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python  \
+ && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 \
  && lsb_release -a \
  && which python && python --version && ls -alh /usr/bin/python* \
  && install__clean && fix_permission 0 /opt
