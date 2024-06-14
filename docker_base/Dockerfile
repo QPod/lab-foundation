@@ -18,10 +18,15 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
  && echo "Install Python ${PYTHON_VERSION} and conda:" && setup_conda_with_mamba ${PYTHON_VERSION} \
  && echo "Backup the conda version of platform.py as it's different from the system version." \
  && cp "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py.bak \
- # If needed, replace sys python with conda python here
- && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
- && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python  \
- && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 \
+ && if $(${HAS_SYS_PY3:-false}) ; then \
+       py3versions -d \
+    && PYTHON_VERSION_DEFAULT=$(py3versions -v -i) \
+    && echo "Found default system python3 version ${PYTHON_VERSION_DEFAULT}, skip conda python replacement..." ; \
+ else \
+       ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
+    && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python    \
+    && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 ; \
+ fi \
  && lsb_release -a \
  && which python && python --version \
  && install__clean && fix_permission 0 /opt
@@ -29,7 +34,6 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
 
 #  && if $(${HAS_SYS_PY3:-false}) ; then \
 #        echo "Replace system Python3 with conda Python - note that /bin and /sbin are symlinks of /usr/bin in docker image ubuntu" \
-#     && PYTHON_VERSION_DEFAULT=$(py3versions -v -i) \
 #     && sed -i "s/${PYTHON_VERSION_DEFAULT}/${PYTHON_VERSION}/g" /usr/share/python3/debian_defaults \
 #     && PYTHON_PTH_FILE=$("${CONDA_PREFIX}"/bin/python3 -c 'import sys;print(sys.path[-1]+"/usr_share.pth")') \
 #     && echo "/usr/share/pyshared/" >>  "${PYTHON_PTH_FILE}" \
