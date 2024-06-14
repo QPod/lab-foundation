@@ -78,7 +78,7 @@ RUN set -eux \
       && export CUDA_VER_TORCH="117" && V=$([[ "${CUDA_VER:-999}" -lt "${CUDA_VER_TORCH}" ]] && echo "torch<2" || echo "torch") \
       && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-117}" || echo "cpu" ) \
       && export PIP_FIND_LINKS="${PIP_FIND_LINKS:-} https://download.pytorch.org/whl/${IDX}/torch_stable.html" \
-      && echo "${V}" /opt/utils/install_list_PY_torch.pip \
+      && echo "${V}" > /opt/utils/install_list_PY_torch.pip \
     ) || echo "Skipping pytorch install" ) \
  # -----------------------------
  && echo "Handle paddle installation, cpu/gpu: https://www.paddlepaddle.org.cn/" \
@@ -89,7 +89,7 @@ RUN set -eux \
       && PADDLE_VER=$(pip index versions ${PADDLE} -f ${URL_PYPI_PADDLE} | grep 'Available' | cut -d ":" -f 2 | tr ', ' '\n' | grep ${CUDA_VER:-'.'} | head -n 1) \
       && V=$(echo ${PADDLE}==${PADDLE_VER}) && echo "to install paddle: ${V}" \
       && export PIP_FIND_LINKS="${PIP_FIND_LINKS:-} https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html" \
-      && echo "${V}" /opt/utils/install_list_PY_paddle.pip \
+      && echo "${V}" > /opt/utils/install_list_PY_paddle.pip \
     ) || echo "Skip paddle install" ) \
  # -----------------------------
  && for profile in $(echo $ARG_PROFILE_PYTHON | tr "," "\n") ; do ( echo "Pip install for ${profile}" ; install_pip "/opt/utils/install_list_PY_${profile}.pip" ; ) ; done \
