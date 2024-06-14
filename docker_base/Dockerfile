@@ -36,8 +36,8 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
  && ln -sf /usr/lib/python${PYTHON_VERSION}/_sysconfigdata__linux_x86_64-linux-gnu.py /usr/lib/python${PYTHON_VERSION}/_sysconfigdata__x86_64-linux-gnu.py \
  && ls -alh /usr/bin/python* \
  && if $(${HAS_SYS_PY3:-false}) ; then \
-   py3versions -d ; \
- && fi \
+      py3versions -d ; \
+    fi \
  && lsb_release -a \
  && which python && python --version \
  && install__clean && fix_permission 0 /opt
