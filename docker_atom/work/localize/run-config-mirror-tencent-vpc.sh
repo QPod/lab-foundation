@@ -7,14 +7,15 @@ export TZ=${TZ:="Asia/Shanghai"}
 ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone
 echo "Setup timezone, current date: $(date)"
 
-if [ -f /etc/apt/sources.list ]; then
-  echo "Found Ubuntu/debian system, setting ubuntu/debian mirror"
+eval "export $(cat /etc/os-release  | grep ID=)" && export OS_ID=${ID} && echo "Found ${ID} system, setting mirror for ${ID}"
 
+if [ -f /etc/apt/sources.list ]; then
+   [ -f /etc/apt/sources.list.d/${OS_ID}.sources ] && ln -sf /etc/apt/sources.list.d/${OS_ID}.sources /etc/apt/sources.list
   sed -i 's/mirrors.*.com\/ubuntu/mirrors.tencentyun.com\/ubuntu/' /etc/apt/sources.list
   sed -i 's/archive.ubuntu.com\/ubuntu/mirrors.tencentyun.com\/ubuntu/' /etc/apt/sources.list
   sed -i 's/security.ubuntu.com\/ubuntu/mirrors.tencentyun.com\/ubuntu/' /etc/apt/sources.list
-
   sed -i 's/deb.debian.org\/debian/mirrors.tencentyun.com\/debian/' /etc/apt/sources.list
+  echo "Finished setting ubuntu/debian mirror"
 fi
 
 if [ -f "$(which python)" ]; then
