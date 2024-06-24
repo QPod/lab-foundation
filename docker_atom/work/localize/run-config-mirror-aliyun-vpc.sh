@@ -8,9 +8,8 @@ ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone
 echo "Setup timezone, current date: $(date)"
 
 eval "export $(cat /etc/os-release  | grep ID=)" && export OS_ID=${ID} && echo "Found ${ID} system, setting mirror for ${ID}"
-FILE_DEB=$([ -f /etc/apt/sources.list.d/${OS_ID}.sources  ] && echo /etc/apt/sources.list.d/${OS_ID}.sources || echo /etc/apt/sources.list )
-FILE_YUM=$([ -f /etc/yum.repos.d/CentOS-Linux-BaseOS.repo ] && echo /etc/yum.repos.d/CentOS-Linux-BaseOS.repo )
 
+FILE_DEB=$([ -f /etc/apt/sources.list.d/${OS_ID}.sources  ] && echo /etc/apt/sources.list.d/${OS_ID}.sources || echo /etc/apt/sources.list )
 if [ -f $FILE_DEB ]; then
   sed -i 's/mirrors.*.com\/ubuntu/mirrors.cloud.aliyuncs.com\/ubuntu/'        $FILE_DEB
   sed -i 's/archive.ubuntu.com\/ubuntu/mirrors.cloud.aliyuncs.com\/ubuntu/'   $FILE_DEB
