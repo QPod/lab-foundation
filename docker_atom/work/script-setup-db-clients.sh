@@ -8,14 +8,15 @@ setup_postgresql_client() {
   echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
   # will download ~9MB files and use ~55MB disk after installation
   sudo apt-get update && sudo apt-get -y install "postgresql-client-${VER_PG}"
-  echo "@ Version of psql client: $(psql --version)"
+
+  type psql && echo "@ Version of psql client: $(psql --version)" || return -1 ;
 }
 
 
 setup_mysql_client() {
   # will download ~5MB files and use ~76MB disk after installation
   sudo apt-get update && sudo apt-get -y install mysql-client
-  echo "@ Version of mysql client: $(mysql --version)"
+  type mysql && echo "@ Version of mysql client: $(mysql --version)" || return -1 ;
 }
 
 
@@ -25,7 +26,7 @@ setup_mongosh_client() {
   echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/6.0 multiverse" > /etc/apt/sources.list.d/mongodb-org-6.0.list
   # will download ~38MB files and use ~218MB disk after installation
   sudo apt-get update && sudo apt-get -y install mongodb-mongosh
-  echo "@ Version of mongosh client: $(mongosh --version)"
+  type mongosh && echo "@ Version of mongosh client: $(mongosh --version)" || return -1 ;
 }
 
 
@@ -34,5 +35,5 @@ setup_redis_client() {
   curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
   echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
   sudo apt-get update && sudo apt-get -y install redis-tools
-  echo "@ Version of redis-cli: $(redis-cli --version)"
+  type redis-cli && echo "@ Version of redis-cli: $(redis-cli --version)" || return -1 ;
 }
