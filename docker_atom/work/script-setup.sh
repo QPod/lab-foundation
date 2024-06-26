@@ -175,8 +175,8 @@ setup_rust() {
   && echo 'export RUSTUP_HOME="/opt/rust"'		>> /etc/profile.d/path-rust.sh \
   && echo 'export PATH=$PATH:/opt/cargo/bin'	>> /etc/profile.d/path-rust.sh ;
   
-  type rust  && echo "@ Version of rustup: $(rustup --version)" || return -1 ;
-  type rustc && echo "@ Version of rustc:  $(rustc --version)"  || return -1 ;
+  type rustup && echo "@ Version of rustup: $(rustup --version)" || return -1 ;
+  type rustc  && echo "@ Version of rustc:  $(rustc  --version)" || return -1 ;
 }
 
 
@@ -231,12 +231,12 @@ setup_traefik() {
 
 
 setup_bazel() {
-     BAZEL_VERSION=$(curl -sL https://github.com/bazelbuild/bazel/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+' ) \
-  && BAZEL_URL="https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" \
-  && curl -o /tmp/bazel.sh -sL "${BAZEL_URL}" && chmod +x /tmp/bazel.sh \
-  && /tmp/bazel.sh && rm /tmp/bazel.sh
+     VER_BAZEL=$(curl -sL https://github.com/bazelbuild/bazel/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+' ) \
+  && URL_BAZEL="https://github.com/bazelbuild/bazel/releases/download/${VER_BAZEL}/bazel-${VER_BAZEL}-installer-linux-x86_64.sh" \
+  && curl -o /tmp/bazel.sh -sL "${URL_BAZEL}" && chmod +x /tmp/bazel.sh \
+  && /tmp/bazel.sh && rm /tmp/bazel.sh ;
   
-  type bazel && echo "@ Version of bazel: $(bazel --version)" || return -1;
+  type bazel && echo "@ Version of bazel: $(bazel --version)" || return -1 ;
 }
 
 
@@ -244,7 +244,7 @@ setup_gradle() {
      VER_GRADLE=$(curl -sL https://github.com/gradle/gradle/releases.atom | grep 'releases/tag' | grep -v 'M' | head -1 | grep -Po '\d[\d.]+' ) \
   && install_zip "https://downloads.gradle.org/distributions/gradle-${VER_GRADLE}-bin.zip" \
   && mv /opt/gradle* /opt/gradle \
-  && ln -sf /opt/gradle/bin/gradle /usr/bin
+  && ln -sf /opt/gradle/bin/gradle /usr/bin ;
   
-  type gradle && echo "@ Version of gradle: $(gradle --version)" || return -1;
+  type gradle && echo "@ Version of gradle: $(gradle --version)" || return -1 ;
 }

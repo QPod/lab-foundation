@@ -7,8 +7,9 @@ setup_docker_compose() {
   && COMPOSE_URL="https://github.com/docker/compose/releases/download/v${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" \
   && echo "Downloading Compose from: ${COMPOSE_URL}" \
   && sudo curl -o /usr/bin/docker-compose -sL ${COMPOSE_URL} \
-  && sudo chmod +x /usr/bin/docker-compose \
-  && echo "@ Version of docker-compose: $(docker-compose --version)"
+  && sudo chmod +x /usr/bin/docker-compose ;
+  
+  type docker-compose && echo "@ Version of docker-compose: $(docker-compose --version)" || return -1 ;
 }
 
 setup_docker_syncer() {
@@ -20,6 +21,7 @@ setup_docker_syncer() {
   && mkdir -pv /tmp/image_syncer && tar -zxvf /tmp/image_syncer.tgz -C /tmp/image_syncer \
   && sudo chmod +x /tmp/image_syncer/image-syncer \
   && sudo mv /tmp/image_syncer/image-syncer /usr/bin/ \
-  && rm -rf /tmp/image_syncer* \
-  && echo "@ image-syncer installed to: $(which image-syncer)"
+  && rm -rf /tmp/image_syncer* ;
+  
+  type image-syncer && echo "@ image-syncer installed to: $(which image-syncer)" || return -1 ;
 }

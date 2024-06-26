@@ -8,8 +8,9 @@ setup_R_base() {
   && echo "options(repos=structure(c(CRAN=\"https://cloud.r-project.org\")))" >> /etc/R/Rprofile.site \
   && R -e "install.packages(c('devtools'),clean=T,quiet=T);" \
   && R -e "install.packages(c('devtools'),clean=T,quiet=F);" \
-  && ( type java && type R && R CMD javareconf || true ) \
-  && echo "@ Version of R: $(R --version)"
+  && ( type java && type R && R CMD javareconf || true ) ;
+  
+  type R && echo "@ Version of R: $(R --version)" || return -1 ;
 }
 
 
@@ -38,8 +39,9 @@ setup_R_rstudio() {
   && echo "provider=sqlite"                            >> /etc/rstudio/db.conf \
   && echo "directory=/etc/rstudio/"                    >> /etc/rstudio/db.conf \
   && printf "USER=root rserver --www-port=8888" > /usr/local/bin/start-rstudio.sh \
-  && chmod u+x /usr/local/bin/start-rstudio.sh \
-  && echo "@ Version of rstudio-server: $(rstudio-server version)"
+  && chmod u+x /usr/local/bin/start-rstudio.sh ;
+
+  type rstudio-server && echo "@ Version of rstudio-server: $(rstudio-server version)" || return -1 ;
 }
 
 
@@ -63,7 +65,7 @@ setup_R_rshiny() {
   # hack shiny-server to allow run in root user: https://github.com/rstudio/shiny-server/pull/391
   sed  -i "s/throw new Error/logger.warn/g"  /opt/shiny-server/lib/worker/app-worker.js
 
-  echo "@ Version of shiny-server: $(shiny-server --version)"
+  type shiny-server && echo "@ Version of shiny-server: $(shiny-server --version)" || return -1 ;
 }
 
 
