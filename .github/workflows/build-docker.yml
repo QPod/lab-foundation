@@ -355,7 +355,7 @@ jobs:
 
   ## Postgres
   qpod_postgres:
-    name: 'postgres-15,postgres-16'
+    name: 'postgres-17,postgres-16,postgres-15'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
