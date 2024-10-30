@@ -95,30 +95,31 @@ setup_nvtop() {
 
 
 setup_java_base() {
+  ## 23, 21(LTS); 17, 11, 8
+
   local VER_JDK=${VERSION_JDK:-"11"}
   ARCH="x64"
+  IS_ALPINE=$(grep -q 'ID=alpine' /etc/os-release && echo true || echo false)
+
   echo "Use env var VERSION_JDK to specify JDK major version. If not specified, will install version 11 by default."
   echo "Will install JDK version ${VER_JDK}"
 
-  JDK_PAGE_DOWNLOAD="https://www.oracle.com/java/technologies/downloads/" \
-  && JDK_URL_ORCA=$(curl -sL ${JDK_PAGE_DOWNLOAD} | grep "tar.gz" | grep "http" | grep -v sha256 | grep ${ARCH} | grep -i $(uname) | sed "s/'/\"/g" | sed -n 's/.*="\([^"]*\).*/\1/p' | grep "jdk-${VER_JDK}" | head -n 1)
+     PAGE_JDK_DOWNLOAD="https://www.oracle.com/java/technologies/downloads/" \
+  && URL_JDK_ORCA=$(curl -sL $PAGE_JDK_DOWNLOAD | grep "tar.gz" | grep "http" | grep -v sha256 | grep ${ARCH} | grep -i $(uname) | grep -oP "(https?://[^\s<>\'\"]*)" | grep "jdk-${VER_JDK}" | head -n 1) \
+  && VER_JDK_MINOR=$(echo $URL_JDK_ORCA | grep -Po '[\d\.]{3,}' | head -n1)
 
-  JDK_PAGE_RELEASE="https://www.oracle.com/java/technologies/javase/${VER_JDK}u-relnotes.html" \
-  && JDK_VER_MINOR=$(curl -sL "${JDK_PAGE_RELEASE}" | grep -P 'JDK \d..\d+' | grep -Po '[\d\.]{3,}' | head -n1) \
-  && JDK_URL_MSFT="https://aka.ms/download-jdk/microsoft-jdk-${JDK_VER_MINOR}-linux-${ARCH}.tar.gz"
-
-  if [ "$VER_JDK" -gt 11 ] ; then
-    URL_OPENJDK=${JDK_URL_ORCA}
-  elif [ "$VER_JDK" -gt 8 ] ; then
-    URL_OPENJDK=${JDK_URL_MSFT}
+  if [ "$VER_JDK" -gt 20 ] ; then
+    URL_JDK_DOWNLOAD=${URL_JDK_ORCA}
   else
-    echo "ORCA JDK8 download URL ref: ${JDK_URL_ORCA}"
-    URL_OPENJDK="https://javadl.oracle.com/webapps/download/GetFile/1.8.0_361-b09/0ae14417abb444ebb02b9815e2103550/linux-i586/jdk-8u361-linux-${ARCH}.tar.gz"
+       URL_JDK_adoptium="https://api.github.com/repos/adoptium/temurin${VER_JDK}-binaries/releases/latest" \
+    && URL_JDK_DOWNLOAD=$(
+      curl -sL $URL_JDK_adoptium | grep 'tar.gz' | grep -vE '.sha256|.sig|.json|debug|test' | grep ${ARCH} | grep -i $(uname) \
+      | grep -oP "(https?://[^\s<>\'\"]*)" | grep -E $(if [ "$IS_ALPINE" = true ]; then echo 'alpine'; else echo -v 'alpine'; fi) | head -n1
+    ) ;
   fi
 
-     echo "Installing JDK version ${VER_JDK} from: ${URL_OPENJDK}" \
-  && install_tar_gz "${URL_OPENJDK}" && mv /opt/jdk* /opt/jdk \
-  && ln -sf /opt/jdk/bin/* /usr/bin/
+  echo "Installing JDK version ${VER_JDK} from: ${URL_JDK_DOWNLOAD}" ;
+  install_tar_gz "${URL_JDK_DOWNLOAD}" && mv /opt/jdk* /opt/jdk && ln -sf /opt/jdk/bin/* /usr/bin/ ;
 
   type java  && echo "@ Version of Java (java):  $(java -version)"  || return -1 ;
   type javac && echo "@ Version of Java (javac): $(javac -version)" || return -1 ;
@@ -137,9 +138,9 @@ setup_java_maven() {
 
 setup_node() {
      ARCH="x64" \
-  && NODEJS_VERSION=$(curl -sL https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+') \
-  && NODEJS_VERSION_MAJOR=$(echo "${NODEJS_VERSION}" | cut -d '.' -f1 ) \
-  && NODEJS_URL="https://nodejs.org/download/release/latest-v${NODEJS_VERSION_MAJOR}.x/node-v${NODEJS_VERSION}-linux-${ARCH}.tar.gz" \
+  && VER_NODEJS=$(curl -sL https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+') \
+  && VER_NODEJS_MAJOR=$(echo "${VER_NODEJS}" | cut -d '.' -f1 ) \
+  && NODEJS_URL="https://nodejs.org/download/release/latest-v${VER_NODEJS_MAJOR}.x/node-v${VER_NODEJS}-linux-${ARCH}.tar.gz" \
   && echo "Downloading NodeJS from: ${NODEJS_URL}" \
   && install_tar_gz ${NODEJS_URL} \
   && mv /opt/node* /opt/node \
@@ -177,6 +178,19 @@ setup_rust() {
   
   type rustup && echo "@ Version of rustup: $(rustup --version)" || return -1 ;
   type rustc  && echo "@ Version of rustc:  $(rustc  --version)" || return -1 ;
+}
+
+
+setup_R_base() {
+     curl -sL https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
+  && echo "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" > /etc/apt/sources.list.d/cran.list \
+  && install_apt  /opt/utils/install_list_R_base.apt \
+  && echo "options(repos=structure(c(CRAN=\"https://cloud.r-project.org\")))" >> /etc/R/Rprofile.site \
+  && R -e "install.packages(c('devtools'),clean=T,quiet=T);" \
+  && R -e "install.packages(c('devtools'),clean=T,quiet=F);" \
+  && ( type java && type R && R CMD javareconf || true ) ;
+  
+  type R && echo "@ Version of R: $(R --version)" || return -1 ;
 }
 
 

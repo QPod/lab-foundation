@@ -2,17 +2,15 @@ name: build-docker-images
 
 on:
   push:
-    branches: [ main ]
-    paths-ignore:
-      - "*.md"
+    branches: [ "main" ]
+    paths-ignore: [ "*.md" ]
 
   pull_request:
-    branches: [ main ]
-    paths-ignore:
-      - "*.md"
+    branches: [ "main" ]
+    paths-ignore: [ "*.md" ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  workflow_dispatch:  # Allows you to run this workflow manually from the Actions tab
+
 
 env:
   BUILDKIT_PROGRESS: "plain"  # Full logs for CI build.
@@ -44,9 +42,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh          
-          build_image python-3.7  latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.7"  && push_image
+          source ./tool.sh
           build_image python-3.11 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.11" && push_image
+          build_image python-3.7  latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.7"  && push_image          
 
 
   qpod_core:
@@ -59,7 +57,7 @@ jobs:
           source ./tool.sh
           build_image core latest  docker_core/Dockerfile \
             --build-arg "ARG_PROFILE_PYTHON=base,datascience,mkl,database,nlp,cv,chem,tf2,torch" \
-            --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_R=base,datascience" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JAVA=base,maven" \
             --build-arg "ARG_PROFILE_LATEX=base,cjk"
@@ -118,20 +116,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image r-std latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" && push_image
 
-  qpod_r-studio:
-    name: 'r-studio'
-    needs: qpod_base
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          source ./tool.sh
-          build_image r-studio  latest docker_core/Dockerfile \
-            --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
-            --build-arg "ARG_PROFILE_JAVA=base" \
-            --build-arg "ARG_PROFILE_LATEX=base,cjk"
-          push_image
-
   qpod_node:
     name: 'node'
     needs: qpod_base
@@ -141,18 +125,18 @@ jobs:
       - run: source ./tool.sh && build_image node latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base" && push_image
 
   qpod_jdk:
-    name: 'jdk,jdk-8,jdk-11,jdk-17'
+    name: 'jdk,jdk-8,jdk-11,jdk-17,jdk-21'
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
+          build_image jdk-21 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=21"
           build_image jdk-17 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=17"
           build_image jdk-11 latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=11"
           build_image jdk-8  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_JAVA=base"  --build-arg "VERSION_JDK=8"
-          alias_image jdk-11 latest jdk latest
-          push_image jdk
+          alias_image jdk-11 latest jdk latest && push_image jdk
 
   qpod_julia:
     name: 'julia'
@@ -192,7 +176,7 @@ jobs:
           source ./tool.sh
           build_image data-science-stack latest  docker_core/Dockerfile \
             --build-arg "ARG_PROFILE_PYTHON=base,database" \
-            --build-arg "ARG_PROFILE_R=base,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_R=base,datascience" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JULIA=base"
           push_image data-science-stack
@@ -207,7 +191,7 @@ jobs:
           source ./tool.sh
           build_image full-stack latest  docker_core/Dockerfile \
             --build-arg "ARG_PROFILE_PYTHON=base,database" \
-            --build-arg "ARG_PROFILE_R=base,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_R=base,datascience" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JAVA=base,maven" \
             --build-arg "ARG_PROFILE_JULIA=base" \
@@ -292,7 +276,7 @@ jobs:
           alias_image torch-cuda118 latest torch latest
           push_image
 
-  qpod_torch_cuda112:
+  qpod_torch_cuda123:
     name: 'torch-cuda123'
     needs: qpod_cuda_123
     runs-on: ubuntu-latest
@@ -339,17 +323,6 @@ jobs:
           alias_image py-nlp-cuda118 latest py-nlp latest
           push_image
 
-  qpod_py-nlp-cuda112:
-    name: 'py-nlp-cuda112'
-    needs: qpod_cuda_112
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          source ./tool.sh
-          build_image py-nlp-cuda112 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_11.2" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,nlp"
-          push_image
-
 
   qpod_py-cv:
     name: 'py-cv'
@@ -374,7 +347,7 @@ jobs:
           build_image full-cuda-11.8 latest docker_core/Dockerfile \
             --build-arg "BASE_IMG=cuda_11.8" \
             --build-arg "ARG_PROFILE_PYTHON=base,datascience,mkl,database,nlp,cv,chem,tf2,torch" \
-            --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_R=base,datascience" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JAVA=base,maven" \
             --build-arg "ARG_PROFILE_LATEX=base,cjk"
@@ -382,16 +355,18 @@ jobs:
 
   ## Postgres
   qpod_postgres:
-    name: 'postgres-15,postgres-16'
+    name: 'postgres-17,postgres-16,postgres-15'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          build_image postgres-15 latest docker_atom/Dockerfile --build-arg "BASE_IMG=postgres:15"
-          build_image postgres-15 latest docker_base/Dockerfile --build-arg "BASE_IMG=postgres-15" --build-arg "PYTHON_VERSION=3.12"
+          build_image postgres-17 latest docker_atom/Dockerfile --build-arg "BASE_IMG=postgres:17"
+          build_image postgres-17 latest docker_base/Dockerfile --build-arg "BASE_IMG=postgres-17" --build-arg "PYTHON_VERSION=3.12"
           build_image postgres-16 latest docker_atom/Dockerfile --build-arg "BASE_IMG=postgres:16"
           build_image postgres-16 latest docker_base/Dockerfile --build-arg "BASE_IMG=postgres-16" --build-arg "PYTHON_VERSION=3.12"
+          build_image postgres-15 latest docker_atom/Dockerfile --build-arg "BASE_IMG=postgres:15"
+          build_image postgres-15 latest docker_base/Dockerfile --build-arg "BASE_IMG=postgres-15" --build-arg "PYTHON_VERSION=3.12"
           push_image postgres-
 
   ## DockerKit - including image-syncer and docker-compsoe
