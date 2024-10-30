@@ -2,17 +2,15 @@ name: build-docker-images
 
 on:
   push:
-    branches: [ main ]
-    paths-ignore:
-      - "*.md"
+    branches: [ "main" ]
+    paths-ignore: [ "*.md" ]
 
   pull_request:
-    branches: [ main ]
-    paths-ignore:
-      - "*.md"
+    branches: [ "main" ]
+    paths-ignore: [ "*.md" ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  workflow_dispatch:  # Allows you to run this workflow manually from the Actions tab
+
 
 env:
   BUILDKIT_PROGRESS: "plain"  # Full logs for CI build.
@@ -38,15 +36,17 @@ jobs:
           alias_image python-3.12 latest base latest && push_image
 
   qpod_python:
-    name: 'python-3.7,python-3.11'
+    name: 'python-3.7,python-3.11,python-3.13'
     needs: 'qpod_base'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh          
-          build_image python-3.7  latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.7"  && push_image
+          build_image python-3.13 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.13" && push_image
           build_image python-3.11 latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.11" && push_image
+          build_image python-3.7  latest docker_base/Dockerfile --build-arg "PYTHON_VERSION=3.7"  && push_image
+          
 
 
   qpod_core:
@@ -59,7 +59,7 @@ jobs:
           source ./tool.sh
           build_image core latest  docker_core/Dockerfile \
             --build-arg "ARG_PROFILE_PYTHON=base,datascience,mkl,database,nlp,cv,chem,tf2,torch" \
-            --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_R=base,datascience" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JAVA=base,maven" \
             --build-arg "ARG_PROFILE_LATEX=base,cjk"
@@ -117,20 +117,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image r-std latest docker_core/Dockerfile --build-arg "ARG_PROFILE_R=base,datascience" --build-arg "ARG_PROFILE_JAVA=base" && push_image
-
-  qpod_r-studio:
-    name: 'r-studio'
-    needs: qpod_base
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          source ./tool.sh
-          build_image r-studio  latest docker_core/Dockerfile \
-            --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
-            --build-arg "ARG_PROFILE_JAVA=base" \
-            --build-arg "ARG_PROFILE_LATEX=base,cjk"
-          push_image
 
   qpod_node:
     name: 'node'
@@ -192,7 +178,7 @@ jobs:
           source ./tool.sh
           build_image data-science-stack latest  docker_core/Dockerfile \
             --build-arg "ARG_PROFILE_PYTHON=base,database" \
-            --build-arg "ARG_PROFILE_R=base,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_R=base,datascience" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JULIA=base"
           push_image data-science-stack
@@ -207,7 +193,7 @@ jobs:
           source ./tool.sh
           build_image full-stack latest  docker_core/Dockerfile \
             --build-arg "ARG_PROFILE_PYTHON=base,database" \
-            --build-arg "ARG_PROFILE_R=base,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_R=base,datascience" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JAVA=base,maven" \
             --build-arg "ARG_PROFILE_JULIA=base" \
@@ -374,7 +360,7 @@ jobs:
           build_image full-cuda-11.8 latest docker_core/Dockerfile \
             --build-arg "BASE_IMG=cuda_11.8" \
             --build-arg "ARG_PROFILE_PYTHON=base,datascience,mkl,database,nlp,cv,chem,tf2,torch" \
-            --build-arg "ARG_PROFILE_R=base,datascience,rstudio,rshiny" \
+            --build-arg "ARG_PROFILE_R=base,datascience" \
             --build-arg "ARG_PROFILE_NODEJS=base" \
             --build-arg "ARG_PROFILE_JAVA=base,maven" \
             --build-arg "ARG_PROFILE_LATEX=base,cjk"

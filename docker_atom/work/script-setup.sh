@@ -180,6 +180,19 @@ setup_rust() {
 }
 
 
+setup_R_base() {
+     curl -sL https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
+  && echo "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" > /etc/apt/sources.list.d/cran.list \
+  && install_apt  /opt/utils/install_list_R_base.apt \
+  && echo "options(repos=structure(c(CRAN=\"https://cloud.r-project.org\")))" >> /etc/R/Rprofile.site \
+  && R -e "install.packages(c('devtools'),clean=T,quiet=T);" \
+  && R -e "install.packages(c('devtools'),clean=T,quiet=F);" \
+  && ( type java && type R && R CMD javareconf || true ) ;
+  
+  type R && echo "@ Version of R: $(R --version)" || return -1 ;
+}
+
+
 setup_julia() {
      JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
   && install_tar_gz $JULIA_URL \
