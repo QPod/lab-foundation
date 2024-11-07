@@ -33,6 +33,7 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
      echo "No default python found in OS." ; \
  fi \
  && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
+ && ln -sf "${CONDA_PREFIX}"/bin/pip       /usr/bin/ \
  && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python  \
  && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 \
  && lsb_release -a \

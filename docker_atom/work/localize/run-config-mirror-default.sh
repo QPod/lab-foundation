@@ -23,3 +23,8 @@ if [ -f "$(which go)" ]; then
   echo "Found golang, getting GO env:"
   go env | sort
 fi
+
+if [ -f "$(which R)" ]; then
+  echo "Found R, getting CRAN mirror"
+  R -e "options('repos');"
+fi

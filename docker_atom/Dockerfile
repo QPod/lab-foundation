@@ -41,6 +41,7 @@ RUN set -eux && cd /tmp \
  # if /etc/profile haven't been executed, execute it.
  && echo -e "${LINE_CHK_FLAG} \n$(cat /etc/bash.bashrc)"            > /etc/bash.bashrc \
  && echo '[ $BASH ] && [ -f /root/.bashrc ] && . /root/.bashrc'     >> /etc/bash.bashrc \
+ && chmod +x /opt/utils/*.sh /opt/utils/localize/*.sh \
  # Clean up and display components version information...
  && source /opt/utils/script-utils.sh && install__clean
 

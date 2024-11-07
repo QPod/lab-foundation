@@ -234,15 +234,6 @@ setup_lua_rocks() {
  type luarocks && echo "@ Version of luarocks: $(luarocks --version)" || return -1 ;
 }
 
-setup_traefik() {
-     TRAEFIK_VERSION=$(curl -sL https://github.com/traefik/traefik/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+') \
-  && TRAEFIK_URL="https://github.com/traefik/traefik/releases/download/v${TRAEFIK_VERSION}/traefik_v${TRAEFIK_VERSION}_linux_$(dpkg --print-architecture).tar.gz" \
-  && install_tar_gz "${TRAEFIK_URL}" traefik \
-  && ln -sf /opt/traefik /usr/bin/ ;
-  
-  type traefik && echo "@ Version of traefik: $(traefik version)" || return -1 ;
-}
-
 
 setup_bazel() {
      VER_BAZEL=$(curl -sL https://github.com/bazelbuild/bazel/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+' ) \
