@@ -29,6 +29,7 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
     && echo "/usr/share/python3/"  >>  "${PYTHON_PTH_FILE}" \
     && rm -rf $(/usr/bin/python3 -c 'import sys; print(" ".join(i for i in sys.path if "python" in i))') /usr/bin/python3* /usr/lib/python${PYTHON_VERSION} \
     && rm -rf /usr/lib/python${PYTHON_VERSION} && ln -sf "${CONDA_PREFIX}"/lib/python${PYTHON_VERSION} /usr/lib/ ; \
+    && ln -sf $( which pip ) /usr/bin/pip \
  else \
      echo "No default python found in OS." ; \
  fi \

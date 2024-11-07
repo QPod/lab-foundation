@@ -43,3 +43,9 @@ if [ -f "$(which go)" ]; then
   export GOPROXY=https://goproxy.cn
   go env | grep 'PROXY'
 fi
+
+if [ -f "$(which R)" ]; then
+  echo "Found R, setting CRAN mirror"
+  echo "options(repos=structure(c(CRAN=\"https://mirrors.tuna.tsinghua.edu.cn/CRAN/\")))" >> /etc/R/Rprofile.site
+  R -e "options('repos');"
+fi
