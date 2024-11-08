@@ -48,6 +48,7 @@ RUN set -eux \
  && echo "If installing R environment - put this after Java ready to configure rJava" \
  && source /opt/utils/script-setup-R.sh \
  && for profile in $(echo $ARG_PROFILE_R | tr "," "\n") ; do ( setup_R_${profile} ) ; done \
+ && ( which R && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ || true ) && ls -alh /usr/bin/python* \
  # -----------------------------
  && echo "If on a x86_64 architecture: 1) if mkl specified, install nomkl; 2) install conda packages as specified." \
  && if echo $(arch) | grep -q "x86_64" ; then \
