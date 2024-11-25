@@ -152,10 +152,24 @@ setup_node() {
   type npm  && echo "@ Version of Node and npm:  $(npm -v)"  || return -1 ;
 }
 
+setup_PNPM() {
+     ARCH="x64" \
+  && VER_PNPM=$(curl -sL https://github.com/pnpm/pnpm/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+') \
+  && URL_PNPM="https://github.com/pnpm/pnpm/releases/download/v${VER_PNPM}/pnpm-linuxstatic-x64" \
+  && echo "Downloading pnpm version ${VER_PNPM} from: ${URL_PNPM}" \
+  && curl -L "${URL_PNPM}" -o /usr/local/bin/pnpm \
+  && chmod +x /usr/local/bin/pnpm \
+  && echo 'export PNPM_HOME="/usr/local/bin"' >> /etc/profile.d/path-pnpm.sh \
+  && echo 'export PATH=$PATH:$PNPM_HOME' >> /etc/profile.d/path-pnpm.sh ;
+
+  type pnpm && echo "@ Version of pnpm: $(pnpm --version)" || return -1 ;
+}
+
 
 setup_GO() {
      VER_GO=$(curl -sL https://github.com/golang/go/releases.atom | grep 'releases/tag' | grep -v 'rc' | head -1 | grep -Po '\d[\d.]+') \
   && URL_GO="https://dl.google.com/go/go${VER_GO}.linux-$(dpkg --print-architecture).tar.gz" \
+  && echo "Downloading golang version ${VER_GO} from: ${URL_GO}" \
   && install_tar_gz "${URL_GO}" go \
   && ln -sf /opt/go/bin/go* /usr/bin/ \
   && echo 'export GOROOT="/opt/go"'       >> /etc/profile.d/path-go.sh \
