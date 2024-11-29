@@ -3,8 +3,8 @@ source /opt/utils/script-utils.sh
 
 setup_mamba() {
   # Notice: mamba use $CONDA_PREFIX to locate base env
-     ARCH="linux-64" && MICROMAMBA_VERSION="latest" \
-  && MAMBA_URL="https://micromamba.snakepit.net/api/micromamba/${ARCH}/${MICROMAMBA_VERSION}" \
+     UNAME=$(uname | tr '[:upper:]' '[:lower:]') && ARCH="64" && MICROMAMBA_VERSION="latest" \
+  && MAMBA_URL="https://micromamba.snakepit.net/api/micromamba/${UNAME}-${ARCH}/${MICROMAMBA_VERSION}" \
   && mkdir -pv /opt/mamba /etc/conda \
   && install_tar_bz $MAMBA_URL bin/micromamba && mv /opt/bin/micromamba /opt/mamba/mamba \
   && ln -sf /opt/mamba/mamba /usr/bin/ \
@@ -56,7 +56,7 @@ EOF
 }
 
 setup_conda_with_mamba() {
-    VERSION_PYTHON=${1:-"3.12"}; shift 1;
+     VERSION_PYTHON=${1:-"3.12"}; shift 1;
      local PREFIX="${CONDA_PREFIX:-/opt/conda}" \
   && mkdir -pv "${PREFIX}" \
   && mamba install -y --root-prefix="${PREFIX}" --prefix="${PREFIX}" -c "conda-forge" conda pip python="${VERSION_PYTHON}" \
@@ -65,9 +65,9 @@ setup_conda_with_mamba() {
 
 setup_conda_download() {
   ## https://docs.conda.io/projects/miniconda/en/latest/index.html
-     mkdir -pv "${CONDA_PREFIX}" \
-  && wget -qO- "https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-$(arch).sh" -O /tmp/conda.sh \
-  && bash /tmp/conda.sh -f -b -p "${CONDA_PREFIX}/" \
+     URL_CONDA="https://repo.continuum.io/miniconda/Miniconda3-latest-$(uname)-$(arch).sh" \
+  && wget -qO- $URL_CONDA -O /tmp/conda.sh \
+  && mkdir -pv "${CONDA_PREFIX}" && bash /tmp/conda.sh -f -b -p "${CONDA_PREFIX}/" \
   && rm -rf /tmp/conda.sh \
   && setup_conda_postprocess ;
 }
@@ -137,10 +137,10 @@ setup_java_maven() {
 
 
 setup_node() {
-     ARCH="x64" \
+     UNAME=$(uname | tr '[:upper:]' '[:lower:]') && ARCH="x64" \
   && VER_NODEJS=$(curl -sL https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+') \
   && VER_NODEJS_MAJOR=$(echo "${VER_NODEJS}" | cut -d '.' -f1 ) \
-  && NODEJS_URL="https://nodejs.org/download/release/latest-v${VER_NODEJS_MAJOR}.x/node-v${VER_NODEJS}-linux-${ARCH}.tar.gz" \
+  && NODEJS_URL="https://nodejs.org/download/release/latest-v${VER_NODEJS_MAJOR}.x/node-v${VER_NODEJS}-${UNAME}-${ARCH}.tar.gz" \
   && echo "Downloading NodeJS from: ${NODEJS_URL}" \
   && install_tar_gz ${NODEJS_URL} \
   && mv /opt/node* /opt/node \
@@ -152,10 +152,25 @@ setup_node() {
   type npm  && echo "@ Version of Node and npm:  $(npm -v)"  || return -1 ;
 }
 
+setup_PNPM() {
+     UNAME=$(uname | tr '[:upper:]' '[:lower:]') && ARCH="x64" \
+  && VER_PNPM=$(curl -sL https://github.com/pnpm/pnpm/releases.atom | grep 'releases/tag' | grep -v 'alpha' | head -1 | grep -Po '\d[\d.]+') \
+  && URL_PNPM="https://github.com/pnpm/pnpm/releases/download/v${VER_PNPM}/pnpm-${UNAME}-${ARCH}" \
+  && echo "Downloading pnpm version ${VER_PNPM} from: ${URL_PNPM}" \
+  && curl -L "${URL_PNPM}" -o /usr/local/bin/pnpm \
+  && chmod +x /usr/local/bin/pnpm \
+  && echo 'export PNPM_HOME="/usr/local/bin"' >> /etc/profile.d/path-pnpm.sh \
+  && echo 'export PATH=$PATH:$PNPM_HOME' >> /etc/profile.d/path-pnpm.sh ;
+
+  type pnpm && echo "@ Version of pnpm: $(pnpm --version)" || return -1 ;
+}
+
 
 setup_GO() {
-     VER_GO=$(curl -sL https://github.com/golang/go/releases.atom | grep 'releases/tag' | grep -v 'rc' | head -1 | grep -Po '\d[\d.]+') \
-  && URL_GO="https://dl.google.com/go/go${VER_GO}.linux-$(dpkg --print-architecture).tar.gz" \
+     UNAME=$(uname | tr '[:upper:]' '[:lower:]') \
+  && VER_GO=$(curl -sL https://github.com/golang/go/releases.atom | grep 'releases/tag' | grep -v 'rc' | head -1 | grep -Po '\d[\d.]+') \
+  && URL_GO="https://dl.google.com/go/go${VER_GO}.${UNAME}-$(dpkg --print-architecture).tar.gz" \
+  && echo "Downloading golang version ${VER_GO} from: ${URL_GO}" \
   && install_tar_gz "${URL_GO}" go \
   && ln -sf /opt/go/bin/go* /usr/bin/ \
   && echo 'export GOROOT="/opt/go"'       >> /etc/profile.d/path-go.sh \
@@ -182,8 +197,9 @@ setup_rust() {
 
 
 setup_R_base() {
-     curl -sL https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
-  && echo "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" > /etc/apt/sources.list.d/cran.list \
+     UNAME=$(uname | tr '[:upper:]' '[:lower:]') \
+  && curl -sL https://cloud.r-project.org/bin/${UNAME}/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
+  && echo "deb https://cloud.r-project.org/bin/${UNAME}/ubuntu $(lsb_release -cs)-cran40/" > /etc/apt/sources.list.d/cran.list \
   && install_apt  /opt/utils/install_list_R_base.apt \
   && echo "options(repos=structure(c(CRAN=\"https://cloud.r-project.org\")))" >> /etc/R/Rprofile.site \
   && R -e "install.packages(c('devtools'),clean=T,quiet=T);" \
@@ -195,8 +211,9 @@ setup_R_base() {
 
 
 setup_julia() {
-     JULIA_URL="https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz" \
-  && install_tar_gz $JULIA_URL \
+     UNAME=$(uname | tr '[:upper:]' '[:lower:]') && ARCH="64" \
+  && URL_JULIA="https://julialangnightlies-s3.julialang.org/bin/${UNAME}/x64/julia-latest-${UNAME}${ARCH}.tar.gz" \
+  && install_tar_gz $URL_JULIA \
   && mv /opt/julia-* /opt/julia \
   && ln -fs /opt/julia/bin/julia /usr/bin/julia \
   && mkdir -p /opt/julia/pkg \
@@ -208,9 +225,9 @@ setup_julia() {
 
 
 setup_lua_base() {
-    VERSION_LUA=$(curl -sL https://www.lua.org/download.html | grep "cd lua" | head -1 | grep -Po '(\d[\d|.]+)') \
- && URL_LUA="http://www.lua.org/ftp/lua-${VERSION_LUA}.tar.gz" \
- && echo "Downloading LUA ${VERSION_LUA} from ${URL_LUA}" \
+    VER_LUA=$(curl -sL https://www.lua.org/download.html | grep "cd lua" | head -1 | grep -Po '(\d[\d|.]+)') \
+ && URL_LUA="http://www.lua.org/ftp/lua-${VER_LUA}.tar.gz" \
+ && echo "Downloading LUA ${VER_LUA} from ${URL_LUA}" \
  && install_tar_gz $URL_LUA \
  && mv /opt/lua-* /tmp/lua && cd /tmp/lua \
  && make linux test && make install INSTALL_TOP=${LUA_HOME:-"/opt/lua"} \
@@ -222,9 +239,10 @@ setup_lua_base() {
 
 setup_lua_rocks() {
  ## https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Unix
-    VERSION_LUA_ROCKS=$(curl -sL https://luarocks.github.io/luarocks/releases/ | grep "linux-x86_64" | head -1 | grep -Po '(\d[\d|.]+)' | head -1) \
- && URL_LUA_ROCKS="http://luarocks.github.io/luarocks/releases/luarocks-${VERSION_LUA_ROCKS}.tar.gz" \
- && echo "Downloading luarocks ${VERSION_LUA_ROCKS} from ${URL_LUA_ROCKS}" \
+    UNAME=$(uname | tr '[:upper:]' '[:lower:]') && ARCH="x86_64" \
+ && VER_LUA_ROCKS=$(curl -sL https://luarocks.github.io/luarocks/releases/ | grep "${UNAME}-${ARCH}" | head -1 | grep -Po '(\d[\d|.]+)' | head -1) \
+ && URL_LUA_ROCKS="http://luarocks.github.io/luarocks/releases/luarocks-${VER_LUA_ROCKS}.tar.gz" \
+ && echo "Downloading luarocks ${VER_LUA_ROCKS} from ${URL_LUA_ROCKS}" \
  && install_tar_gz $URL_LUA_ROCKS \
  && mv /opt/luarocks-* /tmp/luarocks && cd /tmp/luarocks \
  && ./configure --prefix=${LUA_HOME:-"/opt/lua"} --with-lua-include=${LUA_HOME:-"/opt/lua"}/include && make install \
@@ -236,8 +254,9 @@ setup_lua_rocks() {
 
 
 setup_bazel() {
-     VER_BAZEL=$(curl -sL https://github.com/bazelbuild/bazel/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+' ) \
-  && URL_BAZEL="https://github.com/bazelbuild/bazel/releases/download/${VER_BAZEL}/bazel-${VER_BAZEL}-installer-linux-x86_64.sh" \
+     UNAME=$(uname | tr '[:upper:]' '[:lower:]') && ARCH="x64_64" \
+  && VER_BAZEL=$(curl -sL https://github.com/bazelbuild/bazel/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[\d.]+' ) \
+  && URL_BAZEL="https://github.com/bazelbuild/bazel/releases/download/${VER_BAZEL}/bazel-${VER_BAZEL}-installer-${UNAME}-${ARCH}.sh" \
   && curl -o /tmp/bazel.sh -sL "${URL_BAZEL}" && chmod +x /tmp/bazel.sh \
   && /tmp/bazel.sh && rm /tmp/bazel.sh ;
   
