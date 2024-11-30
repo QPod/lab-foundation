@@ -65,8 +65,9 @@ RUN set -eux \
       && ( which java  && echo "py4j  % Install py4j if Java exists" >> /opt/utils/install_list_PY_datascience.pip || echo "Skip py4j install" ) \
     ) || echo "Skip Python datascience packages install" ) \
  # -----------------------------
- && CUDA_VER=$(echo ${CUDA_VERSION:-"999"} | cut -c1-4 | sed 's/\.//' ) \
- && echo "Detected CUDA version: ${CUDA_VER}" \
+ && export CUDA_VER=$(echo ${CUDA_VERSION:-"999"} | cut -c1-4 | sed 's/\.//' ) \
+ && export IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-117}" || echo "cpu" ) \
+ && echo "Detected CUDA version=${CUDA_VER} and IDX=${IDX}" \
  # -----------------------------
  && echo "Handle tensorflow installation 1.x/2.x, cpu/gpu: https://www.tensorflow.org/install/source#gpu" \
  && ( $(grep -q "tf" <<< "${ARG_PROFILE_PYTHON}") && ( \
@@ -79,13 +80,12 @@ RUN set -eux \
  && ( $(grep -q "torch" <<< "${ARG_PROFILE_PYTHON}") && ( \
          echo "If CUDA version < 11.7, install pytorch 1.x, else install pytorch 2.x; if cuda doesn't exist, install pytorch 2.x" \
       && export CUDA_VER_TORCH="117" && V=$([[ "${CUDA_VER:-999}" -lt "${CUDA_VER_TORCH}" ]] && echo "torch<2" || echo "torch") \
-      && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-117}" || echo "cpu" ) \
       && pip install --no-cache-dir --root-user-action=ignore -U --pre "${V}" torchvision torchaudio --index-url "https://download.pytorch.org/whl/${IDX}" \
     ) || echo "Skipping pytorch install" ) \
  # -----------------------------
  && echo "Handle paddle installation, cpu/gpu: https://www.paddlepaddle.org.cn/" \
  && ( $(grep -q "paddle" <<< "${ARG_PROFILE_PYTHON}") && ( \
-         URL_PYPI_PADDLE="https://www.paddlepaddle.org.cn/whl/linux/mkl/avx/stable.html" \
+         URL_PYPI_PADDLE="https://www.paddlepaddle.org.cn/packages/stable/${IDX}" \
       && PADDLE=$( [ -x "$(command -v nvcc)" ] && echo "paddlepaddle-gpu" || echo "paddlepaddle") \
       && PADDLE_VER=$(pip index versions ${PADDLE} -f ${URL_PYPI_PADDLE} | grep 'Available' | cut -d ":" -f 2 | tr ', ' '\n' | grep ${CUDA_VER:-'.'} | head -n 1) \
       && V=$(echo ${PADDLE}==${PADDLE_VER}) && echo "to install paddle: ${V}" \
