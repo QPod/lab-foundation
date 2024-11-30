@@ -77,7 +77,7 @@ RUN set -eux \
  # -----------------------------
  && echo "Handle pytorch installation 1.x only, cpu/gpu: https://pytorch.org/get-started/locally/" \
  && ( $(grep -q "torch" <<< "${ARG_PROFILE_PYTHON}") && ( \
-      && echo "If CUDA version < 11.7, install pytorch 1.x, else install pytorch 2.x; if cuda doesn't exist, install pytorch 2.x" \
+         echo "If CUDA version < 11.7, install pytorch 1.x, else install pytorch 2.x; if cuda doesn't exist, install pytorch 2.x" \
       && export CUDA_VER_TORCH="117" && V=$([[ "${CUDA_VER:-999}" -lt "${CUDA_VER_TORCH}" ]] && echo "torch<2" || echo "torch") \
       && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-117}" || echo "cpu" ) \
       && export PIP_FIND_LINKS="https://download.pytorch.org/whl/${IDX}/torch_stable.html ${PIP_FIND_LINKS:-}" \

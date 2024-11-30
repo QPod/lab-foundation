@@ -11,7 +11,10 @@ on:
 
   workflow_dispatch:  # Allows you to run this workflow manually from the Actions tab
 
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+  
 env:
   BUILDKIT_PROGRESS: "plain"  # Full logs for CI build.
   REGISTRY_URL: "docker.io"  # docker.io or other target registry URL: where to push images to.
