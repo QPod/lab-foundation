@@ -80,7 +80,7 @@ RUN set -eux \
          echo "If CUDA version < 11.7, install pytorch 1.x, else install pytorch 2.x; if cuda doesn't exist, install pytorch 2.x" \
       && export CUDA_VER_TORCH="117" && V=$([[ "${CUDA_VER:-999}" -lt "${CUDA_VER_TORCH}" ]] && echo "torch<2" || echo "torch") \
       && IDX=$( [ -x "$(command -v nvcc)" ] && echo "cu${CUDA_VER:-117}" || echo "cpu" ) \
-      && pip install "${V}" torchvision torchaudio --index-url "https://download.pytorch.org/whl/${IDX} \
+      && pip install --no-cache-dir --root-user-action=ignore -U --pre "${V}" torchvision torchaudio --index-url "https://download.pytorch.org/whl/${IDX}" \
     ) || echo "Skipping pytorch install" ) \
  # -----------------------------
  && echo "Handle paddle installation, cpu/gpu: https://www.paddlepaddle.org.cn/" \
@@ -89,7 +89,7 @@ RUN set -eux \
       && PADDLE=$( [ -x "$(command -v nvcc)" ] && echo "paddlepaddle-gpu" || echo "paddlepaddle") \
       && PADDLE_VER=$(pip index versions ${PADDLE} -f ${URL_PYPI_PADDLE} | grep 'Available' | cut -d ":" -f 2 | tr ', ' '\n' | grep ${CUDA_VER:-'.'} | head -n 1) \
       && V=$(echo ${PADDLE}==${PADDLE_VER}) && echo "to install paddle: ${V}" \
-      && pip install --index-url ${URL_PYPI_PADDLE} "${V}" >  \
+      && pip install --no-cache-dir --root-user-action=ignore -U --pre --index-url ${URL_PYPI_PADDLE} "${V}" >  \
     ) || echo "Skip paddle install" ) \
  # -----------------------------
  # && [ "${PIP_FIND_LINKS+set}" != "set" ] && echo "PIP_FIND_LINKS is not set!" || echo "PIP_FIND_LINKS is set to: ${PIP_FIND_LINKS}" \
