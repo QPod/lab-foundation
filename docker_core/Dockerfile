@@ -94,7 +94,7 @@ RUN set -eux \
       && export PIP_FIND_LINKS="${URL_PYPI_PADDLE} ${PIP_FIND_LINKS:-}" \
     ) || echo "Skip paddle install" ) \
  # -----------------------------
- && echo "PIP_FIND_LINKS is set to: ${PIP_FIND_LINKS}" \
+ && [ -z "${PIP_FIND_LINKS+x}" ] && echo "PIP_FIND_LINKS is set to: ${PIP_FIND_LINKS}" || echo "PIP_FIND_LINKS is not set!" \
  && for profile in $(echo $ARG_PROFILE_PYTHON | tr "," "\n") ; do ( \
       [ -f "/opt/utils/install_list_PY_${profile}.apt" ] && install_apt "/opt/utils/install_list_PY_${profile}.apt" || echo "apt install skipped for ${profile}" ; \
       [ -f "/opt/utils/install_list_PY_${profile}.pip" ] && install_pip "/opt/utils/install_list_PY_${profile}.pip" || echo "pip install skipped for ${profile}" ; \
