@@ -89,7 +89,7 @@ RUN set -eux \
       && PADDLE=$( [ -x "$(command -v nvcc)" ] && echo "paddlepaddle-gpu" || echo "paddlepaddle") \
       && PADDLE_VER=$(pip index versions ${PADDLE} -f ${URL_PYPI_PADDLE} | grep 'Available' | cut -d ":" -f 2 | tr ', ' '\n' | grep ${CUDA_VER:-'.'} | head -n 1) \
       && V=$(echo ${PADDLE}==${PADDLE_VER}) && echo "to install paddle: ${V}" \
-      && pip install --no-cache-dir --root-user-action=ignore -U --pre --index-url ${URL_PYPI_PADDLE} "${V}" >  \
+      && pip install --no-cache-dir --root-user-action=ignore -U --pre --index-url ${URL_PYPI_PADDLE} "${V}" \
     ) || echo "Skip paddle install" ) \
  # -----------------------------
  # && [ "${PIP_FIND_LINKS+set}" != "set" ] && echo "PIP_FIND_LINKS is not set!" || echo "PIP_FIND_LINKS is set to: ${PIP_FIND_LINKS}" \
