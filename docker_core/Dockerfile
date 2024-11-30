@@ -85,7 +85,7 @@ RUN set -eux \
  # -----------------------------
  && echo "Handle paddle installation, cpu/gpu: https://www.paddlepaddle.org.cn/" \
  && ( $(grep -q "paddle" <<< "${ARG_PROFILE_PYTHON}") && ( \
-         URL_PYPI_PADDLE="https://www.paddlepaddle.org.cn/packages/stable/${IDX}" \
+         URL_PYPI_PADDLE="https://www.paddlepaddle.org.cn/packages/stable/${IDX}/" \
       && PADDLE=$( [ -x "$(command -v nvcc)" ] && echo "paddlepaddle-gpu" || echo "paddlepaddle") \
       && PADDLE_VER=$(pip index versions ${PADDLE} -f ${URL_PYPI_PADDLE} | grep 'Available' | cut -d ":" -f 2 | tr ', ' '\n' | grep ${CUDA_VER:-'.'} | head -n 1) \
       && V=$(echo ${PADDLE}==${PADDLE_VER}) && echo "to install paddle: ${V}" \
