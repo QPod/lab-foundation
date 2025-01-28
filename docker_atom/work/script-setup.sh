@@ -165,6 +165,21 @@ setup_PNPM() {
   type pnpm && echo "@ Version of pnpm: $(pnpm --version)" || return -1 ;
 }
 
+setup_bun() {
+  UNAME=$(uname | tr '[:upper:]' '[:lower:]') && ARCH="x64" \
+  && VER_BUN=$(curl -sL https://github.com/oven-sh/bun/releases.atom | grep 'releases/tag' | head -1 | grep -Po 'bun-v\K\d+\.\d+\.\d+') \
+  && BUN_URL="https://github.com/oven-sh/bun/releases/download/bun-v${VER_BUN}/bun-${UNAME}-${ARCH}.zip" \
+  && echo "Downloading bun from: ${BUN_URL}" \
+  && curl -sLO "${BUN_URL}" \
+  && unzip -q "bun-${UNAME}-${ARCH}.zip" -d /opt \
+  && rm "bun-${UNAME}-${ARCH}.zip" \
+  && mv /opt/bun-* /opt/bun \
+  && ln -sf /opt/bun/bun /usr/bin/ \
+  && echo 'export PATH="${PATH}:/opt/bun"' >> /etc/profile.d/path-bun.sh ;
+
+  type bun && echo "@ Version of bun: $(bun -v)" || return $? ;
+}
+
 
 setup_GO() {
      UNAME=$(uname | tr '[:upper:]' '[:lower:]') \
