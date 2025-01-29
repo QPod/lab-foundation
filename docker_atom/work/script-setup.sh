@@ -136,7 +136,7 @@ setup_java_maven() {
 }
 
 
-setup_node() {
+setup_node_base() {
      UNAME=$(uname | tr '[:upper:]' '[:lower:]') && ARCH="x64" \
   && VER_NODEJS=$(curl -sL https://github.com/nodejs/node/releases.atom | grep 'releases/tag' | head -1 | grep -Po '\d[.\d]+') \
   && VER_NODEJS_MAJOR=$(echo "${VER_NODEJS}" | cut -d '.' -f1 ) \
@@ -152,7 +152,7 @@ setup_node() {
   type npm  && echo "@ Version of Node and npm:  $(npm -v)"  || return -1 ;
 }
 
-setup_PNPM() {
+setup_node_pnpm() {
      UNAME=$(uname | tr '[:upper:]' '[:lower:]') && ARCH="x64" \
   && VER_PNPM=$(curl -sL https://github.com/pnpm/pnpm/releases.atom | grep 'releases/tag' | grep -v 'alpha' | head -1 | grep -Po '\d[\d.]+') \
   && URL_PNPM="https://github.com/pnpm/pnpm/releases/download/v${VER_PNPM}/pnpm-${UNAME}-${ARCH}" \
@@ -165,7 +165,7 @@ setup_PNPM() {
   type pnpm && echo "@ Version of pnpm: $(pnpm --version)" || return -1 ;
 }
 
-setup_bun() {
+setup_node_bun() {
   UNAME=$(uname | tr '[:upper:]' '[:lower:]') && ARCH="x64" \
   && VER_BUN=$(curl -sL https://github.com/oven-sh/bun/releases.atom | grep 'releases/tag' | head -1 | grep -Po 'bun-v\K\d+\.\d+\.\d+') \
   && BUN_URL="https://github.com/oven-sh/bun/releases/download/bun-v${VER_BUN}/bun-${UNAME}-${ARCH}.zip" \
