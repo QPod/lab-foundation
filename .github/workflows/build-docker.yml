@@ -128,7 +128,7 @@ jobs:
       - run: source ./tool.sh && build_image node latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base" && push_image
 
   qpod_bun:
-    name: 'node'
+    name: 'bun'
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
