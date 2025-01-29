@@ -1,11 +1,10 @@
 % This file contains apt packages to be installed with apt-get install line by line.
 % Use percent char as line comment separator.
 
-htop vim git-lfs jq tree % Process Management, Editor, Version Control
-build-essential cmake    % build essentials
-wget iputils-ping telnet % download, network (ping)
-unzip bzip2 p7zip-full   % zip/unzip
-rsync                    % file transfer
-openssh-client           % Provide ssh client and generate keys
-openssh-server           % Provide ssh server (sshd)
-% tini                   % tini - which will be entry point later; not available on ubuntu<=18
+htop vim git-lfs jq tree            % Process Management, Editor, Version Control
+build-essential cmake               % build essentials
+wget iputils-ping telnet net-tools  % download, network (ping), netstat
+unzip bzip2 p7zip-full              % zip/unzip
+openssh-client openssh-server       % Provide ssh client and generate keys, ssh server (sshd)
+rsync                               % file transfer
+% tini                              % tini - which will be entry point later; not available on ubuntu<=18

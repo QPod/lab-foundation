@@ -32,11 +32,7 @@ RUN set -eux \
  && source /opt/utils/script-setup.sh \
  # -----------------------------
  && echo "NodeJS is required to build some components like JupyterLab Extensions later" \
- && if echo "${ARG_PROFILE_NODEJS}" | grep -q "base" ; then \
-      setup_node ; \
-    else \
-      echo "Skip NodeJS install" ; \
-    fi \
+ && for profile in $(echo $ARG_PROFILE_NODEJS | tr "," "\n") ; do ( setup_node_${profile} ) ; done \
  # -----------------------------
  && echo "If installing Java environment - notice that Java can be dependency for some other packages like rJava" \
  && export VERSION_JDK=${VERSION_JDK:-11} \

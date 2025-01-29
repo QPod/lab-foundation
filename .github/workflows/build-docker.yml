@@ -127,6 +127,15 @@ jobs:
       - uses: actions/checkout@v4
       - run: source ./tool.sh && build_image node latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=base" && push_image
 
+  qpod_bun:
+    name: 'bun'
+    needs: qpod_base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: source ./tool.sh && build_image node latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=bun" && push_image
+
+
   qpod_jdk:
     name: 'jdk,jdk-8,jdk-11,jdk-17,jdk-21'
     needs: qpod_base

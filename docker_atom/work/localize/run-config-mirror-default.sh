@@ -9,7 +9,7 @@ if [ -f /etc/apt/sources.list ]; then
   echo "Found Ubuntu/debian system, using default ubuntu/debian mirror"
 fi
 
-if [ -f "$(which python)" ]; then
+if command -v python &> /dev/null; then
   echo "Found python, using default pypi source in /etc/pip.conf"
   pip config list
 fi
@@ -19,12 +19,12 @@ if [ -f "$(which npm)" ]; then
   npm config list
 fi
 
-if [ -f "$(which go)" ]; then
+if command -v go &> /dev/null; then
   echo "Found golang, getting GO env:"
   go env | sort
 fi
 
-if [ -f "$(which R)" ]; then
+if command -v R &> /dev/null; then
   echo "Found R, getting CRAN mirror"
   R -e "options('repos');"
 fi
