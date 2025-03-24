@@ -245,7 +245,7 @@ jobs:
 
   ## Sync all images in this build (listed by "names") to mirror registry.
   sync_images:
-    needs: ["qpod_docker_kit"]
+    needs: ["qpod_docker_kit", "qpod_postgres", "qpod_full-stack", "qpod_core"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

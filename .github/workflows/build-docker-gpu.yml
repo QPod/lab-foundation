@@ -162,7 +162,7 @@ jobs:
 
   ## Sync all images in this build (listed by "names") to mirror registry.
   sync_images:
-    needs: ["qpod_core-cuda", "qpod_py-cv", "qpod_py-nlp"]
+    needs: ["qpod_core-cuda", "qpod_py-cv", "qpod_py-nlp", "qpod_torch_cuda126"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
