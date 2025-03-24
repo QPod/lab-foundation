@@ -214,6 +214,7 @@ jobs:
   ## Postgres
   qpod_postgres:
     name: 'postgres-17,postgres-16,postgres-15'
+    needs: ["qpod_base"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
