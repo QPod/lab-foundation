@@ -66,7 +66,7 @@ setup_conda_with_mamba() {
 setup_conda_download() {
   ## https://docs.conda.io/projects/miniconda/en/latest/index.html
      URL_CONDA="https://repo.continuum.io/miniconda/Miniconda3-latest-$(uname)-$(arch).sh" \
-  && wget -qO- $URL_CONDA -O /tmp/conda.sh \
+  && curl -sL "$URL_CONDA" -o /tmp/conda.sh \
   && mkdir -pv "${CONDA_PREFIX}" && bash /tmp/conda.sh -f -b -p "${CONDA_PREFIX}/" \
   && rm -rf /tmp/conda.sh \
   && setup_conda_postprocess ;

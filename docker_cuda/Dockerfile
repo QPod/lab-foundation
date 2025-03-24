@@ -12,11 +12,13 @@ ENV NVIDIA_DISABLE_REQUIRE=1
 # For cuda version 10.0, the image is solely serverd for legacy tensorflow 1.15, which requires python 3.7
 # For tensorflow 2.x or torch, python>=3.9 is supported.
 RUN set -eux && echo ${CUDA_VERSION} && nvcc --version \
- && source /opt/utils/script-setup.sh \
  # HACK & FIX: for some old version of NVIDIA docker images, sys python version is too old, update debpython
- && install_zip https://salsa.debian.org/cpython-team/python3-defaults/-/archive/master/python3-defaults-master.zip?path=debpython \
- && mv /opt/python3-defaults-master-debpython /tmp/debpython \
- && cp -rf /tmp/debpython/debpython/* /usr/share/python3/debpython/ \
+ && URL_PY3_DEP="https://salsa.debian.org/cpython-team/python3-defaults/-/archive/master/python3-defaults-master.zip?path=debpython" \
+ && curl -o /tmp/TMP.zip -sL "${URL_PY3_DEP}" && unzip -q -d /tmp/ /tmp/TMP.zip && rm /tmp/TMP.zip \
+ && mkdir -pv /usr/share/python3/debpython/ \
+ && cp -rf /tmp/python3-defaults-master-debpython/debpython/* /usr/share/python3/debpython/ \
+ && rm -rf /tmp/python3-defaults-master-debpython \
  # Setup nvtop
+ && source /opt/utils/script-setup.sh \
  && setup_nvtop \
  && install__clean
