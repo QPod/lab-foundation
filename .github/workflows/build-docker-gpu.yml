@@ -20,10 +20,10 @@ env:
   REGISTRY_URL: "docker.io"  # docker.io or other target registry URL: where to push images to.
   REGISTRY_SRC: "docker.io"  # For BASE_NAMESPACE of images: where to pull base images from.
   # DOCKER_REGISTRY_USERNAME and DOCKER_REGISTRY_PASSWORD is required for docker image push, they should be set in CI secrets.
-  DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+  DOCKER_REGISTRY_USERNAME: ${{ vars.DOCKER_REGISTRY_USERNAME }}
   DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
   # used to sync image to mirror registry
-  DOCKER_MIRROR_REGISTRY_USERNAME: ${{ secrets.DOCKER_MIRROR_REGISTRY_USERNAME }}
+  DOCKER_MIRROR_REGISTRY_USERNAME: ${{ vars.DOCKER_MIRROR_REGISTRY_USERNAME }}
   DOCKER_MIRROR_REGISTRY_PASSWORD: ${{ secrets.DOCKER_MIRROR_REGISTRY_PASSWORD }}
 
 jobs:
