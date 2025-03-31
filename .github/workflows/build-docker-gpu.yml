@@ -44,7 +44,7 @@ jobs:
           alias_image cuda_12.6 latest cuda latest
           push_image cuda
 
-  # reserved for paddlepaddle: https://www.paddlepaddle.org.cn
+  # reserved for paddlepaddl 2.6: https://www.paddlepaddle.org.cn
   qpod_cuda_120:
     name: 'cuda_12.0'
     runs-on: ubuntu-latest
@@ -96,7 +96,7 @@ jobs:
           push_image
 
   qpod_paddle_cuda120:
-    name: 'paddle-cuda,paddle-cuda120'
+    name: 'paddle-cuda120,paddle-2.6'
     needs: qpod_cuda_120
     runs-on: ubuntu-latest
     steps:
@@ -104,11 +104,11 @@ jobs:
       - run: |
           source ./tool.sh
           build_image paddle-cuda120 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.0" --build-arg "ARG_PROFILE_PYTHON=paddle,mkl"
-          alias_image paddle-cuda120 latest paddle-cuda latest
+          alias_image paddle-cuda120 latest paddle-2.6 latest
           push_image
 
   qpod_paddle_cuda126:
-    name: 'paddle-cuda126'
+    name: 'paddle-cuda126,paddle-3.0'
     needs: qpod_cuda_126
     runs-on: ubuntu-latest
     steps:
@@ -116,6 +116,7 @@ jobs:
       - run: |
           source ./tool.sh
           build_image paddle-cuda126 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.6" --build-arg "ARG_PROFILE_PYTHON=paddle,mkl"
+          alias_image paddle-cuda126 latest paddle-3.0 latest
           push_image
 
 
