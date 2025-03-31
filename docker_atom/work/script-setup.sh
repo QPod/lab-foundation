@@ -73,9 +73,9 @@ setup_conda_download() {
 }
 
 setup_nvtop() {
-  ## The compiliation requries CMake 3.18 or higher. default version in CUDA 11.2 images is 3.16.3
-     curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo tee /etc/apt/trusted.gpg.d/kitware.asc \
-  && echo "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/kitware.list \
+  ## The compiliation requries CMake 3.18 or higher, while the default version in CUDA 11.2 images is 3.16.3
+     curl -sL https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg \
+  && echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/kitware.list \
   && apt-get -qq update -yq --fix-missing && apt-get -qq install -yq --no-install-recommends cmake ;
 
   # Install Utilities "nvtop" from source: libdrm-dev libsystemd-dev used by AMD/Intel GPU support, libudev-dev used by ubuntu18.04
