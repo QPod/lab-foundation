@@ -133,11 +133,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: source ./tool.sh && build_image node latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=bun" && push_image
+      - run: source ./tool.sh && build_image bun  latest docker_core/Dockerfile --build-arg "ARG_PROFILE_NODEJS=bun" && push_image
 
 
   qpod_jdk:
-    name: 'jdk,jdk-8,jdk-11,jdk-17,jdk-21'
+    name: 'jdk-8,jdk-11,jdk-17,jdk-21,jdk'
     needs: qpod_base
     runs-on: ubuntu-latest
     steps:
@@ -220,13 +220,11 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-
-          export IMG_PREFIX_SRC_BAK="${IMG_PREFIX_SRC}" && export IMG_PREFIX_SRC="docker.io/library"
           build_image postgres-17 latest docker_atom/Dockerfile --build-arg "BASE_IMG=postgres:17"
           build_image postgres-16 latest docker_atom/Dockerfile --build-arg "BASE_IMG=postgres:16"
           build_image postgres-15 latest docker_atom/Dockerfile --build-arg "BASE_IMG=postgres:15"
 
-          export IMG_PREFIX_SRC="${IMG_PREFIX_SRC_BAK}"
+          export IMG_PREFIX_SRC="${IMG_PREFIX_DST}"
           build_image postgres-17 latest docker_base/Dockerfile --build-arg "BASE_IMG=postgres-17" --build-arg "PYTHON_VERSION=3.12"
           build_image postgres-16 latest docker_base/Dockerfile --build-arg "BASE_IMG=postgres-16" --build-arg "PYTHON_VERSION=3.12"
           build_image postgres-15 latest docker_base/Dockerfile --build-arg "BASE_IMG=postgres-15" --build-arg "PYTHON_VERSION=3.12"
