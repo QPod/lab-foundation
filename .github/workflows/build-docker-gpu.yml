@@ -184,6 +184,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh
-          printenv | grep -v 'PATH' > /tmp/docker.env
+          printenv | grep -v 'PATH' > /tmp/docker.env && echo "REGISTRY_URL=${REGISTRY_DST}" >> /tmp/docker.env
           docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp \
-            ${IMG_NAMESPACE:-qpod}/docker-kit python /opt/utils/image-syncer/run_jobs.py
+            ${IMG_PREFIX_DST:-qpod}/docker-kit python /opt/utils/image-syncer/run_jobs.py
