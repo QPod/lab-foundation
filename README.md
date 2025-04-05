@@ -22,7 +22,7 @@ AI/数据科学的瑞士军刀——QPod提供了一站式、开箱即用、可�
 
 ## Documentation & Tutorial
 
-[Wiki & Document](https://qpod.github.io/) | [中文使用指引(含中国网络镜像)](https://qpod.github.io/docs/intro-cn)
+[Wiki & Document](https://qpod.github.io) | [中文使用指引(含中国网络镜像)](https://qpod.github.io/docs/intro-cn)
 
 ## Screenshot and Arch Diagram
 
