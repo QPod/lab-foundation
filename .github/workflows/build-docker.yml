@@ -241,10 +241,10 @@ jobs:
           source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile
           printenv | grep -v 'PATH' > /tmp/docker.env
           echo "REGISTRY_URL=${REGISTRY_DST}" >> /tmp/docker.env
-          echo "DOCKER_IMG_NAMESPACE=${DOCKER_IMG_NAMESPACE}" >> /tmp/docker.env
+          echo "IMG_NAMESPACE=${IMG_NAMESPACE}" >> /tmp/docker.env
           docker run --rm --env-file /tmp/docker.env ${IMG_PREFIX_DST}/docker-kit printenv | sort
           docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp ${IMG_PREFIX_DST}/docker-kit \
-            python /opt/utils/image-syncer/run_sync.py --source-registry="quay.io" ${DOCKER_IMG_NAMESPACE}/base
+            python /opt/utils/image-syncer/run_sync.py --source-registry="quay.io" ${IMG_NAMESPACE}/base
           push_image docker-kit
 
   ## Sync all images in this build (listed by "names") to mirror registry.
