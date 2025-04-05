@@ -241,8 +241,8 @@ jobs:
           source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile
           printenv | grep -v 'PATH' > /tmp/docker.env && echo "REGISTRY_URL=${REGISTRY_DST}" >> /tmp/docker.env
           docker run --rm --env-file /tmp/docker.env ${IMG_PREFIX_DST}/docker-kit printenv | sort
-          docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp \
-            ${IMG_PREFIX_DST}/docker-kit python /opt/utils/image-syncer/run_sync.py ${IMG_PREFIX_DST}/base
+          docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp ${IMG_PREFIX_DST}/docker-kit \
+            python /opt/utils/image-syncer/run_sync.py --source-registry="quay.io" ${IMG_PREFIX_DST}/base
           push_image docker-kit
 
   ## Sync all images in this build (listed by "names") to mirror registry.
@@ -254,5 +254,5 @@ jobs:
       - run: |
           source ./tool.sh
           printenv | grep -v 'PATH' > /tmp/docker.env && echo "REGISTRY_URL=${REGISTRY_DST}" >> /tmp/docker.env
-          docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp \
-            ${IMG_PREFIX_DST:-qpod}/docker-kit python /opt/utils/image-syncer/run_jobs.py
+          docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp ${IMG_PREFIX_DST:-qpod}/docker-kit \
+            python /opt/utils/image-syncer/run_jobs.py
