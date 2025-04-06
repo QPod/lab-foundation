@@ -40,14 +40,14 @@ def main():
 
         if args.auth_file is not None:
             cfg = generate_tasks_without_auth(
-                image=img, source_registry=args.source_registry, target_registries=args.target_registry
-                )
-            list_tasks.append((cfg, args.auth_file))
-        else:
-            configs = generate_tasks_with_auth(
                 image=img, tags=None, source_registry=args.source_registry, target_registries=args.target_registry
             )
-            for _, c in enumerate(configs):
+            list_tasks.append((cfg, args.auth_file))
+        else:
+            cfg = generate_tasks_with_auth(
+                image=img, tags=None, source_registry=args.source_registry, target_registries=args.target_registry
+            )
+            for _, c in enumerate(cfg):
                 list_tasks.append((c, None))
 
     with multiprocessing.Pool() as pool:

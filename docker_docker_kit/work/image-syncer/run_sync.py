@@ -71,6 +71,7 @@ def sync_image(cfg: dict = None, file_path_auth: str = None):
 
     cmd = ['image-syncer', '--proc=16', '--retries=2', ] + opts
     print('Running cmd:', ' '.join(cmd))
+    print('Job payload:', json.dumps(cfg, ensure_ascii=False, indent=None))
     ret = 0
     try:
         subprocess.run(cmd, check=True)
