@@ -8,9 +8,11 @@ In this docker image (DockerKit), the following tools are included:
 
 ## Image Syncer
 
-With the help of `image-sync`, you can easily have your docker images copied from one registry to another, or run in batch mode.
+With the help of [image-sync](https://github.com/AliyunContainerService/image-syncer), you can easily have your docker images copied from one registry to another, or run in batch mode.
 
-Below is an example of sync one docker image:
+### Sync one image
+
+Below is an example of command for sync one image:
 
 ```shell
 docker run --rm \
@@ -18,7 +20,32 @@ docker run --rm \
   -e DOCKER_REGISTRY_USERNAME='' \
   -e DOCKER_MIRROR_REGISTRY_USERNAME='' \
   -e DOCKER_MIRROR_REGISTRY_PASSWORD='' \
-  qpod/docker-kit python /opt/utils/image-syncer/run_sync.py library/ubuntu --source-registry='docker.io' --target-registry='quay.io'  
+  qpod/docker-kit python /opt/utils/image-syncer/run_sync.py library/ubuntu --source-registry='quay.io' --target-registry='docker.io'  
 ```
 
 Fill the environment variables above, and more details can be found in code: `./work/image-syncer/run_sync.py`.
+
+### Sync images in batch
+
+To sync images in batch, two config files (or combine them in one as `--config`) are needed.
+
+The `auth.yaml` file should look like:
+
+```yaml
+docker.io:
+  username: ""
+  password: ""
+  insecure: true
+registry.cn-hangzhou.aliyuncs.com:
+  username: ""
+  password: ""
+  insecure: true
+```
+
+The `images.yaml` file should look like:
+
+```yaml
+quay.io/qpod/docker-kit:
+  - docker.io/qpod/docker-kit
+  - registry.cn-hangzhou.aliyuncs.com/qpod/docker-kit
+```

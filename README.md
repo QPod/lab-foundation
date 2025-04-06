@@ -2,7 +2,8 @@
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/QPod/lab-foundation/build-docker.yml?branch=main)](https://github.com/QPod/lab-foundation/actions/workflows/build-docker.yml)
-[![Recent Code Update](https://img.shields.io/github/last-commit/QPod/lab-foundation.svg)](https://github.com/QPod/lab-foundation/stargazers)
+[![Recent Code Update](https://img.shields.io/github/last-commit/QPod/lab-foundation.svg)](https://github.com/QPod/lab-foundation/commits)
+[![Visit Images on Quay.io](https://img.shields.io/badge/Quay.io-Images-green)](https://quay.io/organization/qpod)
 [![Visit Images on DockerHub](https://img.shields.io/badge/DockerHub-Images-green)](https://hub.docker.com/u/qpod)
 
 Please generously STAR★ our project or donate to us!  [![GitHub Starts](https://img.shields.io/github/stars/QPod/lab-foundation.svg?label=Stars&style=social)](https://github.com/QPod/lab-foundation/stargazers)

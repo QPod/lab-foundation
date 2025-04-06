@@ -182,8 +182,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: |
+      - env:
+          AUTH_FILE_CONTENT: ${{ secrets.AUTH_FILE_CONTENT }}
+        run: |
           source ./tool.sh
-          printenv | grep -v 'PATH' > /tmp/docker.env && echo "REGISTRY_URL=${REGISTRY_DST}" >> /tmp/docker.env
+          printf '%s' "$AUTH_FILE_CONTENT" > .github/workflows/auth.json && ls -alh ./.github/workflows
           docker run --rm --env-file /tmp/docker.env -v $(pwd):/tmp -w /tmp ${IMG_PREFIX_DST:-qpod}/docker-kit \
-            python /opt/utils/image-syncer/run_jobs.py
+            python /opt/utils/image-syncer/run_jobs.py --auth-file=/tmp/.github/workflows/auth.json \
+              --target-registry=docker.io,registry.cn-hangzhou.aliyuncs.com,registry.cn-beijing.aliyuncs.com
+              --workflow-file=".github/workflows/build-docker-gpu.yml"
