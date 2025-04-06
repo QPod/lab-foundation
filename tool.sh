@@ -14,12 +14,14 @@ else
 fi
 
 export IMG_NAMESPACE=$(echo "${CI_PROJECT_NAMESPACE}" | awk '{print tolower($0)}')
-export IMG_PREFIX=$(echo "${REGISTRY_URL:-"docker.io"}/${IMG_NAMESPACE}" | awk '{print tolower($0)}')
+export IMG_PREFIX_SRC=$(echo "${REGISTRY_SRC:-"docker.io"}/${IMG_NAMESPACE}" | awk '{print tolower($0)}')
+export IMG_PREFIX_DST=$(echo "${REGISTRY_DST:-"docker.io"}/${IMG_NAMESPACE}" | awk '{print tolower($0)}')
 export TAG_SUFFIX="-$(git rev-parse --short HEAD)"
 
 echo "--------> CI_PROJECT_NAMESPACE=${CI_PROJECT_NAMESPACE}"
 echo "--------> DOCKER_IMG_NAMESPACE=${IMG_NAMESPACE}"
-echo "--------> DOCKER_IMG_PREFIX=${IMG_PREFIX}"
+echo "--------> DOCKER_IMG_PREFIX_SRC=${IMG_PREFIX_SRC}"
+echo "--------> DOCKER_IMG_PREFIX_DST=${IMG_PREFIX_DST}"
 echo "--------> DOCKER_TAG_SUFFIX=${TAG_SUFFIX}"
 
 [ ! -f /etc/docker/daemon.json ] && sudo tee /etc/docker/daemon.json > /dev/null <<< '{}'
@@ -29,34 +31,34 @@ jq '.experimental=true | ."data-root"="/mnt/docker"' /etc/docker/daemon.json > /
 build_image() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M)${TAG_SUFFIX}; WORKDIR="$(dirname $FILE)";
-    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
-    docker tag "${IMG_PREFIX}/${IMG}:${TAG}" "${IMG_PREFIX}/${IMG}:${VER}" ;
+    docker build --compress --force-rm=true -t "${IMG_PREFIX_DST}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX_SRC}" "$@" "${WORKDIR}" ;
+    docker tag "${IMG_PREFIX_DST}/${IMG}:${TAG}" "${IMG_PREFIX_DST}/${IMG}:${VER}" ;
 }
 
 build_image_no_tag() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; WORKDIR="$(dirname $FILE)";
-    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
+    docker build --compress --force-rm=true -t "${IMG_PREFIX_DST}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX_SRC}" "$@" "${WORKDIR}" ;
 }
 
 build_image_common() {
     echo "$@" ;
     IMG=$1; TAG=$2; FILE=$3; shift 3; VER=$(date +%Y.%m%d.%H%M)${TAG_SUFFIX}; WORKDIR="$(dirname $FILE)";
-    docker build --compress --force-rm=true -t "${IMG_PREFIX}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX}" "$@" "${WORKDIR}" ;
-    docker tag "${IMG_PREFIX}/${IMG}:${TAG}" "${IMG_PREFIX}/${IMG}:${VER}" ;
+    docker build --compress --force-rm=true -t "${IMG_PREFIX_DST}/${IMG}:${TAG}" -f "$FILE" --build-arg "BASE_NAMESPACE=${IMG_PREFIX_SRC}" "$@" "${WORKDIR}" ;
+    docker tag "${IMG_PREFIX_DST}/${IMG}:${TAG}" "${IMG_PREFIX_DST}/${IMG}:${VER}" ;
 }
 
 alias_image() {
     IMG_1=$1; TAG_1=$2; IMG_2=$3; TAG_2=$4; shift 4; VER=$(date +%Y.%m%d.%H%M)${TAG_SUFFIX};
-    docker tag "${IMG_PREFIX}/${IMG_1}:${TAG_1}" "${IMG_PREFIX}/${IMG_2}:${TAG_2}" ;
-    docker tag "${IMG_PREFIX}/${IMG_2}:${TAG_2}" "${IMG_PREFIX}/${IMG_2}:${VER}" ;
+    docker tag "${IMG_PREFIX_DST}/${IMG_1}:${TAG_1}" "${IMG_PREFIX_DST}/${IMG_2}:${TAG_2}" ;
+    docker tag "${IMG_PREFIX_DST}/${IMG_2}:${TAG_2}" "${IMG_PREFIX_DST}/${IMG_2}:${VER}" ;
 }
 
 push_image() {
     KEYWORD="${1:-second}";
     docker image prune --force && docker images | sort;
     IMAGES=$(docker images | grep "${KEYWORD}" | awk '{print $1 ":" $2}') ;
-    echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_URL}" -u "$DOCKER_REGISTRY_USERNAME" --password-stdin ;
+    echo "$DOCKER_REGISTRY_PASSWORD" | docker login "${REGISTRY_DST}" -u "$DOCKER_REGISTRY_USERNAME" --password-stdin ;
     for IMG in $(echo "${IMAGES}" | tr " " "\n") ;
     do
       docker push "${IMG}";

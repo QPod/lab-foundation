@@ -12,7 +12,7 @@ def generate(image: str, source_registry: str = None, target_registries: list = 
     passwd_mirror = os.environ.get('DOCKER_MIRROR_REGISTRY_PASSWORD', None)
 
     if uname_mirror is None or passwd_mirror is None:
-        print('ENV variable required: DOCKER_MIRROR_REGISTRY_USERNAME and DOCKER_MIRROR_REGISTRY_PASSWORD !')
+        print('ENV variable required: DOCKER_MIRROR_REGISTRY_USERNAME and DOCKER_MIRROR_REGISTRY_PASSWORD!')
         sys.exit(-2)
 
     if target_registries is None:
@@ -35,7 +35,7 @@ def generate(image: str, source_registry: str = None, target_registries: list = 
             uname_source = os.environ.get('DOCKER_REGISTRY_USERNAME', None)
             passwd_source = os.environ.get('DOCKER_REGISTRY_PASSWORD', None)
             if uname_source is None or passwd_source is None:
-                print('ENV variable required: DOCKER_REGISTRY_USERNAME and DOCKER_REGISTRY_PASSWORD !')
+                print('ENV variable required: DOCKER_REGISTRY_USERNAME and DOCKER_REGISTRY_PASSWORD!')
                 sys.exit(-2)
             c['auth'].update({source_registry: {
                 "username": uname_source, "password": passwd_source}

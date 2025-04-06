@@ -16,13 +16,17 @@ Discussion and contributions are welcome:
 
 ## Your Swiss Army Knife for AI & Data Science
 
-In a nutshell, `QPod` ( [DockerHub](https://hub.docker.com/r/qpod/qpod/) | [GitHub](https://github.com/QPod/lab-foundation) ) is an **out-of-box Data Science / AI environment and platform** at your fingertip which you would love 💕.
+In a nutshell, `QPod` (
+[GitHub](https://github.com/QPod/lab-foundation) |
+[quay.io](https://quay.io/organization/qpod) |
+[DockerHub](https://hub.docker.com/r/qpod/qpod/)
+) is an **out-of-box Data Science / AI environment and platform** at your fingertip which you would love 💕.
 
 AI/数据科学的瑞士军刀——QPod提供了一站式、开箱即用、可自由定制的，基于容器的、开源AI/数据科学开发、分析工具。
 
 ## Documentation & Tutorial
 
-[Wiki & Document](https://qpod.github.io/) | [中文使用指引(含中国网络镜像)](https://qpod.github.io/docs/intro-cn)
+[Wiki & Document](https://qpod.github.io) | [中文使用指引(含中国网络镜像)](https://qpod.github.io/docs/intro-cn)
 
 ## Screenshot and Arch Diagram
 
