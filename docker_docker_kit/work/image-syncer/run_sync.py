@@ -69,9 +69,11 @@ def sync_image(cfg: dict = None, file_path_auth: str = None):
             raise ValueError('file_path_auth required if auth not provided directly!')
         opts = ['--auth=' + file_path_auth, '--images=' + fp.name]
 
+    cmd = ['image-syncer', '--proc=16', '--retries=2', ] + opts
+    print('Running cmd:', ' '.join(cmd))
     ret = 0
     try:
-        subprocess.run(['image-syncer', '--proc=16', '--retries=2', ] + opts, check=True)
+        subprocess.run(cmd, check=True)
     except subprocess.CalledProcessError as e:
         ret = e.returncode
         print(e)
