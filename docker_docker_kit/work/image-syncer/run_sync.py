@@ -11,8 +11,8 @@ def generate_tasks_without_auth(image: str, source_registry: str = None, target_
     if target_registries is None:
         destinations = 'cn-beijing,cn-hangzhou'.split(',')  # ,cn-shanghai,cn-shenzhen,cn-chengdu,cn-hongkong,us-west-1,eu-central-1
         target_registries = ['registry.%s.aliyuncs.com' % i for i in destinations]
-    elif isinstance(target_registries, str):
-        target_registries = target_registries.split(',')
+    else:    
+        target_registries = (','.join(target_registries)).split(',')
 
     img_src_tag = '%s:%s' % (image, tags) if tags is not None else image
     img_src: str = "%s/%s" % (source_registry, img_src_tag)
@@ -34,8 +34,8 @@ def generate_tasks_with_auth(image: str, source_registry: str = None, target_reg
     if target_registries is None:
         destinations = 'cn-beijing,cn-hangzhou'.split(',')  # ,cn-shanghai,cn-shenzhen,cn-chengdu,cn-hongkong,us-west-1,eu-central-1
         target_registries = ['registry.%s.aliyuncs.com' % i for i in destinations]
-    elif isinstance(target_registries, str):
-        target_registries = target_registries.split(',')
+    else:
+        target_registries = (','.join(target_registries)).split(',')
 
     for target_registry in target_registries:
         img_src_tag = '%s:%s' % (image, tags) if tags is not None else image
