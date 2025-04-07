@@ -53,7 +53,7 @@ RUN set -eux \
     echo "nomkl" >> /opt/utils/install_list_core.conda && echo "Install nomkl." ; \
   fi \
   && ln -sf /opt/utils/install_list_core.conda /opt/utils/install_list_PY_mkl.pip \
-  && install_conda /opt/utils/install_list_core.conda \
+  && install_mamba /opt/utils/install_list_core.conda \
  # -----------------------------
  && echo "If installing Python packages" \
  && ( $(grep -q "datascience" <<< "${ARG_PROFILE_PYTHON}") && ( \

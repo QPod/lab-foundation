@@ -8,11 +8,9 @@ import tempfile
 
 def generate_tasks_without_auth(image: str, source_registry: str = None, target_registries: list = None, tags: list = None):
     """Generate a config item which will be used by `image-syncer`."""
-    if target_registries is None:
+    if target_registries is None or len(target_registries) == 0:
         destinations = 'cn-beijing,cn-hangzhou'.split(',')  # ,cn-shanghai,cn-shenzhen,cn-chengdu,cn-hongkong,us-west-1,eu-central-1
         target_registries = ['registry.%s.aliyuncs.com' % i for i in destinations]
-    else:    
-        target_registries = (','.join(target_registries)).split(',')
 
     img_src_tag = '%s:%s' % (image, tags) if tags is not None else image
     img_src: str = "%s/%s" % (source_registry, img_src_tag)
@@ -31,11 +29,9 @@ def generate_tasks_with_auth(image: str, source_registry: str = None, target_reg
     
     auth = {"username": uname_mirror, "password": passwd_mirror}
 
-    if target_registries is None:
+    if target_registries is None or len(target_registries) == 0:
         destinations = 'cn-beijing,cn-hangzhou'.split(',')  # ,cn-shanghai,cn-shenzhen,cn-chengdu,cn-hongkong,us-west-1,eu-central-1
         target_registries = ['registry.%s.aliyuncs.com' % i for i in destinations]
-    else:
-        target_registries = (','.join(target_registries)).split(',')
 
     for target_registry in target_registries:
         img_src_tag = '%s:%s' % (image, tags) if tags is not None else image
