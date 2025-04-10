@@ -18,7 +18,7 @@ if [ -f $FILE_DEB ]; then
   echo "Finished setting ubuntu/debian mirror"
 fi
 
-if command -v python &> /dev/null; then
+if [ -f "$(which python)" ] ; then
   echo "Found python, setting pypi source in /etc/pip.conf"
   cat >/etc/pip.conf <<EOF
 [global]
@@ -33,7 +33,7 @@ EOF
 fi
 
 for cmd in npm pnpm yarn bun; do
-  if command -v "$cmd" &> /dev/null; then
+  if [ -f "$(which $cmd)" ] ; then
     echo "Found $cmd, setting mirror"
     "$cmd" config set registry https://registry.npmmirror.com
     "$cmd" config list
@@ -41,13 +41,13 @@ for cmd in npm pnpm yarn bun; do
   fi
 done
 
-if command -v go &> /dev/null; then
+if [ -f "$(which go)" ] ; then
   echo "Found golang, setting GOPROXY"
   export GOPROXY=https://mirrors.cloud.aliyuncs.com/goproxy/
   go env | grep 'PROXY'
 fi
 
-if command -v R &> /dev/null; then
+if [ -f "$(which R)" ] ; then
   echo "Found R, setting CRAN mirror"
   echo "options(repos=structure(c(CRAN=\"http://mirrors.cloud.aliyuncs.com/CRAN/\")))" >> /etc/R/Rprofile.site
   R -e "options('repos');"
