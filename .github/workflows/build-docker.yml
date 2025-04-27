@@ -240,7 +240,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: |
+      - env:
+          AUTH_FILE_CONTENT: ${{ secrets.AUTH_FILE_CONTENT }}
+          DOCKER_MIRROR_REGISTRY: ${{ vars.DOCKER_MIRROR_REGISTRY }}
+        run: |
           source ./tool.sh && build_image docker-kit latest docker_docker_kit/Dockerfile && push_image docker-kit
           echo "jobs: { qpod_docker_kit: { name: 'docker-kit' } }" | tee ".github/workflows/build-docker.yml" > /dev/null
           printf '%s' "$AUTH_FILE_CONTENT" > .github/workflows/auth.json && ls -alh ./.github/workflows
