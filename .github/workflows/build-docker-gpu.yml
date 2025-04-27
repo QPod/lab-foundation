@@ -160,7 +160,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh
+          source ./tool.sh && export IMG_PREFIX_SRC="${IMG_PREFIX_DST}"
           build_image py-nlp-cuda126 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.6" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,nlp"
           alias_image py-nlp-cuda126 latest py-nlp latest
           push_image
@@ -172,7 +172,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh
+          source ./tool.sh && export IMG_PREFIX_SRC="${IMG_PREFIX_DST}"
           build_image py-nlp-cuda124 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.4" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,nlp"
           push_image
 
@@ -184,7 +184,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh 
+          source ./tool.sh && export IMG_PREFIX_SRC="${IMG_PREFIX_DST}"
           build_image py-cv   latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.6" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,cv"
           push_image
 
@@ -196,7 +196,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          source ./tool.sh && free_diskspace
+          source ./tool.sh && free_diskspace && export IMG_PREFIX_SRC="${IMG_PREFIX_DST}"
           build_image full-cuda-12.6 latest docker_core/Dockerfile \
             --build-arg "BASE_IMG=cuda_12.6" \
             --build-arg "ARG_PROFILE_PYTHON=base,datascience,mkl,database,nlp,cv,chem,tf2,torch" \
