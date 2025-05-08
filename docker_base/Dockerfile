@@ -6,7 +6,7 @@ FROM ${BASE_NAMESPACE:+$BASE_NAMESPACE/}${BASE_IMG}
 
 LABEL maintainer="haobibo@gmail.com"
 
-ARG REPLACE_SYS_PY="false"
+ARG REPLACE_SYS_PY="true"
 ARG PYTHON_VERSION="3.12"
 
 ENV CONDA_PREFIX=/opt/conda
@@ -18,6 +18,8 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
  && export HAS_SYS_PY=$( [ -x "$(command -v python3)" ] && echo 'true' || echo 'false' ) && echo "@ Detect OS Py3 installed: ${HAS_SYS_PY:-error}" \
  && echo "Install Mamba:" && setup_mamba \
  && echo "Install Python ${PYTHON_VERSION} and conda:" && setup_conda_with_mamba ${PYTHON_VERSION} \
+ && PY_VER=$(/opt/conda/bin/python -c 'import sys; print(f"{sys.version_info.major}{sys.version_info.minor:02d}")' 2>/dev/null) \
+ && ( (( $PY_VER >= 308 )) && pip install -U uv || echo "Skip uv install" ) \
  && echo "Backup the conda version of platform.py as it's different from the system version." \
  && cp "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py.bak \
  && if $( ${HAS_SYS_PY:-false} && ${REPLACE_SYS_PY:-false} ) ; then \
@@ -39,6 +41,5 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
  && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python  \
  && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 \
  && lsb_release -a \
- && pip install -U uv \
  && which python && python --version && ls -alh /usr/bin/python* \
  && install__clean && fix_permission 0 /opt
