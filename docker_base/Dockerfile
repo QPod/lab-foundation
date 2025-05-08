@@ -6,6 +6,7 @@ FROM ${BASE_NAMESPACE:+$BASE_NAMESPACE/}${BASE_IMG}
 
 LABEL maintainer="haobibo@gmail.com"
 
+ARG REPLACE_SYS_PY="false"
 ARG PYTHON_VERSION="3.12"
 
 ENV CONDA_PREFIX=/opt/conda
@@ -14,12 +15,12 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
  && export PATH=$PATH:${CONDA_PREFIX}/bin \
  && install_apt /opt/utils/install_list_base.apt \
  && echo "Install tini:" && setup_tini \
- && export HAS_SYS_PY3=$( [ -x "$(command -v python3)" ] && echo 'true' || echo 'false' ) && echo "@ Detect OS Py3 installed: ${HAS_SYS_PY3:-error}" \
+ && export HAS_SYS_PY=$( [ -x "$(command -v python3)" ] && echo 'true' || echo 'false' ) && echo "@ Detect OS Py3 installed: ${HAS_SYS_PY:-error}" \
  && echo "Install Mamba:" && setup_mamba \
  && echo "Install Python ${PYTHON_VERSION} and conda:" && setup_conda_with_mamba ${PYTHON_VERSION} \
  && echo "Backup the conda version of platform.py as it's different from the system version." \
  && cp "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py.bak \
- && if $(${HAS_SYS_PY3:-false}) ; then \
+ && if $( ${HAS_SYS_PY:-false} && ${REPLACE_SYS_PY:-false} ) ; then \
        py3versions -d \
     && PYTHON_VERSION_DEFAULT=$(py3versions -v -i) \
     && PYTHON_PTH_FILE=$("${CONDA_PREFIX}"/bin/python3 -c 'import sys;print(sys.path[-1]+"/usr_share.pth")') \
@@ -31,12 +32,13 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
     && rm -rf $(/usr/bin/python3 -c 'import sys; print(" ".join(i for i in sys.path if "python" in i))') /usr/bin/python3* /usr/lib/python${PYTHON_VERSION} \
     && rm -rf /usr/lib/python${PYTHON_VERSION} && ln -sf "${CONDA_PREFIX}"/lib/python${PYTHON_VERSION} /usr/lib/ ; \
  else \
-     echo "No default python found in OS." ; \
+     echo "Not replacing OS default python." ; \
  fi \
  && ln -sf "${CONDA_PREFIX}"/bin/python3.* /usr/bin/ \
  && ln -sf "${CONDA_PREFIX}"/bin/pip       /usr/bin/ \
  && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python  \
  && ln -sf "/usr/bin/python${PYTHON_VERSION}" /usr/bin/python3 \
  && lsb_release -a \
+ && pip install -U uv \
  && which python && python --version && ls -alh /usr/bin/python* \
  && install__clean && fix_permission 0 /opt
