@@ -6,7 +6,7 @@ FROM ${BASE_NAMESPACE:+$BASE_NAMESPACE/}${BASE_IMG}
 
 LABEL maintainer="haobibo@gmail.com"
 
-ARG REPLACE_SYS_PY="true"
+ARG SYS_PY_REPLACE="true"
 ARG PYTHON_VERSION="3.12"
 
 ENV CONDA_PREFIX=/opt/conda
@@ -15,14 +15,15 @@ RUN set -eux && source /opt/utils/script-setup.sh && source /opt/utils/script-se
  && export PATH=$PATH:${CONDA_PREFIX}/bin \
  && install_apt /opt/utils/install_list_base.apt \
  && echo "Install tini:" && setup_tini \
- && export HAS_SYS_PY=$( [ -x "$(command -v python3)" ] && echo 'true' || echo 'false' ) && echo "@ Detect OS Py3 installed: ${HAS_SYS_PY:-error}" \
+ && export SYS_PY_REPLACE=${SYS_PY_REPLACE} \
+ && export SYS_PY_EXISTS=$( [ -x "$(command -v python3)" ] && echo 'true' || echo 'false' ) && echo "@ Detect OS Py3 installed: ${SYS_PY_EXISTS:-error}" \
  && echo "Install Mamba:" && setup_mamba \
  && echo "Install Python ${PYTHON_VERSION} and conda:" && setup_conda_with_mamba ${PYTHON_VERSION} \
  && PY_VER=$(/opt/conda/bin/python -c 'import sys; print(f"{sys.version_info.major}{sys.version_info.minor:02d}")' 2>/dev/null) \
  && ( (( $PY_VER >= 308 )) && pip install -U uv || echo "Skip uv install" ) \
  && echo "Backup the conda version of platform.py as it's different from the system version." \
  && cp "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py "${CONDA_PREFIX}/lib/python${PYTHON_VERSION}"/platform.py.bak \
- && if $( ${HAS_SYS_PY:-false} && ${REPLACE_SYS_PY:-false} ) ; then \
+ && if $( ${SYS_PY_EXISTS:-false} && ${SYS_PY_REPLACE:-false} ) ; then \
        py3versions -d \
     && PYTHON_VERSION_DEFAULT=$(py3versions -v -i) \
     && PYTHON_PTH_FILE=$("${CONDA_PREFIX}"/bin/python3 -c 'import sys;print(sys.path[-1]+"/usr_share.pth")') \
