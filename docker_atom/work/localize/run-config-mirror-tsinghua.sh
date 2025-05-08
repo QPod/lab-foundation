@@ -27,7 +27,7 @@ root-user-action=ignore
 retries=5
 timeout=180
 trusted-host=pypi.python.org pypi.org files.pythonhosted.org mirrors.tuna.tsinghua.edu.cn
-index-url=http://mirrors.tuna.tsinghua.edu.cn/pypi/simple/
+index-url=https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/
 EOF
   pip config list
 fi
