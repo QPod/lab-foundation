@@ -165,15 +165,15 @@ jobs:
           alias_image py-nlp-cuda126 latest py-nlp latest
           push_image
 
-  qpod_py-nlp-cuda124:
-    name: 'py-nlp-cuda124'
-    needs: qpod_cuda_124
+  qpod_py-nlp-cuda128:
+    name: 'py-nlp-cuda128'
+    needs: qpod_cuda_128
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
           source ./tool.sh && export IMG_PREFIX_SRC="${IMG_PREFIX_DST}"
-          build_image py-nlp-cuda124 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.4" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,nlp"
+          build_image py-nlp-cuda128 latest docker_core/Dockerfile --build-arg "BASE_IMG=cuda_12.8" --build-arg "ARG_PROFILE_PYTHON=datascience,mkl,torch,nlp"
           push_image
 
 
