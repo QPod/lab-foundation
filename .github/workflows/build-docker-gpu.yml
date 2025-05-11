@@ -33,7 +33,7 @@ jobs:
   # latest cuda supported by paddlepadle: https://www.paddlepaddle.org.cn/
   # latest cuda supported by vllm: https://docs.vllm.ai/en/latest/getting_started/installation/gpu.html?device=cuda
   qpod_cuda_126:
-    name: 'cuda_12.6,cuda'
+    name: 'cuda_12.6,cuda,nvidia-cuda'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
