@@ -32,7 +32,7 @@ trusted-host=pypi.python.org pypi.org files.pythonhosted.org
 EOF
   fi
 
-  echo 'export PATH=${PATH}:${CONDA_PREFIX:-"/opt/conda"}/bin'		>> /etc/profile.d/path-conda.sh
+  echo 'export PATH=${CONDA_PREFIX:-"/opt/conda"}/bin:${PATH}'		>> /etc/profile.d/path-conda.sh
   ln -sf "${CONDA_PREFIX}/bin/conda" /usr/bin/
 
      conda config --system --prepend channels conda-forge \
